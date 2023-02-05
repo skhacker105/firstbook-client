@@ -1,18 +1,30 @@
 .product-card {
     margin-top: 10px;
     margin-bottom: 20px;
+    width: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .product-disabled {
     background-color: #808080;
 }
 
+.product-header {
+    width: 100%;
+}
+.product-header::ng-deep .mat-mdc-card-header-text {
+    width: 100%;
+}
+
 .product-title {
     text-align: left;
+    width: 100%;
 }
 
 .product-subtitle {
     padding-bottom: 10px;
+    text-align: justify;
 }
 
 .product-images {

@@ -31,6 +31,10 @@ const routes: Routes = [
     loadChildren: () => import('./components/chat-room/chat-room.module').then(m => m.ChatRoomModule)
   },
   {
+    path: 'chatroomwindow',
+    loadChildren: () => import('./components/chat-room-window/chat-room-window.module').then(m => m.ChatRoomWindowModule)
+  },
+  {
     path: 'home',
     component: HomeComponent
   },

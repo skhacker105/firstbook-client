@@ -1,7 +1,7 @@
 <mat-card class="product-card" *ngIf="product" [ngClass]="{
     'product-disabled' : product.disabled
 }">
-    <mat-card-header>
+    <mat-card-header class="product-header">
         <mat-card-title class="product-title">
             <p align="end">
                 <button mat-fab extended color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
