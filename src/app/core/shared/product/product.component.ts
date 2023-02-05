@@ -95,7 +95,7 @@ export class ProductComponent implements OnInit {
       ).subscribe((res: any) => {
         this.specs = res[0] ? res[0].data : [];
         this.mainImage = res[1] ? res[1].data : undefined;
-        this.images = res[2].map((r: any) => r.data)
+        this.images = res[2] ? res[2].map((r: any) => r.data) : [];
         this.divideSpecsByCategory();
       })
   }
