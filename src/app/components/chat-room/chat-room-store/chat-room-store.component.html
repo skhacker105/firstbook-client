@@ -1,0 +1,8 @@
+<mat-list class="full-width full-height">
+    <mat-list-item *ngFor="let chatroom of chatrooms" class="room">
+        <app-chat-room [chatRoom]="chatroom" (undeleteClick)="handleUnDeleteChatRoom(chatroom)"
+            (deleteClick)="handleDeleteChatRoom(chatroom)"></app-chat-room>
+    </mat-list-item>
+</mat-list>
+
+<app-add-entity-trigger [addEntity]="addEntity"></app-add-entity-trigger>

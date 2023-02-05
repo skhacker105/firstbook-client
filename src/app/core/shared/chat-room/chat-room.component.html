@@ -1,0 +1,45 @@
+<mat-toolbar *ngIf="chatRoom" class="room-bar" [ngClass]="{
+    'deleted-room': chatRoom.inactive
+}">
+    <div class="room-name">
+        {{ actionDrawerOpen ? (name | shortenString:8) : (name | shortenString:35) }}
+    </div>
+    <span class="spacer"></span>
+
+    <mat-drawer-container autosize class="full-height action-container" align="end">
+
+        <button mat-flat-button [ngClass]="{
+            'action-trigger': !chatRoom.inactive,
+            'action-trigger-deleted': chatRoom.inactive
+        }" (click)="drawer.toggle()" *ngIf="!actionDrawerOpen">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <button mat-flat-button [ngClass]="{
+            'action-trigger': !chatRoom.inactive,
+            'action-trigger-deleted': chatRoom.inactive
+        }" (click)="drawer.toggle()" *ngIf="actionDrawerOpen">
+            <mat-icon>keyboard_arrow_right</mat-icon>
+        </button>
+
+        <mat-drawer #drawer mode="side" hasBackdrop="false" position="end" [ngClass]="{
+            'action-drawer': !chatRoom.inactive,
+            'action-drawer-deleted': chatRoom.inactive
+        }" (closedStart)="actionDrawerOpen = false" (openedStart)="actionDrawerOpen = true">
+
+            <button mat-mini-fab class="action-drawer-action" [disabled]="chatRoom.inactive"
+                [routerLink]="['/chatroom/edit/', chatRoom.id]"><mat-icon>edit</mat-icon></button>
+
+            <button mat-mini-fab class="action-drawer-action"
+                [matBadgeDisabled]="chatRoom.shares && chatRoom.shares.length === 1"
+                [disabled]="chatRoom.shares && chatRoom.shares.length === 1"
+                [matBadge]="chatRoom.shares ? chatRoom.shares.length : 0"><mat-icon>supervisor_account</mat-icon></button>
+
+            <button mat-mini-fab class="action-drawer-action" *ngIf="!chatRoom.inactive" color="warn"
+                (click)="handleDeleteClick()"><mat-icon>delete</mat-icon></button>
+
+            <button mat-mini-fab class="action-drawer-action" *ngIf="chatRoom.inactive" color="warn"
+                (click)="handleUnDeleteClick()"><mat-icon>plus_one</mat-icon></button>
+
+        </mat-drawer>
+    </mat-drawer-container>
+</mat-toolbar>

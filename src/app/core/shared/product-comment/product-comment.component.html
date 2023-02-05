@@ -1,0 +1,61 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      Comments
+    </mat-card-title>
+    <mat-card-subtitle>
+      <br>
+      <button mat-fab extended color="none" (click)="openFormModal(commentFormTemplate)">
+        <mat-icon>add</mat-icon>
+        Add Comment
+      </button><br><br>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content align="start">
+    <ng-container *ngFor="let c of comments">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-subtitle>
+            <a routerLink="/user/profile/{{getUserName(c)}}">{{getUserName(c)}}</a> {{c.creationDate
+            ?
+            (c.creationDate.toString() | commentTime) : ''}} ago
+          </mat-card-subtitle>
+          <span class="spacer"></span>
+
+          <button mat-icon-button color="none" *ngIf="isAdmin || c.user._id === userId"
+            (click)="openFormModal(commentFormTemplate, c._id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="none" *ngIf="isAdmin || c.user._id === userId"
+            (click)="openRemoveModal(c._id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          {{c.content}}
+        </mat-card-content>
+      </mat-card>
+
+    </ng-container>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #commentFormTemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{action}} Comment</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="commentModalRef?.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #formDir="ngForm" [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <textarea class="form-control" name="content" cols="30" rows="10" formControlName="content"></textarea>
+        <div class="test">
+          <button type="submit" class="btn btn-primary" (click)="commentModalRef?.hide()"
+            [disabled]="commentForm.invalid">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

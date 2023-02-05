@@ -1,0 +1,102 @@
+<mat-card *ngIf="user">
+  <mat-card-header class="full-width">
+    <mat-card-title>
+
+      <mat-toolbar>
+        <span>{{user.username}}</span>
+        <span class="spacer"></span>
+        <button *ngIf="!editable && (ownProfile || isAdmin)" mat-icon-button color="none" type="button" [routerLink]="['/user/profile/edit/', user.username]">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button *ngIf="editable" mat-icon-button color="none" type="button" [routerLink]="['/user/profile/', user.username]">
+          <mat-icon>cancel_presentation</mat-icon>
+        </button>
+      </mat-toolbar>
+
+    </mat-card-title>
+    <mat-card-subtitle align="left">
+      <br>
+    <mat-label>Role: </mat-label><span>{{user.isAdmin? 'Admin': 'User'}}</span>
+
+      <br><br>
+    </mat-card-subtitle>
+
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="editUserForm" *ngIf="editUserForm" class="comment-form" (ngSubmit)="onSubmit()">
+      <p align="justify">
+
+        <!-- Block unblock User commenting -->
+        <mat-slide-toggle class="username" color="accent" formControlName="isCommentsBlocked" *ngIf="isAdmin"
+          (change)="handleCommentBlockChange()">
+          Block user from commenting
+        </mat-slide-toggle><br>
+
+        <!-- firstName -->
+        <mat-form-field class="username">
+          <mat-label>First Name</mat-label>
+          <input matInput type="text" formControlName="firstName">
+        </mat-form-field>
+
+        <!-- lastName -->
+        <mat-form-field class="username">
+          <mat-label>Last Name</mat-label>
+          <input matInput type="text" formControlName="lastName">
+        </mat-form-field>
+
+        <!-- contact1 -->
+        <mat-form-field class="username">
+          <mat-label>Contact 1</mat-label>
+          <input matInput type="text" formControlName="contact1">
+        </mat-form-field>
+
+        <!-- contact2 -->
+        <mat-form-field class="username">
+          <mat-label>Contact 2</mat-label>
+          <input matInput type="text" formControlName="contact2">
+        </mat-form-field>
+
+        <!-- address -->
+        <mat-form-field class="username">
+          <mat-label>Address</mat-label>
+          <textarea matInput rows="4" formControlName="address"></textarea>
+        </mat-form-field>
+
+      </p>
+      <p align="end" *ngIf="editable">
+        <button mat-raised-button color="primary" type="submit">Save</button>
+      </p>
+    </form>
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Comments
+        </mat-panel-title>
+        <mat-panel-description>
+          {{user.commentsCount}}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <ng-container *ngIf="!comments || comments.length === 0">
+        No comments yet
+      </ng-container>
+
+      <ng-container *ngFor="let c of comments">
+        <ng-template *ngIf="c.product" [ngTemplateOutlet]="productcomments"
+          [ngTemplateOutletContext]="{ comment: c}"></ng-template>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #productcomments let-comment="comment">
+  <div class="product-comments">
+    <button mat-flat-button routerLink="/inventory/detail/{{comment.product._id}}" class="comment-title">
+      {{ comment.product.name }}</button>
+    <mat-label>
+      <span class="comment-content">{{ comment.content | shortenString:100 }} </span>
+    </mat-label>
+  </div>
+</ng-template>

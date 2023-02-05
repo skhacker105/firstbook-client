@@ -1,0 +1,19 @@
+.contacts-store {
+    margin: 30px auto;
+  }
+  
+  .top {
+    margin-top: 50px;
+  }
+  
+  .bottom {
+    margin-bottom: 50px;
+  }
+
+  .type-group {
+    background-image: linear-gradient(to bottom,#aebbff,#cfbcf8,#e6bfee,#f6c4e5,#ef94b4);
+  }
+  
+  .type-name {
+    font-size: smaller;
+  }

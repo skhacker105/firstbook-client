@@ -1,0 +1,15 @@
+<mat-selection-list *ngIf="data && data.options.length > 0" [multiple]="false">
+    <div mat-subheader>
+        {{ data.title }}
+    </div>
+    <ng-container *ngFor="let option of data.options">
+        <mat-list-item mat-dialog-content [mat-dialog-close]="option">
+            <mat-icon matListItemIcon>{{ option.icon }}</mat-icon>
+            <div matListItemTitle>{{option.message}}</div>
+            <!-- <div matListItemLine><mat-divider></mat-divider></div> -->
+        </mat-list-item>
+    </ng-container>
+</mat-selection-list>
+<div mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+</div>

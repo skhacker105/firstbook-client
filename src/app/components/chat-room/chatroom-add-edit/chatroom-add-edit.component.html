@@ -1,0 +1,50 @@
+<form *ngIf="chatRoomCreateForm" class="full-height" #formDir="ngForm" [formGroup]="chatRoomCreateForm"
+    (ngSubmit)="onSubmit()">
+
+    <mat-card class="full-height card">
+
+        <mat-card-content>
+
+            <!-- name -->
+            <mat-form-field class="flexible-input">
+                <mat-label>Chat Room Name</mat-label>
+                <input type="text" matInput formControlName="name" (keyup)="userEntry = true">
+            </mat-form-field>
+
+            <!-- Search Registered APP Users -->
+            <mat-form-field class="flexible-input">
+                <mat-label>Regitered Users</mat-label>
+                <input type="text" matInput placeholder="Search by name, username and phone numbers"
+                    formControlName="user" [matAutocomplete]="auto">
+                <mat-icon matSuffix *ngIf="chatRoomCreateForm.controls['user']?.value"
+                    (click)="chatRoomCreateForm.controls['user'].setValue('')">clear</mat-icon>
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="getOptionText"
+                    (optionSelected)="handleUserSelection()">
+                    <mat-option *ngFor="let option of userChangeSub$ | async" [value]="option">
+                        {{ option.username }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+
+        </mat-card-content>
+
+        <mat-card-content class="user-list">
+
+            <mat-list class="full-width">
+                <ng-container *ngFor="let share of selectedUsers?.shares; let i = index;">
+                    <mat-divider *ngIf="i > 0"></mat-divider>
+                    <mat-list-item class="full-width">
+                        {{ share.user?.firstName ? share.user?.firstName : share.user?.username }}
+                        <mat-icon class="remove-selected-user" (click)="removeSelectedUser(share)">close</mat-icon>
+                    </mat-list-item>
+                </ng-container>
+            </mat-list>
+
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+            <button mat-raised-button type="button" routerLink="/chatroom">Cancel</button>
+            <button type="submit" mat-raised-button color="primary">Save</button>
+        </mat-card-actions>
+    </mat-card>
+</form>

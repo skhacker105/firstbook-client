@@ -1,0 +1,40 @@
+.product-card {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.product-disabled {
+    background-color: #808080;
+}
+
+.product-title {
+    text-align: left;
+}
+
+.product-subtitle {
+    padding-bottom: 10px;
+}
+
+.product-images {
+    max-height: 200px;
+    max-width: 200px;
+    height: auto;
+    width: auto;
+    margin: auto;
+}
+
+.product-edit {
+    margin-right: 10px;
+}
+
+.product-action {
+    width: 100%;
+    background-image: linear-gradient(to bottom,#ffaef1,#f7bcf8,#e5bfee,#f6c4e5,#ffccde)
+}
+
+.product-specs {
+    width: 100%;
+    max-height: 300px;
+    overflow: auto;
+    background-color: #f7f7ff;
+}

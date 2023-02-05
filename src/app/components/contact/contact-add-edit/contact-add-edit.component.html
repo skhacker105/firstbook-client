@@ -1,0 +1,94 @@
+<ng-container *ngIf="createContactForm && title && firstName && lastName && type && contact1 && contact2 && address">
+    <form #formDir="ngForm" [formGroup]="createContactForm" (ngSubmit)="onSubmit()">
+        <mat-card class="contact-card entity">
+            <mat-card-header>
+                <mat-card-title>{{ id ? 'Edit': 'New' }} Contact <br><br></mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+
+                <!-- Search Registered APP Users -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Regitered Users</mat-label>
+                    <input type="text" matInput placeholder="Search by name, username and phone numbers"
+                        formControlName="appUserId" [matAutocomplete]="auto">
+                    <mat-icon matSuffix *ngIf="createContactForm.controls['appUserId']?.value"
+                    (click)="createContactForm.controls['appUserId'].setValue('')">clear</mat-icon>
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="getOptionText"
+                    (optionSelected)="handleUserSelection()">
+                        <mat-option *ngFor="let option of userChangeSub$ | async" [value]="option">
+                            {{ option.username }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+
+                <!-- Title -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Title</mat-label>
+                    <mat-select formControlName="title" class="flexible-input">
+                        <mat-select-trigger>
+                            {{title.value}}
+                        </mat-select-trigger>
+                        <mat-option>Clear</mat-option>
+                        <mat-option *ngFor="let title of userService.titles" [value]="title">{{title}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="title.hasError('required')">
+                        Title is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- First Name -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>First name</mat-label>
+                    <input type="text" matInput formControlName="firstName">
+                    <mat-error *ngIf="firstName.hasError('required')">
+                        Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- Last Name -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Last Name</mat-label>
+                    <input type="text" matInput formControlName="lastName">
+                </mat-form-field>
+
+                <!-- type -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Type</mat-label>
+                    <mat-select formControlName="type" class="flexible-input">
+                        <mat-select-trigger>
+                            {{type.value}}
+                        </mat-select-trigger>
+                        <mat-option *ngFor="let rel of userService.userRelationTypes" [value]="rel">{{rel}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="type.hasError('required')">
+                        Relation Type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- contact1 -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Contact Number 1</mat-label>
+                    <input type="text" matInput formControlName="contact1">
+                </mat-form-field>
+
+                <!-- contact2 -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Contact Number 2</mat-label>
+                    <input type="text" matInput formControlName="contact2">
+                </mat-form-field>
+
+                <!-- address -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Address</mat-label>
+                    <textarea matInput rows="5" formControlName="address"></textarea>
+                </mat-form-field>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+                <button mat-raised-button routerLink="/contact" type="button">Cancel</button>
+                <button mat-raised-button color="primary" type="submit">Save</button>
+            </mat-card-actions>
+        </mat-card>
+
+    </form>
+</ng-container>

@@ -1,0 +1,17 @@
+
+.contact-header-image {
+    /* background-image: url('https://material.angular.io/assets/img/contacts/shiba1.jpg'); */
+    background-size: cover;
+}
+
+.action {
+    font-size: large;
+}
+
+.delete-action {
+    color: red;
+}
+
+.contact-panel-header {
+    height: 100px;
+}

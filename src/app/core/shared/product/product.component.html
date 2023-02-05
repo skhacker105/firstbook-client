@@ -1,0 +1,60 @@
+<mat-card class="product-card" *ngIf="product" [ngClass]="{
+    'product-disabled' : product.disabled
+}">
+    <mat-card-header>
+        <mat-card-title class="product-title">
+            <p align="end">
+                <button mat-fab extended color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
+                    (click)="goToEditDetail()">
+                    <mat-icon>edit</mat-icon>
+                    Edit
+                </button>
+                <button mat-fab extended color="none" class="product-disable" *ngIf="!product.disabled && isEditAllowed"
+                    (click)="handleEnableDisable(false)">
+                    <mat-icon>visibility_off</mat-icon>
+                    Disable
+                </button>
+                <button mat-fab extended color="primary" class="product-enable" *ngIf="product.disabled && isEditAllowed"
+                    (click)="handleEnableDisable(true)">
+                    <mat-icon>visibility_on</mat-icon>
+                    Enable
+                </button>
+            </p>
+
+            <div (click)="goToDetail()">{{ product.name }}</div>
+        </mat-card-title>
+        <mat-card-subtitle *ngIf="!product.disabled" class="product-subtitle">
+            <app-star-rating
+                    [currentRating]="product.currentRating"
+                    [ratingPoints]="product.ratingPoints"
+                    [ratedCount]="product.ratedCount"
+                    [ratedBy]="product.ratedBy">
+                </app-star-rating>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <app-preview *ngIf="!product.disabled" [customOptions]="customOptions" [files]="images" [mainImage]="mainImage"
+        [showActions]="false" (imageClick)="handleImageClick($event)"></app-preview>
+
+    <mat-card-content *ngIf="!product.disabled">
+        <p align="justify" [innerHTML]="product.description">
+        </p>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="!product.disabled">
+        <mat-expansion-panel class="product-action">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>vertical_split</mat-icon>
+                </mat-panel-title>
+                <mat-panel-description>
+                    Specifications
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="product-specs">
+                <ng-container *ngFor="let category of unique_specs">
+                    <app-product-specification [category]="category"></app-product-specification>
+                </ng-container>
+            </div>
+        </mat-expansion-panel>
+    </mat-card-actions>
+</mat-card>

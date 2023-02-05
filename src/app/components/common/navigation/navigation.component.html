@@ -1,0 +1,101 @@
+<mat-toolbar color="primary">
+
+  <!-- Left Menu -->
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+
+    <button mat-menu-item routerLink="/home">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </button>
+
+    <ng-template [ngIf]="isUserLogged()">
+      <button mat-menu-item routerLink="/chatroom">
+        <mat-icon>chat</mat-icon>
+        <span>Chat</span>
+      </button>
+      <button mat-menu-item routerLink="/contact">
+        <mat-icon>contacts</mat-icon>
+        <span>Contacts</span>
+      </button>
+      <button mat-menu-item routerLink="/user/profile/ME">
+        <mat-icon>account_box</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item routerLink="/user/purchaseHistory">
+        <mat-icon>history</mat-icon>
+        <span>Transactions</span>
+      </button>
+      <button mat-menu-item routerLink="/inventory">
+        <mat-icon>create</mat-icon>
+        <span>Inventory</span>
+      </button>
+    </ng-template>
+
+    <button mat-menu-item>
+      <mat-icon>supervisor_account</mat-icon>
+      <span>About Us</span>
+    </button>
+  </mat-menu>
+
+
+  <span class="spacer"></span>
+
+  <!-- Cart -->
+  <ng-template [ngIf]="isUserLogged()">
+    <button mat-mini-fab routerLink="/user/cart" [matBadge]="cartItems" [matBadgeHidden]="!cartItems"
+      matBadgeColor="warn" color="primary">
+      <mat-icon>shopping_cart</mat-icon>
+    </button>
+  </ng-template>
+
+
+  <!--  Register/Login -->
+  <button mat-icon-button [matMenuTriggerFor]="menu1">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu1="matMenu">
+
+    <ng-template [ngIf]="!isUserLogged()">
+      <button mat-menu-item routerLink="/user/login">
+        <mat-icon>power</mat-icon>
+        <span>Login</span>
+      </button>
+      <button mat-menu-item routerLink="/user/register">
+        <mat-icon>library_books</mat-icon>
+        <span>Register</span>
+      </button>
+    </ng-template>
+
+    <ng-template [ngIf]="isUserLogged()">
+      <button mat-menu-item>
+        <span>
+          {{getUsername()}}
+          <span>Hello, {{username}}</span>
+        </span>
+      </button>
+      <button mat-menu-item routerLink="/home" (click)="logout()">
+        <mat-icon>power_off</mat-icon>
+        <span>
+          Logout
+        </span>
+      </button>
+    </ng-template>
+  </mat-menu>
+
+</mat-toolbar>
+
+<br>
+<form #formDir="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+  <mat-form-field class="search-container">
+    <input matInput type="text" name="query" placeholder="Products, Services ..." formControlName="query">
+    <button type="submit" [disabled]="searchForm.invalid" matSuffix mat-icon-button aria-label="Search">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <!-- <input type="text" mat-input name="query" placeholder="Products, Services ..." formControlName="query" />
+      <button type="submit" [disabled]="searchForm.invalid"><i class="fa fa-search"></i></button> -->
+</form>

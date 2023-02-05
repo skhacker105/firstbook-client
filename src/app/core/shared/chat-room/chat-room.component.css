@@ -1,0 +1,53 @@
+.room-bar {
+    padding-right: 0px;
+    height: 100%;
+    background-color: #c587bf;
+    font-size: small;;
+}
+
+.deleted-room {
+    background-color: #757575 !important;
+    color: #a0a0a0;
+}
+
+.action-container {
+    width: 90%;
+    max-width: 250px;
+    background-color: transparent;
+}
+
+.action-trigger {
+    height: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+    background-color: #b743ac !important;
+}
+
+.action-trigger-deleted {
+    height: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+    background-color: #525252 !important;
+}
+
+.action-drawer {
+    min-width: 70%;
+    background-color: #b743ac !important;
+}
+
+.action-drawer-deleted {
+    min-width: 70%;
+    background-color: #525252 !important;
+}
+
+.action-drawer::ng-deep .mat-drawer-inner-container {
+    display: flex;
+}
+
+.action-drawer-deleted::ng-deep .mat-drawer-inner-container {
+    display: flex;
+}
+
+.action-drawer-action {
+    margin: auto;
+}

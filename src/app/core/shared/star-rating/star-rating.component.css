@@ -1,0 +1,12 @@
+.rating {
+    word-wrap: none !important;
+}
+
+.star {
+    cursor: pointer;
+}
+
+.selected-star {
+    color: #3f51b5;
+    background-color: yellow;
+}

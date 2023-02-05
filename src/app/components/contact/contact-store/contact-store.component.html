@@ -1,0 +1,51 @@
+<ng-template [ngIf]="contacts && contacts.length>0">
+
+  <mat-button-toggle-group #group="matButtonToggleGroup">
+    <mat-button-toggle value="left" aria-label="List View" (click)="groupView=false">
+      <mat-icon>list</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="center" aria-label="Group View" (click)="groupView=true">
+      <mat-icon>group_work</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <div class="contacts-store" *ngIf="!groupView">
+    <ng-container *ngFor="let contact of contacts | paginate: {
+      itemsPerPage: pageSize,
+      currentPage: currentPage,
+      totalItems: total }">
+      <app-contact [contact]="contact" (deleted)="contactDeleted(contact)"></app-contact>
+      <br>
+    </ng-container>
+  </div>
+
+  <div class="contacts-store" *ngIf="groupView">
+    <ng-container *ngFor="let type of typeGroups">
+      <mat-expansion-panel class="type-group">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ type.type }}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{type.data.length}}
+            <!-- <mat-icon>date_range</mat-icon> -->
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <br>
+        <ng-container *ngFor="let contact of type.data">
+          <app-contact [contact]="contact" (deleted)="contactDeleted(contact)"></app-contact>
+          <br>
+        </ng-container>
+      </mat-expansion-panel>
+      <br>
+    </ng-container>
+  </div>
+
+  <div *ngIf="contacts.length === 0" class="no-results">
+    <img src="https://i.imgur.com/KRVihMq.png" alt="no-item-found">
+  </div>
+
+</ng-template>
+
+<app-add-entity-trigger [addEntity]="addEntity"></app-add-entity-trigger>

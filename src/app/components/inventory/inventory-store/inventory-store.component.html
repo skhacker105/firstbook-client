@@ -1,0 +1,12 @@
+<ng-container *ngIf="productIds && productIds.length > 0">
+    <div class="products-container">
+        <ng-container *ngFor="let productId of productIds">
+            <app-product [productId]="productId" class="sm-12 md-3 lg-2"></app-product>
+        </ng-container>
+    </div>
+</ng-container>
+<ng-container *ngIf="!productIds || productIds.length === 0">
+    No Items in list
+</ng-container>
+
+<app-add-entity-trigger [addEntity]="addEntity"></app-add-entity-trigger>

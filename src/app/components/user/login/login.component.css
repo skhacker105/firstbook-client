@@ -1,0 +1,17 @@
+.login-form {
+  margin: auto auto;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.login-form form {
+  position: relative;
+  top: 20px;
+}
+
+.input-error {
+  color: #ffc6d4;
+}

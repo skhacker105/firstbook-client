@@ -1,0 +1,24 @@
+.spec-container {
+    width: 100%;
+    border: 1px solid #efefef;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.spec-label {
+    width: 100%;
+    text-align: justify;
+    font-style: italic;
+    display: block;
+    color: gray;
+    font-size: small;
+    padding: 3px;
+}
+
+.spec-value {
+    width: 100%;
+    text-align: justify;
+    display: block;
+    padding-left: 3px;
+    padding-right: 3px;
+}

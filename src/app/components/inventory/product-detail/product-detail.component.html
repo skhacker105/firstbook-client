@@ -1,0 +1,42 @@
+<ng-container *ngIf="product">
+    <mat-card [ngClass]="{
+    'product-disabled' : product.disabled
+}">
+        <mat-card-header>
+            <mat-card-title class="product-title">
+                {{ product.name }}
+                <span class="spacer"></span>
+                <button mat-fab *ngIf="!product.disabled && isEditAllowed" (click)="goToEditDetail()">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </mat-card-title>
+            <mat-card-subtitle *ngIf="!product.disabled">
+                <app-star-rating
+                    [currentRating]="product.currentRating"
+                    [ratingPoints]="product.ratingPoints"
+                    [ratedCount]="product.ratedCount"
+                    [userId]="userId"
+                    [ratedBy]="product.ratedBy"
+                    (rate)="rateProduct($event)">
+                </app-star-rating>
+            </mat-card-subtitle>
+        </mat-card-header>
+        <app-preview *ngIf="!product.disabled" [customOptions]="customOptions" [files]="images" [mainImage]="mainImage"
+            [showActions]="false"></app-preview>
+
+        <mat-card-content *ngIf="!product.disabled">
+            <p align="justify" [innerHTML]="product.description">
+            </p>
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="!product.disabled">
+            <div class="product-specs">
+                <ng-container *ngFor="let category of unique_specs">
+                    <app-product-specification [category]="category"></app-product-specification>
+                </ng-container>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+    <app-product-comment [productId]="id" [isLogged]="isLogged" [isAdmin]="isAdmin"
+        [userId]="userId"></app-product-comment>
+</ng-container>

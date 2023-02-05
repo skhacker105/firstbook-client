@@ -1,0 +1,30 @@
+<ng-container *ngIf="customOptions && (mainImage || files.length > 0)">
+    <owl-carousel-o [options]="customOptions">
+        <ng-template carouselSlide *ngIf="mainImage">
+            <ng-template [ngTemplateOutlet]="imagepreview"
+                [ngTemplateOutletContext]="{picture: mainImage, isMain: true}"></ng-template>
+        </ng-template>
+        <ng-container *ngFor="let slide of files; let i = index;">
+            <ng-template carouselSlide>
+                <ng-template [ngTemplateOutlet]="imagepreview"
+                    [ngTemplateOutletContext]="{picture: slide}"></ng-template>
+            </ng-template>
+        </ng-container>
+    </owl-carousel-o>
+</ng-container>
+
+<ng-template let-picture="picture" let-isMain="isMain" #imagepreview>
+    <div class="product-images-container">
+        <img class="product-images" [src]="picture.image | sanitizerUrl" (click)="handleImageClick(picture, isMain)">
+    </div><br>
+
+    <button mat-fab color="primary" class="preview-action preview-add" *ngIf="showActions"
+    [disabled]="isMain || !picture._id"
+        (click)="handleSetMainImage(picture._id)">
+        <mat-icon>label_important</mat-icon>
+    </button>
+    <button mat-fab color="none" class="preview-action preview-delete" *ngIf="showActions"
+        (click)="isMain ? handleDeleteMainMenu() : handleDeleteImage(picture._id)">
+        <mat-icon>delete_outline</mat-icon>
+    </button>
+</ng-template>

@@ -1,0 +1,13 @@
+.remove-selected-user {
+    position: absolute;
+    right: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-list {
+    flex-grow: 1;
+}

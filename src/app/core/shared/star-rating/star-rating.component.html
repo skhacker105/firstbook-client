@@ -1,0 +1,34 @@
+<ng-template *ngIf="!currentRating && !userId" [ngTemplateOutlet]="nostars"></ng-template>
+<ng-template *ngIf="!currentRating && userId" [ngTemplateOutlet]="editablestars"></ng-template>
+<ng-template *ngIf="currentRating && !userId" [ngTemplateOutlet]="noneditablestars"></ng-template>
+<ng-template *ngIf="currentRating && userId && !alreadyRated" [ngTemplateOutlet]="editablestars"></ng-template>
+<ng-template *ngIf="currentRating && userId && alreadyRated" [ngTemplateOutlet]="noneditablestars"></ng-template>
+
+<ng-template #nostars>
+    No rating available
+</ng-template>
+
+<ng-template #editablestars>
+    <div class="rating">
+        <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+            <mat-icon *ngIf="newRating < i" (click)="handleRating(i)" class="star"
+                [ngClass]="{ 'selected-star': newRating >= i }">star_border</mat-icon>
+            <mat-icon *ngIf="newRating >= i" (click)="handleRating(i)" class="star"
+                [ngClass]="{ 'selected-star': newRating >= i }">star</mat-icon>
+        </ng-container>
+    </div>
+    <ng-container *ngIf="currentRating && ratedCount"> {{ currentRating }} stars by {{ ratedCount }} user{{ ratedCount > 1 ? 's' : '' }}</ng-container>
+</ng-template>
+
+<ng-template #noneditablestars>
+    <div class="rating" *ngIf="currentRating">
+        <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+            <mat-icon *ngIf="currentRating >= i" class="star selected-star">star</mat-icon>
+        </ng-container>
+
+        <ng-container *ngFor="let i of [1, 2, 3, 4, 5]">
+            <mat-icon *ngIf="currentRating < i" class="star">star_border</mat-icon>
+        </ng-container>
+    </div>
+    <ng-container *ngIf="ratedCount">Rated by {{ ratedCount }} user{{ ratedCount > 1 ? 's' : '' }} </ng-container>
+</ng-template>

@@ -1,0 +1,32 @@
+<mat-expansion-panel class="entity" *ngIf="contact" hideToggle>
+    <mat-expansion-panel-header class="contact-panel-header">
+        <mat-panel-title class="no-word-wrap">
+            <sup>{{ contact.title }}</sup> {{ contact.firstName}} {{ contact.lastName}}
+        </mat-panel-title>
+        <mat-panel-description>
+            {{ contact.type }}
+        </mat-panel-description>
+        <div>
+            <div>
+                {{ contact.contact1 }}
+            </div>
+            <div *ngIf="contact.contact2">
+                {{ contact.contact2 }}
+            </div>
+        </div>
+    </mat-expansion-panel-header>
+
+    <mat-grid-list cols="4" rowHeight="90px">
+        <mat-grid-tile *ngFor="let action of actions">
+            <div class="action" [ngClass]="{
+                'delete-action': action.isDelete
+            }">
+                <button mat-icon-button (click)="onActionClick(action)">
+                    <mat-icon>{{action.maticon}}</mat-icon>
+                </button><br>
+                {{action.display}}
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+
+</mat-expansion-panel>

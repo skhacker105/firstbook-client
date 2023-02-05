@@ -1,0 +1,8 @@
+.room {
+    height: 70px !important;
+    margin-bottom: 10px;
+}
+
+.room::ng-deep .mdc-list-item__content {
+    height: 100%;
+}

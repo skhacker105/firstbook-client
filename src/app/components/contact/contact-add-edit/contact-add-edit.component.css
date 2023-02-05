@@ -1,0 +1,8 @@
+.contact-card {
+    max-width: 100%;
+}
+
+.contact-header-image {
+    /* background-image: url('https://material.angular.io/assets/img/contacts/shiba1.jpg'); */
+    background-size: cover;
+}

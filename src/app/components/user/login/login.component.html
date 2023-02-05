@@ -1,0 +1,45 @@
+<!-- <div class="login-form"> -->
+<mat-card class="login-form">
+
+  <form #formDir="ngForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- User Name -->
+    <div class="form-field">
+
+      <mat-form-field class="username">
+        <mat-label>Username</mat-label>
+        <input type="text" matInput name="username" placeholder="Username" formControlName="username">
+        <mat-icon matPrefix>account_box</mat-icon>
+      </mat-form-field>
+      <div *ngIf="username?.invalid && (username?.dirty || username?.touched)" class="input-error">
+        <div *ngIf="username?.errors?.['required']">
+          Username is required
+        </div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-field">
+
+      <mat-form-field class="username">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput name="password" placeholder="***" formControlName="password">
+        <mat-icon matPrefix>visibility_off</mat-icon>
+      </mat-form-field>
+
+      <div *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="input-error">
+        <div *ngIf="password?.errors?.['required']">
+          Password is required
+        </div>
+        <div *ngIf="password?.errors?.['minlength'] || password?.errors?.['maxlength']">
+          Password must be between 3 and 16 symbols
+        </div>
+      </div>
+    </div>
+
+    <mat-card-actions>
+      <button mat-raised-button type="submit" class="login-submit" color="accent"
+        [disabled]="loginForm.invalid">Login</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+<!-- </div> -->

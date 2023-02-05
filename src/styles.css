@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Oxygen');
+@import url('https://fonts.googleapis.com/css?family=Wendy+One');
+@import url('https://fonts.googleapis.com/css?family=Shojumaru');
+@import url('https://use.fontawesome.com/releases/v5.1.0/css/all.css');
+
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  min-height: 100%;
+
+  font-family: 'Open Sans', sans-serif;
+  font-size: 22px;
+  background-image: linear-gradient(to bottom, #3f51b5, #844cb6, #b743ac, #e13c9a, #ff4081);
+}
+
+input[type=file] {
+  display: none;
+}
+
+quill-editor {
+  height: 200px;
+}
+
+app-product {
+  height: 100%;
+  display: flex;
+  margin: auto;
+}
+
+app-product>mat-card {
+  max-width: 100%;
+}
+
+.no-word-wrap {
+  white-space: nowrap;
+}
+
+/* Forms Start */
+.add-entity {
+  position: fixed;
+  z-index: 1000;
+  right: 10px;
+  bottom: 70px;
+}
+
+.entity {
+  background-image: linear-gradient(to bottom, #aebbff, #cfbcf8, #e6bfee, #f6c4e5, #ffccde);
+}
+
+.form {
+  width: 100%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.author,
+.cover,
+.genre,
+.year,
+.description,
+.isbn,
+.pagesCount,
+.price {
+  outline: none;
+  border: none;
+  width: 100%;
+  padding: 10px 10px 10px 60px;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  background: #EFE1C4;
+  color: #927057;
+  font-size: 1.1em;
+}
+
+.full-width,
+.username,
+.email,
+.pass,
+.title,
+.upload,
+.submit,
+.login-submit {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+
+@media screen and (max-width: 600px) {
+  .flexible-input {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .flexible-input {
+    width: 50%;
+    padding: 1px;
+  }
+}
+
+.form-field {
+  text-align: left;
+}
+
+.fa-user,
+.fa-envelope,
+.fa-unlock-alt,
+.fa-image,
+.fa-book,
+.fa-book-open,
+.fa-clipboard,
+.fa-sign-in-alt,
+.fa-pen,
+.fa-barcode,
+.fa-file-alt,
+.fa-dollar-sign {
+  position: absolute;
+  top: 4px;
+  left: 14px;
+  color: #927057;
+  font-size: 30px;
+}
+
+.fa-unlock-alt {
+  top: 6px;
+}
+
+.input-error {
+  color: #C3002F;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 15px;
+  margin-top: -30px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+
+/* .submit:disabled, */
+.delete-book {
+  background-color: #C3002F;
+}
+
+/* Forms End */
+
+.ngx-pagination a {
+  color: #FFF !important;
+  padding: 10px !important;
+  background-color: #777;
+}
+
+.ngx-pagination li {
+  margin-left: 10px;
+}
+
+.ngx-pagination a {
+  text-decoration: none;
+}
+
+.ngx-pagination a:hover {
+  color: #000 !important;
+}
+
+.ngx-pagination span {
+  padding: 8px !important;
+}
+
+.ngx-pagination .current {
+  padding: 10px !important;
+}
+
+.pagination-previous a,
+.pagination-next a {
+  color: #CACACA !important;
+  background-color: transparent;
+}
+
+.pagination-previous a:hover,
+.pagination-next a:hover {
+  background-color: #CACACA !important;
+}
+
+.ngx-pagination .current:hover {
+  cursor: not-allowed;
+}
+
+.pagination-previous span,
+.pagination-next span {
+  cursor: not-allowed;
+}
+
+.myModal div {
+  color: #000;
+  text-align: left;
+}
+
+.myModal button {
+  margin-left: 10px;
+}
+
+.no-results {
+  margin: -3em 0;
+}

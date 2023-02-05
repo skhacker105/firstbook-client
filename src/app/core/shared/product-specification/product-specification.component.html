@@ -1,0 +1,10 @@
+<ng-container *ngIf="display === displayFormat.freeFlow && specification">
+    <ng-container *ngFor="let spec of specification.categorySpecs">
+        <div class="spec-container">
+            <mat-label class="spec-label">{{ spec.name }}</mat-label>
+            <span  class="spec-value">{{ spec.value }}</span>
+        </div>
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="display === displayFormat.tabular && specification"></ng-container>
