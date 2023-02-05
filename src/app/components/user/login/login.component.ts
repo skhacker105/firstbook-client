@@ -36,6 +36,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.loginForm.controls['username'].setValue(this.loginForm.controls['username'].value.trim())
     this.userService
       .login(this.loginForm.value)
       .subscribe(() => {
