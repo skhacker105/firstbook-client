@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 
 // Services
 import { UserService } from '../../../core/services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -37,7 +38,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -48,6 +50,7 @@ export class RegisterComponent implements OnInit {
     this.userService
       .register(this.registerForm.value)
       .subscribe(() => {
+        this.toastr.success('User register.');
         this.router.navigate(['/home']);
       });
   }

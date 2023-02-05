@@ -152,9 +152,13 @@ export class ProductCreateComponent implements OnInit {
         if (saveSpecs) {
           saveSpecs.subscribe(savedSpecsRes => {
             if (!savedProductRes.data) return;
+            if (!this.mainImage) this.toastr.success('Item saved.');
             this.saveImages(savedProductRes.data);
           });
-        } else this.saveImages(savedProductRes.data);
+        } else {
+          if (!this.mainImage) this.toastr.success('Item saved.');
+          this.saveImages(savedProductRes.data);
+        }
       });
     }
   }
@@ -204,6 +208,7 @@ export class ProductCreateComponent implements OnInit {
   }
 
   reloadAfterSave(product: Product) {
+    this.toastr.success('Item saved.');
     if (!this.id) this.router.navigate([`/inventory/edit/${product._id}`]);
     else this.loadProduct();
   }

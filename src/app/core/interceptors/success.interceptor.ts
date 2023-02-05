@@ -33,7 +33,7 @@ export class SuccessInterceptor implements HttpInterceptor {
           (event: HttpEvent<any>) => {
             if (event instanceof HttpResponse) {
               if (event.body.message || event.body.message !== '') {
-                this.toastr.success(event.body.message);
+                // this.toastr.success(event.body.message);
               }
             }
 

@@ -97,12 +97,14 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
         .createContact(this.createContactForm.value)
         .subscribe((res) => {
           if (!res.data) return;
+          this.toastr.success('Contact saved.');
           this.router.navigate([`/contact`]);
         });
     } else {
       this.contactService
         .editContact(this.id, this.createContactForm.value)
         .subscribe((res) => {
+          this.toastr.success('Contact updated.');
           res.data ? this.router.navigateByUrl(`/contact`) : null;
         });
     }
