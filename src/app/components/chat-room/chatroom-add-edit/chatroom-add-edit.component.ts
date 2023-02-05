@@ -74,7 +74,7 @@ export class ChatroomAddEditComponent implements OnInit {
   addUserChangeSubscription(form: FormGroup) {
     this.userChangeSub$ = form.get('user')!.valueChanges.pipe(
       distinctUntilChanged(),
-      debounceTime(1000),
+      debounceTime(500),
       filter(txt => !!txt),
       switchMap(txt => {
         return this.userService.search(this.generateQuery(txt)).pipe(
@@ -86,10 +86,15 @@ export class ChatroomAddEditComponent implements OnInit {
 
   handleUserSelection() {
     if (!this.chatRoomCreateForm) return;
+    let updateSelectedUserDetails = false;
+    if (!this.selectedUsers) {
+      updateSelectedUserDetails = true;
+      this.selectedUsers = this.generateSelectUserObject();
+    }
     const selectedUser = this.chatRoomCreateForm.controls['user'].value as User;
     this.chatRoomCreateForm.controls['user'].setValue(undefined);
     if (!selectedUser || this.selectedUsers?.shares.find(u => u._id === selectedUser._id)) return;
-    this.selectedUsers?.shares.push({
+    this.selectedUsers.shares.push({
       _id: '',
       roomKey: this.chatRoomCreateForm.controls['roomKey'].value,
       name: this.chatRoomCreateForm.controls['name'].value,
@@ -97,6 +102,26 @@ export class ChatroomAddEditComponent implements OnInit {
     });
     this.generateName(this.chatRoomCreateForm);
     this.generateKey(this.chatRoomCreateForm);
+    this.updateSelectedUserObject();
+  }
+
+  updateSelectedUserObject() {
+    if (!this.selectedUsers || !this.chatRoomCreateForm) return;
+    const name = this.chatRoomCreateForm.controls['name'].value;
+    const roomKey = this.chatRoomCreateForm.controls['roomKey'].value;
+    this.selectedUsers.name = name;
+    this.selectedUsers.roomKey = roomKey;
+  }
+
+  generateSelectUserObject(): ChatRoomUsers {
+    return {
+      id: '',
+      roomKey: '',
+      shares: [],
+      deletedShares: [],
+      inactive: false,
+      name: ''
+    } as ChatRoomUsers
   }
 
   generateName(form: FormGroup) {
@@ -173,7 +198,9 @@ export class ChatroomAddEditComponent implements OnInit {
       return this.chatRoomService.addChatRoom({ roomKey, name, user: room.user?._id });
     }));
     if (this.id)
-    result.push(this.chatRoomService.editChatRoom(this.id, { name }));
+      result.push(this.chatRoomService.editChatRoom(this.id, { name }));
+    else
+      result.push(this.chatRoomService.addChatRoom({ roomKey, name, user: profile.id }));
     result = result.concat(deletedShares.map(room => {
       return this.chatRoomService.deleteChatRoom(room._id);
     }));
