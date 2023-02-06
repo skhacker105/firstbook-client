@@ -1,0 +1,85 @@
+.message-window {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0px;
+}
+
+.window-header,
+.window-title {
+    width: 100%;
+    padding: 0px;
+}
+
+.window-header::ng-deep .mat-mdc-card-header-text {
+    width: 100%;
+}
+
+.room-name {
+    width: 100%;
+    background:
+        linear-gradient(#ef6afb 0%,
+            #d978fd 10%,
+            #bb66fb 20%,
+            #945bfd 30%,
+            #6b4eff 40%,
+            #4640ff 50%,
+            #6b4eff 60%,
+            #945bfd 70%,
+            #bb66fb 80%,
+            #d978fd 90%,
+            #ef6afb 100%) 0 0/100% 200%;
+    /* animation: a 20s linear infinite; */
+}
+
+.window-subtitle {
+    text-align: left;
+    background-color: #ff4081;
+}
+
+.window-messages {
+    background-color: #efefef;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: 0px;
+    padding: 0px;
+    background:
+        linear-gradient(#4640ff 0%,
+            #6b4eff 10%,
+            #945bfd 20%,
+            #bb66fb 30%,
+            #d978fd 40%,
+            #ef6afb 50%,
+            #d978fd 60%,
+            #bb66fb 70%,
+            #945bfd 80%,
+            #6b4eff 90%,
+            #4640ff 100%) 0 0/100% 200%;
+    /* animation: a 20s linear infinite; */
+}
+
+@keyframes a {
+    to {
+        background-position: 0 -200%
+    }
+}
+
+.window-action-container {
+    display: flex;
+    height: 60px;
+    width: 100%;
+    background-color: #3f51b5;
+}
+
+.message-input {
+    flex: 1 1 auto;
+}
+
+.message-input::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.message-send {
+    margin-left: 10px;
+}

@@ -1,7 +1,7 @@
 <mat-toolbar *ngIf="chatRoom" class="room-bar" [ngClass]="{
     'deleted-room': chatRoom.inactive
 }">
-    <div class="room-name">
+    <div class="room-name" (click)="gotoRoomWindow()">
         {{ actionDrawerOpen ? (name | shortenString:8) : (name | shortenString:35) }}
     </div>
     <span class="spacer"></span>

@@ -1,1 +1,27 @@
-<p>window works!</p>
+<mat-card class="message-window" *ngIf="room">
+    <mat-card-header class="window-header">
+        <mat-card-title class="window-title">
+            <mat-toolbar class="room-name">
+                {{ name }}
+            </mat-toolbar>
+        </mat-card-title>
+        <mat-card-subtitle class="window-subtitle" *ngIf="roomUserNames">
+            <mat-label>{{ roomUserNames }}</mat-label>
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="window-messages" id="scrollme">
+    </mat-card-content>
+
+    <form *ngIf="messageForm" [formGroup]="messageForm">
+        <mat-card-actions class="window-action-container">
+            <mat-form-field class="message-input">
+                <input matInput placeholder="" formControlName="message">
+            </mat-form-field>
+
+            <button mat-mini-fab class="message-send">
+                <mat-icon>send</mat-icon>
+            </button>
+        </mat-card-actions>
+    </form>
+</mat-card>

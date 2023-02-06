@@ -1,7 +1,7 @@
 <ng-container *ngIf="productIds && productIds.length > 0">
     <div class="products-container">
         <ng-container *ngFor="let productId of productIds">
-            <app-product [productId]="productId" class="sm-12 md-3 lg-2"></app-product>
+            <app-product [productId]="productId" [loadOnlyMainImage]="true" class="sm-12 md-3 lg-2"></app-product>
         </ng-container>
     </div>
 </ng-container>

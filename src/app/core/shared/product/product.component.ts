@@ -23,6 +23,7 @@ import { ImageViewComponent } from '../image-view/image-view.component';
 export class ProductComponent implements OnInit {
 
   @Input('productId') id: string | undefined;
+  @Input('loadOnlyMainImage') mainImageOnly: boolean = false;
   product: Product | undefined;
   specs: ProductSpecification[] = [];
   unique_specs: ISpecs[] = [];
@@ -56,12 +57,12 @@ export class ProductComponent implements OnInit {
       loop: true,
       margin: 10,
       autoplay: false,
-      mouseDrag: true,
-      touchDrag: true,
-      pullDrag: true,
-      freeDrag: true,
-      dotsEach: true,
-      dotsData: true,
+      mouseDrag: this.mainImageOnly ? false : true,
+      touchDrag: this.mainImageOnly ? false : true,
+      pullDrag: this.mainImageOnly ? false : true,
+      freeDrag: this.mainImageOnly ? false : true,
+      dotsEach: this.mainImageOnly ? false : true,
+      dotsData: this.mainImageOnly ? false : true,
       responsive: {
         0: {
           items: 1
@@ -89,7 +90,7 @@ export class ProductComponent implements OnInit {
           return forkJoin([
             this.loadProductSpecification(productRes.data),
             this.loadProductMainImage(productRes.data),
-            this.loadProductImages(productRes.data)
+            !this.mainImageOnly ? this.loadProductImages(productRes.data) : of([])
           ])
         })
       ).subscribe((res: any) => {

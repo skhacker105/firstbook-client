@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { ChatRoomUsers } from '../../models/chat.model';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -18,7 +19,7 @@ export class ChatRoomComponent implements OnInit {
   name: string | undefined;
   actionDrawerOpen = false;
 
-  constructor(private matDialog: MatDialog){}
+  constructor(private matDialog: MatDialog, private router: Router){}
 
   ngOnInit(): void {
     if (!this.chatRoom) return;
@@ -52,5 +53,10 @@ export class ChatRoomComponent implements OnInit {
       if (!this.chatRoom || !result) return;
       this.undeleteClick.emit(this.chatRoom.id);
     });
+  }
+
+  gotoRoomWindow() {
+    if (!this.chatRoom) return;
+    this.router.navigateByUrl(`/chatroomwindow/default/${this.chatRoom.id}`);
   }
 }

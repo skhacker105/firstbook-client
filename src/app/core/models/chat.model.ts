@@ -25,6 +25,7 @@ export class ChatRoomUsers {
         public shares: ChatRoom[],
         public deletedShares?: ChatRoom[],
         public name?: string,
+        public profile?: User,
         public inactive?: boolean
     ){}
 }
