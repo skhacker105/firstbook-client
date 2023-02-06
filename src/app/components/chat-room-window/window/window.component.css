@@ -56,7 +56,7 @@
             #945bfd 80%,
             #6b4eff 90%,
             #4640ff 100%) 0 0/100% 200%;
-    /* animation: a 20s linear infinite; */
+    animation: a 20s linear infinite;
 }
 
 @keyframes a {
