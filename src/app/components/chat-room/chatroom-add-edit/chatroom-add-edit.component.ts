@@ -180,6 +180,7 @@ export class ChatroomAddEditComponent implements OnInit {
     if (obs.length > 0)
       forkJoin(obs)
         .subscribe((chatrooms: ServerResponse<ChatRoom>[]) => {
+          this.toastr.success('Chatroom saved')
           this.loadChatRoom();
         });
     return;

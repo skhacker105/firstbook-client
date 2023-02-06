@@ -81,7 +81,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     if (roomUsers.shares.length === 1) return '';
     let name = '';
     roomUsers.shares.forEach(room => {
-      name = name + this.getUserName(room);
+      name = name + (name ? ', ' : '') + this.getUserName(room);
     });
     return name;
   }

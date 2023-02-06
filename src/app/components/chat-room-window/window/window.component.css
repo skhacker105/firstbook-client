@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     padding: 0px;
+    background-color: transparent;
 }
 
 .window-header,
@@ -18,45 +19,21 @@
 
 .room-name {
     width: 100%;
-    background:
-        linear-gradient(#ef6afb 0%,
-            #d978fd 10%,
-            #bb66fb 20%,
-            #945bfd 30%,
-            #6b4eff 40%,
-            #4640ff 50%,
-            #6b4eff 60%,
-            #945bfd 70%,
-            #bb66fb 80%,
-            #d978fd 90%,
-            #ef6afb 100%) 0 0/100% 200%;
-    /* animation: a 20s linear infinite; */
+    background-color: #c587bf;
 }
 
 .window-subtitle {
     text-align: left;
-    background-color: #ff4081;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .window-messages {
-    background-color: #efefef;
+    background-color: #b743ac !important;
     flex: 1 1 auto;
     overflow-y: auto;
     height: 0px;
     padding: 0px;
-    background:
-        linear-gradient(#4640ff 0%,
-            #6b4eff 10%,
-            #945bfd 20%,
-            #bb66fb 30%,
-            #d978fd 40%,
-            #ef6afb 50%,
-            #d978fd 60%,
-            #bb66fb 70%,
-            #945bfd 80%,
-            #6b4eff 90%,
-            #4640ff 100%) 0 0/100% 200%;
-    animation: a 20s linear infinite;
 }
 
 @keyframes a {

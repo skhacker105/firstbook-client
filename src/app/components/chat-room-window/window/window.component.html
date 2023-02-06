@@ -2,6 +2,9 @@
     <mat-card-header class="window-header">
         <mat-card-title class="window-title">
             <mat-toolbar class="room-name">
+                <button mat-icon-button routerLink="/chatroom">
+                    <mat-icon>arrow_back_ios</mat-icon>
+                </button>
                 {{ name }}
             </mat-toolbar>
         </mat-card-title>
@@ -11,6 +14,7 @@
     </mat-card-header>
 
     <mat-card-content class="window-messages" id="scrollme">
+        
     </mat-card-content>
 
     <form *ngIf="messageForm" [formGroup]="messageForm">
