@@ -87,8 +87,8 @@
 
 </mat-toolbar>
 
-<br>
-<form #formDir="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+<form #formDir="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit()" *ngIf="helperService.showGlobalSearch">
+  <br>
   <mat-form-field class="search-container">
     <input matInput type="text" name="query" placeholder="Products, Services ..." formControlName="query">
     <button type="submit" [disabled]="searchForm.invalid" matSuffix mat-icon-button aria-label="Search">

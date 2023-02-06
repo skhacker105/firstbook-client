@@ -6,8 +6,6 @@ import { Subject } from 'rxjs';
 
 // JWT Decoding
 import decode from 'jwt-decode';
-import { BehaviorSubject } from 'rxjs';
-import { AddEntity } from '../models/add-entity.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -17,6 +15,8 @@ export class HelperService {
   isUserLogged = new Subject<boolean>();
   searchQuery = new Subject<string>();
   cartStatus = new Subject<string>();
+  showGlobalSearch = true;
+  showFooter = true;
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
@@ -11,7 +11,7 @@ import { HelperService } from 'src/app/core/services/helper.service';
   templateUrl: './window.component.html',
   styleUrls: ['./window.component.css']
 })
-export class WindowComponent implements OnInit {
+export class WindowComponent implements OnInit, OnDestroy {
 
   id: string | undefined | null;
   room: ChatRoom | undefined;
@@ -34,11 +34,18 @@ export class WindowComponent implements OnInit {
     this.loginProfile = this.helperService.getProfile();
     this.loadChatRoom();
     this.initMessageForm();
+    this.helperService.showGlobalSearch = false;
+    this.helperService.showFooter = false;
     setTimeout(() => {
       this.scrollMe = document.getElementById('scrollme');
       console.log('this.scrollme = ', this.scrollMe)
       this.scrollToBottom();
-    },1000)
+    }, 1000)
+  }
+
+  ngOnDestroy(): void {
+    this.helperService.showGlobalSearch = true;
+    this.helperService.showFooter = true;
   }
 
   initMessageForm() {
@@ -93,8 +100,8 @@ export class WindowComponent implements OnInit {
 
   scrollToBottom(): void {
     if (!this.scrollMe) return;
-    this.scrollMe.scrollIntoView({behavior: 'smooth'});
+    this.scrollMe.scrollIntoView({ behavior: 'smooth' });
     console.log('scrolled')
-}
+  }
 
 }

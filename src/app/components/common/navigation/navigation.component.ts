@@ -36,7 +36,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private helperService: HelperService,
+    public helperService: HelperService,
     private cartService: CartService,
     private userService: UserService
   ) { }
