@@ -14,16 +14,31 @@
     </mat-card-header>
 
     <mat-card-content class="window-messages" id="scrollme">
-        
+        <div class="messages-top-buffer"></div>
+        <ng-container *ngFor="let message of messageArray">
+            <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id">
+                <div username>
+                    {{ message.room ? getUserName(message.room) : '' }}
+                </div>
+                <div timestamp>
+                    {{ message.creationDate.toString() | commentTime }} ago
+                </div>
+                <div content>
+                    {{ message.message }}
+                </div>
+            </app-chat-window>
+            <!-- {{ message.message }} -->
+        </ng-container>
     </mat-card-content>
 
     <form *ngIf="messageForm" [formGroup]="messageForm">
         <mat-card-actions class="window-action-container">
             <mat-form-field class="message-input">
-                <input matInput placeholder="" formControlName="message">
+                <!-- <input matInput placeholder="" formControlName="message"> -->
+                <textarea rows="1" matInput formControlName="message"></textarea>
             </mat-form-field>
 
-            <button mat-mini-fab class="message-send">
+            <button mat-mini-fab class="message-send" (click)="sendMessage()">
                 <mat-icon>send</mat-icon>
             </button>
         </mat-card-actions>

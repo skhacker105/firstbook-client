@@ -1,0 +1,44 @@
+.message-container {
+    width: 100%;
+    display: flex;
+}
+
+.message {
+    max-width: 80%;
+    min-width: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.message-header, .message-header::ng-deep .mat-mdc-card-header-text {
+    background-color: #5a66ab;
+    width: 100%;
+    color: white;
+    padding-top: 0px;
+}
+
+.message-title, .message-title {
+    display: flex;
+    width: 100%;
+}
+
+.message-user-name {
+    flex: 1 1 auto;
+    font-size: 14px;
+    text-align: left;
+}
+
+.message-timestamp {
+    font-size: 14px;
+    color: #acacac;
+    padding-left: 10px;
+    white-space: nowrap !important;
+}
+
+.align-right {
+    flex-flow: row-reverse;
+}
+
+.message-content {
+    text-align: justify;
+}

@@ -1,10 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ChatMessage, ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
 import { User } from 'src/app/core/models/user.model';
 import { ChatRoomService } from 'src/app/core/services/chat-room.service';
 import { HelperService } from 'src/app/core/services/helper.service';
+import { WebsocketService } from '../service/websocket.service';
+
+enum RoomTypes {
+  stringMessage = 'string'
+}
 
 @Component({
   selector: 'app-window',
@@ -21,16 +26,23 @@ export class WindowComponent implements OnInit, OnDestroy {
   roomUserNames: string = '';
   messageForm: FormGroup | undefined;
   scrollMe: HTMLElement | null | undefined;
+  isTyping: boolean | undefined = false;
+  messageArray: ChatMessage[] = [];
+  pageSize = 15;
+  currentPage = 1;
 
   constructor(
     private route: ActivatedRoute,
     private chatRoomService: ChatRoomService,
     private helperService: HelperService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private webSocketService: WebsocketService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('roomId');
+    if (!this.id) this.router.navigateByUrl('/chatroom');
     this.loginProfile = this.helperService.getProfile();
     this.loadChatRoom();
     this.initMessageForm();
@@ -48,9 +60,12 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.helperService.showFooter = true;
   }
 
-  initMessageForm() {
+  initMessageForm(room?: ChatRoom) {
     this.messageForm = this.fb.group({
-      message: new FormControl('', Validators.required)
+      roomKey: new FormControl(room?.roomKey, Validators.required),
+      room:  new FormControl(room?._id, Validators.required),
+      message: new FormControl('', Validators.required),
+      type: new FormControl(RoomTypes.stringMessage, Validators.required)
     });
   }
 
@@ -62,8 +77,10 @@ export class WindowComponent implements OnInit, OnDestroy {
         if (!roomRes.data || !this.loginProfile) return;
         roomRes.data.user = this.loginProfile;
         this.room = roomRes.data;
+        this.initMessageForm(roomRes.data);
         this.loadChatRoomUsers(roomRes.data);
-
+        this.initiateSocketConnection(roomRes.data);
+        this.loadChats(roomRes.data);
       });
   }
 
@@ -75,6 +92,37 @@ export class WindowComponent implements OnInit, OnDestroy {
         this.name = this.getRoomName(this.selectedUsers);
         this.roomUserNames = this.accumulateUserNames(this.selectedUsers);
       });
+  }
+
+  loadChats(room: ChatRoom) {
+    this.chatRoomService.search(this.generateQuery(room.roomKey))
+    .subscribe(messagesRes => {
+      if(messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
+    })
+  }
+
+  generateQuery(query: string): string {
+    return `?query={"searchTerm":"${query}"}`
+      + `&sort={"creationDate":-1}`
+      + `&skip=${(this.currentPage - 1) * this.pageSize}`
+      + `&limit=${this.pageSize}`;
+  }
+
+  initiateSocketConnection(room: ChatRoom) {
+    this.webSocketService.joinRoom(room.roomKey);
+    this.webSocketService.newMessageReceived().subscribe(message => {
+      this.messageArray.push(message);
+      this.isTyping = false;
+    });
+    this.webSocketService.receivedTyping().subscribe(message => {
+      console.log('isTyping = ', message.isTyping);
+      this.isTyping = message.isTyping;
+    });
+  }
+
+  sendMessage() {
+    this.webSocketService.sendMessage(this.messageForm?.value);
+    this.initMessageForm(this.room);
   }
 
   accumulateUserNames(roomUsers: ChatRoomUsers): string {

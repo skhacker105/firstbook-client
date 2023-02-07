@@ -13,8 +13,14 @@ export class ChatRoom {
 export class ChatMessage {
     constructor(
         public _id: string,
-        public message: string,
-        public room?: ChatRoom
+        public roomKey: string,
+        public message: string | string[],
+        public type: string,
+        public creationDate: Date,
+        public room?: ChatRoom,
+        public replyOf?: string[],
+        public isTyping?: boolean,
+        public error?: any
     ) {}
 }
 

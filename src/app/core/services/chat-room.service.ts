@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ChatRoom, ChatRoomUsers } from '../models/chat.model';
+import { ChatMessage, ChatRoom, ChatRoomUsers } from '../models/chat.model';
 import { ServerResponse } from '../models/server-response.model';
 import { User } from '../models/user.model';
 
@@ -10,6 +10,7 @@ const domain = environment.api;
 const getAllLinkedChatRoomsEndpoint = domain + 'chat/getAlLinkedChatlRoom/';
 const getAllChatRoomsEndpoint = domain + 'chat/getAll';
 const getSingleChatRoomsEndpoint = domain + 'chat/getSingle/';
+const getChatRoomMessagesEndpoint = domain + 'chat/message/';
 const addChatRoomEndpoint = domain + 'chat/add';
 const editChatRoomEndpoint = domain + 'chat/edit/';
 const deleteChatRoomEndpoint = domain + 'chat/delete/';
@@ -66,5 +67,9 @@ export class ChatRoomService {
 
   undeleteChatRoom(roomId: string): Observable<ServerResponse<ChatRoom>> {
     return this.http.delete<ServerResponse<ChatRoom>>(undeleteChatRoomEndpoint + roomId);
+  }
+
+  search(query: string): Observable<ServerResponse<ChatMessage[]>> {
+    return this.http.get<ServerResponse<ChatMessage[]>>(getChatRoomMessagesEndpoint + query);
   }
 }

@@ -1,0 +1,26 @@
+<div class="message-container" [ngClass]="{
+    'align-right': isMe
+}">
+    <mat-card class="message">
+        <mat-card-header class="message-header">
+            <mat-card-title class="message-title">
+                    <div class="message-user-name">
+                        <ng-content *ngIf="!isMe" select="[username]"></ng-content>
+                        <ng-container *ngIf="isMe">ME</ng-container>
+                    </div>
+                    <div class="message-timestamp">
+                        <ng-content select="[timestamp]"></ng-content>
+                    </div>
+                
+            </mat-card-title>
+            <mat-card-subtitle>
+                <ng-content select="[replyOf]"></ng-content>
+            </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content class="message-content">
+            <ng-content select="[content]"></ng-content>
+        </mat-card-content>
+
+    </mat-card>
+</div>

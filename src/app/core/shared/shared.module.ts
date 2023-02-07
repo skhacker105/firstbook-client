@@ -54,6 +54,7 @@ import { ProductCommentComponent } from './product-comment/product-comment.compo
 import { AddEntityTriggerComponent } from './add-entity-trigger/add-entity-trigger.component';
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
+import { ChatWindowComponent } from './chat-window/chat-window.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { ChatRoomComponent } from './chat-room/chat-room.component';
     ProductCommentComponent,
     AddEntityTriggerComponent,
     OptionDialogComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
+    ChatWindowComponent
   ],
   imports: [
     CommonModule,
@@ -143,7 +145,8 @@ import { ChatRoomComponent } from './chat-room/chat-room.component';
     MatListModule,
     MatDividerModule,
     ChatRoomComponent,
-    MatSidenavModule
+    MatSidenavModule,
+    ChatWindowComponent
   ]
 })
 export class SharedModule { }
