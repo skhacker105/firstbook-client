@@ -26,19 +26,19 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     // this.bookService
     //   .search(newestBooksQuery)
-    //   .subscribe((res) => {
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
     //     this.newestBooks = res.data;
     //   });
 
     // this.bookService
     //   .search(bestRatedBooksQuery)
-    //   .subscribe((res) => {
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
     //     this.bestRatedBooks = res.data;
     //   });
 
     // this.bookService
     //   .search(mostPurchasedBooksQuery)
-    //   .subscribe((res) => {
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
     //     this.mostPurchasedBooks = res.data;
     //   });
   }

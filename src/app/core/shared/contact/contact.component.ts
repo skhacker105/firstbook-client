@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { Contact } from '../../models/contact.model';
 import { ContactService } from '../../services/contact.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -17,9 +18,10 @@ interface IAction {
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css']
 })
-export class ContactComponent {
+export class ContactComponent implements OnDestroy {
   @Input('contact') contact: Contact | undefined;
   @Output('deleted') deletedEvent = new EventEmitter<boolean>();
+  isComponentIsActive = new Subject();
 
   actions: IAction[] = [
     {
@@ -65,12 +67,12 @@ export class ContactComponent {
   deleteClick() {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent);
 
-    dialogRef.afterClosed().subscribe((result: boolean) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: boolean) => {
       if (!this.contact) return;
       if (result) {
         this.contactService
           .deleteContact(this.contact._id)
-          .subscribe(res => {
+          .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
             if (res.data) {
               this.deletedEvent.emit();
             }
@@ -78,5 +80,9 @@ export class ContactComponent {
           })
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 }

@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Router
 import { Router, ActivatedRoute } from '@angular/router';
@@ -11,13 +11,14 @@ import { HelperService } from '../../../core/services/helper.service';
 
 // Models
 import { Book } from '../../../core/models/book.model';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-book-details',
   templateUrl: './book-details.component.html',
   styleUrls: ['./book-details.component.css']
 })
-export class BookDetailsComponent implements OnInit {
+export class BookDetailsComponent implements OnInit, OnDestroy {
   book: Book | undefined;
   bookId: string | undefined | null;
   userId: string | undefined;
@@ -27,6 +28,7 @@ export class BookDetailsComponent implements OnInit {
   isAdded: boolean | undefined;
   isBought: boolean | undefined;
   stars = ['', '', '', '', ''];
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -45,18 +47,22 @@ export class BookDetailsComponent implements OnInit {
     if (!this.bookId) return;
     this.bookService
       .getSingleBook(this.bookId)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.book = res.data;
         if (this.book?.currentRating)
           this.calcRating(this.book.currentRating);
       });
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   buyBook(): void {
     if (!this.bookId) return;
     this.cartService
       .addToCart(this.bookId)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.helperService.cartStatus.next('add');
         this.isBought = true;
       }, () => {
@@ -68,7 +74,7 @@ export class BookDetailsComponent implements OnInit {
     if (!this.bookId) return;
     this.bookService
       .addToFavourites(this.bookId)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.isAdded = true;
       }, () => {
         this.isAdded = true;
@@ -81,7 +87,7 @@ export class BookDetailsComponent implements OnInit {
       this.isRated = true;
       this.bookService
         .rateBook(this.bookId, { rating: rating })
-        .subscribe((res) => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
           if (!this.book || !res.data) return;
           this.book.currentRating = res.data.currentRating;
           this.book.ratedCount ? this.book.ratedCount++ : this.book.ratedCount = 0;

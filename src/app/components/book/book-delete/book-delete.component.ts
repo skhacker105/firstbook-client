@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 // Router
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 // Services
 import { BookService } from '../../../core/services/book.service';
@@ -18,6 +19,7 @@ import { BookService } from '../../../core/services/book.service';
 export class BookDeleteComponent implements OnInit {
   deleteBookForm: FormGroup | undefined;
   id: string | null | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -32,10 +34,14 @@ export class BookDeleteComponent implements OnInit {
     if (!this.id) return;
     this.bookService
       .getSingleBook(this.id)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (!this.deleteBookForm) return;
         this.deleteBookForm.patchValue({ ...res.data });
       });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   initForm(): void {
@@ -64,7 +70,7 @@ export class BookDeleteComponent implements OnInit {
     if (!this.id) return;
     this.bookService
       .deleteBook(this.id)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.router.navigate(['/home']);
       });
   }

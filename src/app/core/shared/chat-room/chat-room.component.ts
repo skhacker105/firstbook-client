@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { ChatRoomUsers } from '../../models/chat.model';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
@@ -10,7 +11,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
   templateUrl: './chat-room.component.html',
   styleUrls: ['./chat-room.component.css']
 })
-export class ChatRoomComponent implements OnInit {
+export class ChatRoomComponent implements OnInit, OnDestroy {
 
   @Input() chatRoom: ChatRoomUsers | undefined;
   @Output() deleteClick = new EventEmitter<string>();
@@ -18,6 +19,7 @@ export class ChatRoomComponent implements OnInit {
 
   name: string | undefined;
   actionDrawerOpen = false;
+  isComponentIsActive = new Subject();
 
   constructor(private matDialog: MatDialog, private router: Router){}
 
@@ -25,6 +27,10 @@ export class ChatRoomComponent implements OnInit {
     if (!this.chatRoom) return;
     this.name = this.chatRoom.shares.length === 1 ? this.chatRoom.shares[0].user?.firstName ? this.chatRoom.shares[0].user?.firstName :
       this.chatRoom.shares[0].user?.username : this.chatRoom.name
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   handleDeleteClick() {
@@ -35,7 +41,7 @@ export class ChatRoomComponent implements OnInit {
     };
     const ref = this.matDialog.open(ConfirmationDialogComponent, { data: data });
     
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe(result => {
       if (!this.chatRoom || !result) return;
       this.deleteClick.emit(this.chatRoom.id);
     });
@@ -49,7 +55,7 @@ export class ChatRoomComponent implements OnInit {
     };
     const ref = this.matDialog.open(ConfirmationDialogComponent, { data: data });
     
-    ref.afterClosed().subscribe(result => {
+    ref.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe(result => {
       if (!this.chatRoom || !result) return;
       this.undeleteClick.emit(this.chatRoom.id);
     });

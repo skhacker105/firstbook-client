@@ -5,7 +5,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 // RXJS
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 // Services
 import { HelperService } from '../../../core/services/helper.service';
@@ -28,6 +28,7 @@ export class BookStoreComponent implements OnInit, OnDestroy {
   querySub$: Subscription | undefined;
   routeChangeSub$: Subscription | undefined;
   books: Book[] = [];
+  isComponentIsActive = new Subject();
 
   constructor(
     private route: ActivatedRoute,
@@ -36,14 +37,14 @@ export class BookStoreComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.routeChangeSub$ = this.route.params.subscribe((params) => {
+    this.routeChangeSub$ = this.route.params.pipe(takeUntil(this.isComponentIsActive)).subscribe((params) => {
       this.currentQuery = params['query'] ? params['query'] : '';
       this.initRequest(this.currentQuery);
     });
 
     this.querySub$ = this.helperService
       .searchQuery
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.currentPage = 1;
       });
   }
@@ -51,13 +52,14 @@ export class BookStoreComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.routeChangeSub$ ? this.routeChangeSub$.unsubscribe() : null;
     this.querySub$ ? this.querySub$.unsubscribe() : null;
+    this.isComponentIsActive.complete()
   }
 
   initRequest(query: string): void {
     query = this.generateQuery(query);
     this.bookSevice
       .search(query)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.total = res.itemsCount ? res.itemsCount : 0;
         this.books = res.data ? res.data : [];
       });

@@ -9,8 +9,8 @@ import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 // RXJS
-import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 // Services
 import { CartService } from '../../services/cart.service';
@@ -33,6 +33,7 @@ export class CartComponent implements OnInit, OnDestroy {
   removeModalRef: BsModalRef | undefined;
   lastCartState: string | undefined;
   lastDeleteId: string | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -44,7 +45,7 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cartService
       .getCart()
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.cart = res.data;
         if (this.cart)
           this.cartForm = this.toFormGroup(this.cart.books);
@@ -54,6 +55,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.changesSub$ ? this.changesSub$.unsubscribe() : null;
+    this.isComponentIsActive.complete()
   }
 
   toFormGroup(books: Book[]): FormGroup {
@@ -79,7 +81,7 @@ export class CartComponent implements OnInit, OnDestroy {
         debounceTime(800),
         distinctUntilChanged()
       )
-      .subscribe(val => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(val => {
         if (this.lastCartState !== JSON.stringify(val)) {
           this.lastCartState = JSON.stringify(val);
           this.reCalcSum(val);
@@ -99,7 +101,7 @@ export class CartComponent implements OnInit, OnDestroy {
     if (!this.lastDeleteId) return;
     this.cartService
       .removeFromCart(this.lastDeleteId)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         if (!this.cart) return;
         this.helperService.cartStatus.next('remove');
         this.cart.books = this.cart.books.filter(b => b._id !== this.lastDeleteId);
@@ -111,7 +113,7 @@ export class CartComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     this.cartService
       .checkout(this.cartForm?.value)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.helperService.cartStatus.next('updateStatus');
         this.router.navigate(['/user/purchaseHistory']);
       });

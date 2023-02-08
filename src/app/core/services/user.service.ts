@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 // RXJS
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
 // HTTP
 import { HttpClient } from '@angular/common/http';
@@ -33,6 +33,7 @@ export class UserService {
 
   private userProducts: string[] = [];
   userProductsLoaded = false;
+  isComponentIsActive = new Subject();
   titles = ['Mr.', 'Mrs.', 'Miss', 'Ms'];
   userRelationTypes = [
     'Friend', 'Vendor', 'Client', 'Other', 'Other Friend',
@@ -68,7 +69,7 @@ export class UserService {
   loadUserProducts(user: User) {
     this.productService
       .userProducts()
-      .subscribe(productsRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(productsRes => {
         this.userProductsLoaded = true;
         if (productsRes.data)
           this.userProducts = productsRes.data

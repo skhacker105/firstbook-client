@@ -13,7 +13,7 @@ import { CommentService } from '../../../core/services/comment.service';
 import { HelperService } from '../../../core/services/helper.service';
 
 // RXJS
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 // Custom Validators
 import { isUrlValidator } from '../../../core/directives/is-url.directive';
@@ -42,6 +42,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   editUserForm: FormGroup | undefined;
   editable = false;
   ownProfile = false;
+  isComponentIsActive = new Subject();
 
   constructor(
     private route: ActivatedRoute,
@@ -54,7 +55,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.evaluateEditable();
-    this.routeChangeSub$ = this.route.params.subscribe((params) => {
+    this.routeChangeSub$ = this.route.params.pipe(takeUntil(this.isComponentIsActive)).subscribe((params) => {
       let username = params['username'];
       if (username === 'ME') {
         username = this.helperService.getProfile()?.username;
@@ -62,7 +63,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
       this.userService
         .getProfile(username)
-        .subscribe((res) => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
           this.user = res.data;
           this.isAdmin = this.helperService.isAdmin() && this.helperService.getProfile()?.id != this.user?.id;
           this.ownProfile = this.helperService.getProfile()?.username === this.user?.username
@@ -78,7 +79,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   evaluateEditable() {
-    this.route.url.subscribe(urlSegments => {
+    this.route.url.pipe(takeUntil(this.isComponentIsActive)).subscribe(urlSegments => {
       this.editable = urlSegments.some(seg => seg.path === 'edit');
     });
   }
@@ -97,13 +98,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routeChangeSub$ ? this.routeChangeSub$.unsubscribe() : null;
+    this.isComponentIsActive.complete()
   }
 
   getComments(): void {
     if (!this.user?.id) return;
     this.commentService
       .getLatestFiveComments(this.user.id)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.comments = res.data ? res.data : [];
       });
   }
@@ -111,7 +113,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onSubmit(): void {
     if (!this.editUserForm) return
     this.userService.updateProfile(this.editUserForm.value)
-      .subscribe(res => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
         if (!this.user) return;
         if (this.user.isCommentsBlocked != this.editUserForm?.controls['isCommentsBlocked'].value)
           this.editUserForm?.controls['isCommentsBlocked'].value ? this.blockComments(this.user.id) : this.unblockComments(this.user.id);
@@ -135,7 +137,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     this.userService
       .changeAvatar(payload)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         if (this.user?.avatar)
           this.user.avatar = newAvatar;
         this.avatarForm.reset();
@@ -145,13 +147,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
   blockComments(id: string): void {
     this.userService
       .blockComments(id)
-      .subscribe();
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe();
   }
 
   unblockComments(id: string): void {
     this.userService
       .unblockComments(id)
-      .subscribe();
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe();
   }
 
   get avatar(): AbstractControl | null {

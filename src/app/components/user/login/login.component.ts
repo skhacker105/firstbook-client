@@ -1,11 +1,12 @@
 // Decorators and Lifehooks
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 // Router
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 
 // Services
 import { UserService } from '../../../core/services/user.service';
@@ -15,7 +16,7 @@ import { UserService } from '../../../core/services/user.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup = new FormGroup({
     'username': new FormControl('', [
       Validators.required
@@ -26,6 +27,7 @@ export class LoginComponent implements OnInit {
       Validators.maxLength(16)
     ]),
   });
+  isComponentIsActive = new Subject();
 
   constructor(
     private userService: UserService,
@@ -35,11 +37,15 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   onSubmit(): void {
     this.loginForm.controls['username'].setValue(this.loginForm.controls['username'].value.trim())
     this.userService
       .login(this.loginForm.value)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.router.navigate(['/home']);
       });
   }

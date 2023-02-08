@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { HTTPResponseCache } from '../constants/cache-decorator';
 import { ChatMessage, ChatRoom, ChatRoomUsers } from '../models/chat.model';
 import { ServerResponse } from '../models/server-response.model';
-import { User } from '../models/user.model';
 
 const domain = environment.api;
 const getAllLinkedChatRoomsEndpoint = domain + 'chat/getAlLinkedChatlRoom/';
@@ -23,6 +23,7 @@ export class ChatRoomService {
 
   constructor(private http: HttpClient) { }
 
+  // @HTTPResponseCache()
   getSingle(id: string): Observable<ServerResponse<ChatRoom>> {
     return this.http.get<ServerResponse<ChatRoom>>(getSingleChatRoomsEndpoint + id);
   }

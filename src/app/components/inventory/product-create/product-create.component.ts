@@ -1,10 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o/public_api';
 import { ToastrService } from 'ngx-toastr';
-import { forkJoin, from, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, from, mergeMap, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogData } from 'src/app/core/models/confirmation-dialog.model';
 import { ItemImage } from 'src/app/core/models/image';
 import { Product, ProductSpecification } from 'src/app/core/models/product.model';
@@ -20,7 +20,7 @@ import { ISpecs } from 'src/app/core/models/specs';
   templateUrl: './product-create.component.html',
   styleUrls: ['./product-create.component.css']
 })
-export class ProductCreateComponent implements OnInit {
+export class ProductCreateComponent implements OnInit, OnDestroy {
   createProductForm: FormGroup | undefined;
   mainImage: ItemImage | undefined;
   images: ItemImage[] = [];
@@ -29,6 +29,7 @@ export class ProductCreateComponent implements OnInit {
   product: Product | undefined;
   customOptions: OwlOptions | undefined;
   @ViewChild('fileInput') fileInput!: ElementRef;
+  isComponentIsActive = new Subject();
 
   constructor(
     private productService: ProductService,
@@ -53,12 +54,16 @@ export class ProductCreateComponent implements OnInit {
     this.loadProduct();
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   loadProduct(): void {
     if (!this.id) return this.initProductForm();
 
     this.productService
       .getSingleProduct(this.id)
-      .subscribe((productRes) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((productRes) => {
         if (!this.id) return;
 
         this.product = productRes.data;
@@ -73,7 +78,7 @@ export class ProductCreateComponent implements OnInit {
     if (!loadedProduct) return;
     this.productSpecsService
       .getProductSpecs(loadedProduct._id)
-      .subscribe(specsRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(specsRes => {
 
         loadedProduct.specifications = specsRes.data ? specsRes.data : [];
         const new_unique_specs: ISpecs[] = [];
@@ -98,7 +103,7 @@ export class ProductCreateComponent implements OnInit {
     if (!loadedProduct || !loadedProduct.defaultImage) return;
     this.productService
       .getImage(loadedProduct.defaultImage)
-      .subscribe(fileRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(fileRes => {
         this.mainImage = fileRes.data;
       });
   }
@@ -113,7 +118,7 @@ export class ProductCreateComponent implements OnInit {
     this.images = [];
     if (subscription.length > 0) {
       forkJoin(subscription)
-        .subscribe(imgsRes => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe(imgsRes => {
           imgsRes.forEach(imgRes => {
             if (imgRes.data)
               this.images.push(imgRes.data);
@@ -145,12 +150,12 @@ export class ProductCreateComponent implements OnInit {
   onSubmit(): void {
     const saveProd = this.saveProduct();
     if (saveProd) {
-      saveProd.subscribe(savedProductRes => {
+      saveProd.pipe(takeUntil(this.isComponentIsActive)).subscribe(savedProductRes => {
         if (!savedProductRes.data) return;
 
         const saveSpecs = this.saveSpecifications(savedProductRes.data);
         if (saveSpecs) {
-          saveSpecs.subscribe(savedSpecsRes => {
+          saveSpecs.pipe(takeUntil(this.isComponentIsActive)).subscribe(savedSpecsRes => {
             if (!savedProductRes.data) return;
             if (!this.mainImage) this.toastr.success('Item saved.');
             this.saveImages(savedProductRes.data);
@@ -203,7 +208,7 @@ export class ProductCreateComponent implements OnInit {
       if (!img._id) subscriptions.push(this.productService.saveImage(savedProduct, img));
     })
     if (subscriptions.length > 0)
-      forkJoin(subscriptions).subscribe(results => this.reloadAfterSave(savedProduct));
+      forkJoin(subscriptions).pipe(takeUntil(this.isComponentIsActive)).subscribe(results => this.reloadAfterSave(savedProduct));
     else this.reloadAfterSave(savedProduct)
   }
 
@@ -270,7 +275,7 @@ export class ProductCreateComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: string) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result) {
         if (!this.unique_specs.find(s => s.name === result)) {
           let newSpec = {
@@ -326,7 +331,7 @@ export class ProductCreateComponent implements OnInit {
     if (event) event.stopPropagation();
     let dialogRef = this.dialog.open(ConfirmationDialogComponent);
 
-    dialogRef.afterClosed().subscribe((result: string) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result) this.deleteSpecCategory(category, unique_index);
     });
   }
@@ -338,7 +343,7 @@ export class ProductCreateComponent implements OnInit {
     });
     if (index >= 0) {
       this.deleteSpec(index)
-        .subscribe(res => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
           this.removeDeletedSpec(index, unique_index);
           this.deleteSpecCategory(category, unique_index)
         });
@@ -348,10 +353,10 @@ export class ProductCreateComponent implements OnInit {
   handleSpecDelete(index: number, unique_index: number) {
     let dialogRef = this.dialog.open(ConfirmationDialogComponent)
 
-    dialogRef.afterClosed().subscribe((result: string) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result)
         this.deleteSpec(index)
-          .subscribe(res => {
+          .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
             this.removeDeletedSpec(index, unique_index);
             this.toastr.success('Specification deleted permanently');
           });
@@ -378,14 +383,14 @@ export class ProductCreateComponent implements OnInit {
   handleMainImageDelete() {
     let dialogRef = this.dialog.open(ConfirmationDialogComponent)
 
-    dialogRef.afterClosed().subscribe((result: string) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (!result) return;
       if (!this.product || !this.mainImage?._id) {
         this.mainImage = undefined;
         return;
       }
       this.productService.deleteMainImage(this.product)
-        .subscribe(res => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
           this.mainImage = undefined;
           this.toastr.success('Main Image deleted permanently');
         })
@@ -395,7 +400,7 @@ export class ProductCreateComponent implements OnInit {
   handleImageDelete(id: string) {
     let dialogRef = this.dialog.open(ConfirmationDialogComponent)
 
-    dialogRef.afterClosed().subscribe((result: string) => {
+    dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (!result) return;
       this.deleteImage(id);
     });
@@ -407,7 +412,7 @@ export class ProductCreateComponent implements OnInit {
       if (!image._id) this.removeDeletedImage(id);
       else {
         this.productService.deleteImage(id)
-          .subscribe(res => this.removeDeletedImage(id));
+          .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => this.removeDeletedImage(id));
       }
     }
   }
@@ -426,7 +431,7 @@ export class ProductCreateComponent implements OnInit {
       data: confirmData
     });
 
-    confirmSetRef.afterClosed().subscribe((result: string) => {
+    confirmSetRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result) this.setMainImage(id);
     });
   }
@@ -450,7 +455,7 @@ export class ProductCreateComponent implements OnInit {
       obs = saveMainImage
         .pipe(mergeMap(r => deleteImage));
     }
-    if (obs) obs.subscribe(res => this.loadProduct());
+    if (obs) obs.pipe(takeUntil(this.isComponentIsActive)).subscribe(res => this.loadProduct());
   }
 
   handleEditCategory(category: string, e: any) {
@@ -465,7 +470,7 @@ export class ProductCreateComponent implements OnInit {
     });
 
 
-    newCategoryNameRef.afterClosed().subscribe((result: string) => {
+    newCategoryNameRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result) {
         this.updateCategoryName(category, result);
       }

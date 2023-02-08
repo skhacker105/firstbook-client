@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, TemplateRef, Input, OnInit } from '@angular/core';
+import { Component, TemplateRef, Input, OnInit, OnDestroy } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 // Services
@@ -14,13 +14,14 @@ import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { User } from '../../models/user.model';
 import { HelperService } from '../../services/helper.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-product-comment',
   templateUrl: './product-comment.component.html',
   styleUrls: ['./product-comment.component.css']
 })
-export class ProductCommentComponent implements OnInit {
+export class ProductCommentComponent implements OnInit, OnDestroy {
   @Input('productId') productId: string | undefined | null;
   @Input('isLogged') isLogged: boolean | undefined = false;
   @Input('isAdmin') isAdmin: boolean | undefined = false;
@@ -34,6 +35,7 @@ export class ProductCommentComponent implements OnInit {
   isFromEdit: boolean = false;
   lastEditId: string | undefined;
   action: string | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private productService: ProductService,
@@ -47,9 +49,13 @@ export class ProductCommentComponent implements OnInit {
 
     this.productService
       .getComments(this.productId, this.comments.length.toString())
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.comments = res.data ? res.data : [];
       });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   openFormModal(template: TemplateRef<any>, id?: string): void {
@@ -83,7 +89,7 @@ export class ProductCommentComponent implements OnInit {
       data: confirmData
     });
 
-    confirmSetRef.afterClosed().subscribe((result: string) => {
+    confirmSetRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result) this.removeComment(id)
     });
   }
@@ -100,7 +106,7 @@ export class ProductCommentComponent implements OnInit {
     if (!this.productId) return;
     this.productService
       .getComments(this.productId, this.comments.length.toString())
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (res.data && res.data?.length !== 0) {
           this.comments.splice(this.comments.length, 0, ...res.data);
         }
@@ -111,7 +117,7 @@ export class ProductCommentComponent implements OnInit {
     if (!this.productId) return;
     this.productService
       .addComment(this.productId, this.commentForm.value)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (res.data)
           this.comments.unshift(res.data);
       });
@@ -124,7 +130,7 @@ export class ProductCommentComponent implements OnInit {
     const editedContent = this.commentForm.value.content;
     this.productService
       .editComment(this.lastEditId, this.commentForm.value)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         for (const c of this.comments) {
           if (c._id === this.lastEditId) {
             c.content = editedContent;
@@ -139,7 +145,7 @@ export class ProductCommentComponent implements OnInit {
   removeComment(delId: string): void {
     this.productService
       .deleteComment(delId)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.comments = this.comments.filter(c => c._id !== delId);
       });
   }

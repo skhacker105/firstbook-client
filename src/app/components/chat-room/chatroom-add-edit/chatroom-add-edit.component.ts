@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
 import { ServerResponse } from 'src/app/core/models/server-response.model';
 import { User } from 'src/app/core/models/user.model';
@@ -15,7 +15,7 @@ import { UserService } from 'src/app/core/services/user.service';
   templateUrl: './chatroom-add-edit.component.html',
   styleUrls: ['./chatroom-add-edit.component.css']
 })
-export class ChatroomAddEditComponent implements OnInit {
+export class ChatroomAddEditComponent implements OnInit, OnDestroy {
 
   id: string | undefined | null;
   chatRoomCreateForm: FormGroup | undefined;
@@ -25,6 +25,7 @@ export class ChatroomAddEditComponent implements OnInit {
   selectedUsers: ChatRoomUsers | undefined;
   originalUsers: ChatRoomUsers | undefined;
   userEntry = false;
+  isComponentIsActive = new Subject();
 
   constructor(
     private chatRoomService: ChatRoomService,
@@ -41,11 +42,15 @@ export class ChatroomAddEditComponent implements OnInit {
     this.loadChatRoom();
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   loadChatRoom() {
     if (!this.id) return;
 
     this.chatRoomService.getSingle(this.id)
-      .subscribe(roomRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(roomRes => {
         if (!roomRes.data || !this.chatRoomCreateForm) return;
 
         roomRes.data.user = undefined;
@@ -56,7 +61,7 @@ export class ChatroomAddEditComponent implements OnInit {
 
   loadChatRoomUsers(room: ChatRoom) {
     this.chatRoomService.getAllChatRoomUsers(room)
-      .subscribe(chatRoomUsers => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(chatRoomUsers => {
         this.selectedUsers = chatRoomUsers;
         this.originalUsers = JSON.parse(JSON.stringify(this.selectedUsers));
       });
@@ -179,7 +184,7 @@ export class ChatroomAddEditComponent implements OnInit {
 
     if (obs.length > 0)
       forkJoin(obs)
-        .subscribe((chatrooms: ServerResponse<ChatRoom>[]) => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe((chatrooms: ServerResponse<ChatRoom>[]) => {
           this.toastr.success('Chatroom saved')
           this.loadChatRoom();
         });

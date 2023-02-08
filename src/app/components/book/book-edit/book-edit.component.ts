@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
@@ -13,15 +13,17 @@ import { BookService } from '../../../core/services/book.service';
 // Custom Validators
 import { isUrlValidator } from '../../../core/directives/is-url.directive';
 import { isIsbnValidator } from '../../../core/directives/is-isbn.directive';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-book-edit',
   templateUrl: './book-edit.component.html',
   styleUrls: ['./book-edit.component.css']
 })
-export class BookEditComponent implements OnInit {
+export class BookEditComponent implements OnInit, OnDestroy {
   editBookForm: FormGroup | undefined;
   id: string | null | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -36,9 +38,13 @@ export class BookEditComponent implements OnInit {
     if (!this.id) return;
     this.bookService
       .getSingleBook(this.id)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.editBookForm ? this.editBookForm.patchValue({ ...res.data }) : null;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   initForm(): void {
@@ -82,7 +88,7 @@ export class BookEditComponent implements OnInit {
     if (!this.id || !this.editBookForm?.value) return;
     this.bookService
       .editBook(this.id, this.editBookForm.value)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         res.data ? this.router.navigate([`/book/details/${res.data._id}`]) : null;
       });
   }

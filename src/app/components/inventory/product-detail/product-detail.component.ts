@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
 import { ItemImage } from 'src/app/core/models/image';
 import { Product, ProductSpecification } from 'src/app/core/models/product.model';
 import { ServerResponse } from 'src/app/core/models/server-response.model';
@@ -16,7 +16,7 @@ import { ProductService } from 'src/app/core/services/product.service';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, OnDestroy {
 
   id: string | null | undefined;
   product: Product | undefined;
@@ -29,6 +29,7 @@ export class ProductDetailComponent implements OnInit {
   isAdmin = false;
   userId: string | undefined;
   isLogged: boolean | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private route: ActivatedRoute,
@@ -46,6 +47,10 @@ export class ProductDetailComponent implements OnInit {
     this.loadLoggedInUser();
     this.carouselOptions();
     this.loadProduct();
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   carouselOptions() {
@@ -78,7 +83,7 @@ export class ProductDetailComponent implements OnInit {
 
     this.productService
       .getSingleProduct(this.id)
-      .subscribe((productRes) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((productRes) => {
         if (!this.id) return;
 
         this.product = productRes.data;
@@ -92,7 +97,7 @@ export class ProductDetailComponent implements OnInit {
     if (!loadedProduct) return;
     this.productSpecsService
       .getProductSpecs(loadedProduct._id)
-      .subscribe(specsRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(specsRes => {
 
         loadedProduct.specifications = specsRes.data ? specsRes.data : [];
         const new_unique_specs: ISpecs[] = [];
@@ -122,7 +127,7 @@ export class ProductDetailComponent implements OnInit {
     if (!loadedProduct || !loadedProduct.defaultImage) return;
     this.productService
       .getImage(loadedProduct.defaultImage)
-      .subscribe(fileRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(fileRes => {
         this.mainImage = fileRes.data;
       });
   }
@@ -137,7 +142,7 @@ export class ProductDetailComponent implements OnInit {
     this.images = [];
     if (subscription.length > 0) {
       forkJoin(subscription)
-        .subscribe(imgsRes => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe(imgsRes => {
           imgsRes.forEach(imgRes => {
             if (imgRes.data)
               this.images.push(imgRes.data);
@@ -163,7 +168,7 @@ export class ProductDetailComponent implements OnInit {
     if (!this.id) return;
     this.productService
       .rateProduct(this.id, { rating: rating })
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (!this.product || !res.data) return;
         this.product = res.data;
       });

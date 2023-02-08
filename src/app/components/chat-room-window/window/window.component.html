@@ -31,14 +31,14 @@
         </ng-container>
     </mat-card-content>
 
-    <form *ngIf="messageForm" [formGroup]="messageForm">
+    <form *ngIf="messageForm" [formGroup]="messageForm" (ngSubmit)="sendMessage()">
         <mat-card-actions class="window-action-container">
             <mat-form-field class="message-input">
                 <!-- <input matInput placeholder="" formControlName="message"> -->
                 <textarea rows="1" matInput formControlName="message"></textarea>
             </mat-form-field>
 
-            <button mat-mini-fab class="message-send" (click)="sendMessage()">
+            <button mat-mini-fab class="message-send" type="submit">
                 <mat-icon>send</mat-icon>
             </button>
         </mat-card-actions>

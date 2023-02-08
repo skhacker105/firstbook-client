@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, TemplateRef, Input, OnInit } from '@angular/core';
+import { Component, TemplateRef, Input, OnInit, OnDestroy } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 // Services
@@ -9,13 +9,14 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 // Models
 import { Comment } from '../../models/comment.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.css']
 })
-export class CommentComponent implements OnInit {
+export class CommentComponent implements OnInit, OnDestroy {
   @Input('bookId') bookId: string | undefined | null;
   @Input('isLogged') isLogged: boolean | undefined = false;
   @Input('isAdmin') isAdmin: boolean | undefined = false;
@@ -30,6 +31,7 @@ export class CommentComponent implements OnInit {
   lastEditId: string | undefined;
   lastDeleteId: string | undefined;
   action: string | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private commentService: CommentService,
@@ -41,9 +43,13 @@ export class CommentComponent implements OnInit {
 
     this.commentService
       .getComments(this.bookId, this.comments.length.toString())
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.comments = res.data ? res.data : [];
       });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   openFormModal(template: TemplateRef<any>, id?: string): void {
@@ -91,7 +97,7 @@ export class CommentComponent implements OnInit {
     if (!this.bookId) return;
     this.commentService
       .getComments(this.bookId, this.comments.length.toString())
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (res.data && res.data?.length !== 0) {
           this.comments.splice(this.comments.length, 0, ...res.data);
         }
@@ -102,7 +108,7 @@ export class CommentComponent implements OnInit {
     if (!this.bookId) return;
     this.commentService
       .addComment(this.bookId, this.commentForm.value)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (res.data)
           this.comments.unshift(res.data);
       });
@@ -115,7 +121,7 @@ export class CommentComponent implements OnInit {
     const editedContent = this.commentForm.value.content;
     this.commentService
       .editComment(this.lastEditId, this.commentForm.value)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         for (const c of this.comments) {
           if (c._id === this.lastEditId) {
             c.content = editedContent;
@@ -133,7 +139,7 @@ export class CommentComponent implements OnInit {
     const delId = this.lastDeleteId;
     this.commentService
       .deleteComment(this.lastDeleteId)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.comments = this.comments.filter(c => c._id !== delId);
       });
   }

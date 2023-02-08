@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import { forkJoin, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, mergeMap, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { ItemImage } from '../../models/image';
 import { Product, ProductSpecification } from '../../models/product.model';
@@ -20,7 +20,7 @@ import { ImageViewComponent } from '../image-view/image-view.component';
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.css']
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit, OnDestroy {
 
   @Input('productId') id: string | undefined;
   @Input('loadOnlyMainImage') mainImageOnly: boolean = false;
@@ -32,6 +32,7 @@ export class ProductComponent implements OnInit {
   customOptions: OwlOptions | undefined;
   loggedInUser: User | undefined;
   isEditAllowed: boolean = false;
+  isComponentIsActive = new Subject();
 
   constructor(
     private productService: ProductService,
@@ -46,6 +47,10 @@ export class ProductComponent implements OnInit {
     this.checkIfEditAllowed();
     this.carouselOptions();
     this.loadProductDetails();
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   loadLoggedInUser() {
@@ -93,7 +98,7 @@ export class ProductComponent implements OnInit {
             !this.mainImageOnly ? this.loadProductImages(productRes.data) : of([])
           ])
         })
-      ).subscribe((res: any) => {
+      ).pipe(takeUntil(this.isComponentIsActive)).subscribe((res: any) => {
         this.specs = res[0] ? res[0].data : [];
         this.mainImage = res[1] ? res[1].data : undefined;
         this.images = res[2] ? res[2].map((r: any) => r.data) : [];
@@ -155,7 +160,7 @@ export class ProductComponent implements OnInit {
       data: confirmData
     });
 
-    confirmSetRef.afterClosed().subscribe((result: string) => {
+    confirmSetRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (result && state) this.enableProduct()
       else if (result && !state) this.disableProduct()
     });
@@ -165,7 +170,7 @@ export class ProductComponent implements OnInit {
     if (!this.product) return;
     this.productService
       .enableProduct(this.product._id)
-      .subscribe(res => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
         if (!this.product) return;
         this.product['disabled'] = false;
       });
@@ -175,7 +180,7 @@ export class ProductComponent implements OnInit {
     if (!this.product) return;
     this.productService
       .disableProduct(this.product._id)
-      .subscribe(res => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(res => {
         if (!this.product) return;
         this.product['disabled'] = true;
       })

@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 // Services
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
 
 const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -19,7 +20,7 @@ const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   registerForm: FormGroup = new FormGroup({
     'username': new FormControl('', [
       Validators.required
@@ -34,7 +35,8 @@ export class RegisterComponent implements OnInit {
       Validators.required,
       Validators.pattern(emailRegex)
     ])
-  }, { validators: mustMatchValidator });;
+  }, { validators: mustMatchValidator });
+  isComponentIsActive = new Subject();
 
   constructor(
     private userService: UserService,
@@ -46,10 +48,14 @@ export class RegisterComponent implements OnInit {
     // this.registerForm = 
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   onSubmit(): void {
     this.userService
       .register(this.registerForm.value)
-      .subscribe(() => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.toastr.success('User register.');
         this.router.navigate(['/home']);
       });

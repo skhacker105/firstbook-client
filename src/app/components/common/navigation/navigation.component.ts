@@ -8,7 +8,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 // RXJS
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 // Services
 import { HelperService } from '../../../core/services/helper.service';
@@ -33,6 +33,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   isAdmin: boolean | undefined;
   statusChecker: number | undefined;
   cartItems: number | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -51,13 +52,13 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
     this.isLoggedSub$ = this.helperService
       .isUserLogged
-      .subscribe((data) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((data) => {
         this.isLogged = data;
       });
 
     this.cartStatusSub$ = this.helperService
       .cartStatus
-      .subscribe((data) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((data) => {
         if (data === 'add') {
           this.cartItems ? this.cartItems++ : this.cartItems = 1;
         } else if (data === 'remove') {
@@ -69,6 +70,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
     window.clearInterval(this.statusChecker);
     this.isLoggedSub$ ? this.isLoggedSub$.unsubscribe() : null;
     this.cartStatusSub$ ? this.cartStatusSub$.unsubscribe() : null;
@@ -115,7 +117,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   getCartSize(): void {
     this.cartService
       .getCartSize()
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.cartItems = res.data ? res.data : 0;
       });
   }

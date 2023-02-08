@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { ChatMessage, ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
 import { User } from 'src/app/core/models/user.model';
 import { ChatRoomService } from 'src/app/core/services/chat-room.service';
@@ -30,6 +31,7 @@ export class WindowComponent implements OnInit, OnDestroy {
   messageArray: ChatMessage[] = [];
   pageSize = 15;
   currentPage = 1;
+  isComponentIsActive = new Subject();
 
   constructor(
     private route: ActivatedRoute,
@@ -44,8 +46,8 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.id = this.route.snapshot.paramMap.get('roomId');
     if (!this.id) this.router.navigateByUrl('/chatroom');
     this.loginProfile = this.helperService.getProfile();
-    this.loadChatRoom();
     this.initMessageForm();
+    this.loadChatRoom();
     this.helperService.showGlobalSearch = false;
     this.helperService.showFooter = false;
     setTimeout(() => {
@@ -58,12 +60,13 @@ export class WindowComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.helperService.showGlobalSearch = true;
     this.helperService.showFooter = true;
+    this.isComponentIsActive.complete()
   }
 
   initMessageForm(room?: ChatRoom) {
     this.messageForm = this.fb.group({
       roomKey: new FormControl(room?.roomKey, Validators.required),
-      room:  new FormControl(room?._id, Validators.required),
+      room: new FormControl(room?._id, Validators.required),
       message: new FormControl('', Validators.required),
       type: new FormControl(RoomTypes.stringMessage, Validators.required)
     });
@@ -73,7 +76,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     if (!this.id) return;
 
     this.chatRoomService.getSingle(this.id)
-      .subscribe(roomRes => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(roomRes => {
         if (!roomRes.data || !this.loginProfile) return;
         roomRes.data.user = this.loginProfile;
         this.room = roomRes.data;
@@ -86,7 +89,7 @@ export class WindowComponent implements OnInit, OnDestroy {
 
   loadChatRoomUsers(room: ChatRoom) {
     this.chatRoomService.getAllChatRoomUsers(room)
-      .subscribe(chatRoomUsers => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(chatRoomUsers => {
         this.selectedUsers = chatRoomUsers;
         this.selectedUsers.profile = this.loginProfile;
         this.name = this.getRoomName(this.selectedUsers);
@@ -95,10 +98,11 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
 
   loadChats(room: ChatRoom) {
+    console.log('room = ', room)
     this.chatRoomService.search(this.generateQuery(room.roomKey))
-    .subscribe(messagesRes => {
-      if(messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
-    })
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe(messagesRes => {
+        if (messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
+      })
   }
 
   generateQuery(query: string): string {
@@ -110,17 +114,18 @@ export class WindowComponent implements OnInit, OnDestroy {
 
   initiateSocketConnection(room: ChatRoom) {
     this.webSocketService.joinRoom(room.roomKey);
-    this.webSocketService.newMessageReceived().subscribe(message => {
+    this.webSocketService.newMessageReceived().pipe(takeUntil(this.isComponentIsActive)).subscribe(message => {
       this.messageArray.push(message);
       this.isTyping = false;
     });
-    this.webSocketService.receivedTyping().subscribe(message => {
+    this.webSocketService.receivedTyping().pipe(takeUntil(this.isComponentIsActive)).subscribe(message => {
       console.log('isTyping = ', message.isTyping);
       this.isTyping = message.isTyping;
     });
   }
 
   sendMessage() {
+    if (this.messageForm?.invalid) return;
     this.webSocketService.sendMessage(this.messageForm?.value);
     this.initMessageForm(this.room);
   }

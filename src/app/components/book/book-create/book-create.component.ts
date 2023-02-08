@@ -1,5 +1,5 @@
 // Decorators and Lifehooks
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
@@ -13,14 +13,16 @@ import { BookService } from '../../../core/services/book.service';
 // Custom Validators
 import { isUrlValidator } from '../../../core/directives/is-url.directive';
 import { isIsbnValidator } from '../../../core/directives/is-isbn.directive';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-book-create',
   templateUrl: './book-create.component.html',
   styleUrls: ['./book-create.component.css']
 })
-export class BookCreateComponent implements OnInit {
+export class BookCreateComponent implements OnInit, OnDestroy {
   createBookForm: FormGroup | undefined;
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -64,11 +66,15 @@ export class BookCreateComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   onSubmit(): void {
     if (!this.createBookForm) return;
     this.bookService
       .createBook(this.createBookForm.value)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         if (!res.data) return;
         this.router.navigate([`/book/details/${res.data._id}`]);
       });

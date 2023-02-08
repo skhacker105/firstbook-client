@@ -4,7 +4,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { Contact } from 'src/app/core/models/contact.model';
 import { OptionalDialogDataOption, OptionDialogData } from 'src/app/core/models/option-dialog-data.model';
 import { User } from 'src/app/core/models/user.model';
@@ -33,6 +33,7 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
       { key: 'update', message: 'Update only empty field', icon: 'copy_all' }
     ]
   };
+  isComponentIsActive = new Subject();
 
   constructor(
     private router: Router,
@@ -52,9 +53,13 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
 
     this.contactService
       .getSingleContact(this.id)
-      .subscribe((res) => {
+      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
         this.createContactForm ? this.createContactForm.patchValue({ ...res.data }) : null;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
   }
 
   initUserForm() {
@@ -95,7 +100,7 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
     if (!this.id) {
       this.contactService
         .createContact(this.createContactForm.value)
-        .subscribe((res) => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
           if (!res.data) return;
           this.toastr.success('Contact saved.');
           this.router.navigate([`/contact`]);
@@ -103,14 +108,11 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
     } else {
       this.contactService
         .editContact(this.id, this.createContactForm.value)
-        .subscribe((res) => {
+        .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
           this.toastr.success('Contact updated.');
           res.data ? this.router.navigateByUrl(`/contact`) : null;
         });
     }
-  }
-
-  ngOnDestroy(): void {
   }
 
   getOptionText(option: User) {
@@ -151,7 +153,7 @@ export class ContactAddEditComponent implements OnInit, OnDestroy {
         data: this.overwriteOperations
       });
 
-      dialogRef.afterClosed().subscribe((option?: OptionalDialogDataOption) => {
+      dialogRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((option?: OptionalDialogDataOption) => {
         if (!option) return;
         else this.evaluateOverwriteOption(option, oldValue, newValue);
       });
