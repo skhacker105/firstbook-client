@@ -5,19 +5,27 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { finalize, Observable, tap } from 'rxjs';
 import { HelperService } from '../services/helper.service';
 
 @Injectable()
 export class LoaderInterceptor implements HttpInterceptor {
 
+  httpCount = 0;
 
   constructor(private helperService: HelperService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.helperService.increaseHttpCallCounter();
+    this.httpCount++;
+    this.helperService.pendingHttpCall.next(true);
+    console.log('httpCount = ', this.httpCount);
 
     return next.handle(request)
-      .pipe(tap(res => this.helperService.decreaseHttpCallCounter()));
+      .pipe(finalize(() => {
+        this.httpCount--;
+        console.log('httpCount = ', this.httpCount);
+        if (!this.httpCount)
+          this.helperService.pendingHttpCall.next(false);
+      }));
   }
 }

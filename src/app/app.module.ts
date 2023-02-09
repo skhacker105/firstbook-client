@@ -20,6 +20,7 @@ import { HomeComponent } from './components/landing/home/home.component';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { SuccessInterceptor } from './core/interceptors/success.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { LoaderInterceptor } from './core/interceptors/loader.interceptor';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,11 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
       multi: true
     }
   ],

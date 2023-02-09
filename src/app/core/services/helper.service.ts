@@ -17,8 +17,7 @@ export class HelperService {
   cartStatus = new Subject<string>();
   showGlobalSearch = true;
   showFooter = true;
-  private _pendingCalls = new BehaviorSubject<number>(0);
-  public pendingCalls = this._pendingCalls.asObservable();
+  pendingHttpCall=new BehaviorSubject<boolean>(false);
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);
@@ -70,23 +69,15 @@ export class HelperService {
     return val ? val : '';
   }
 
-  increaseHttpCallCounter() {
-    this._pendingCalls.next(this._pendingCalls.value + 1);
-  }
-
-  decreaseHttpCallCounter() {
-    this._pendingCalls.next(this._pendingCalls.value - 1);
-  }
-
   hashFnv32a(str: string, asString = true, seed = undefined): string {
     /*jshint bitwise:false */
     var i, l,
-        hval = (seed === undefined) ? 0x811c9dc5 : seed;
+      hval = (seed === undefined) ? 0x811c9dc5 : seed;
 
     for (i = 0, l = str.length; i < l; i++) {
-        hval ^= str.charCodeAt(i);
-        hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+      hval ^= str.charCodeAt(i);
+      hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
     }
     return ("0000000" + (hval >>> 0).toString(16));
-}
+  }
 }
