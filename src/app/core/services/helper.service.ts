@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 // RXJS
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 // JWT Decoding
 import decode from 'jwt-decode';
@@ -17,6 +17,8 @@ export class HelperService {
   cartStatus = new Subject<string>();
   showGlobalSearch = true;
   showFooter = true;
+  private _pendingCalls = new BehaviorSubject<number>(0);
+  public pendingCalls = this._pendingCalls.asObservable();
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);
@@ -66,6 +68,14 @@ export class HelperService {
   getToken(): string {
     let val = localStorage.getItem('token');
     return val ? val : '';
+  }
+
+  increaseHttpCallCounter() {
+    this._pendingCalls.next(this._pendingCalls.value + 1);
+  }
+
+  decreaseHttpCallCounter() {
+    this._pendingCalls.next(this._pendingCalls.value - 1);
   }
 
   hashFnv32a(str: string, asString = true, seed = undefined): string {

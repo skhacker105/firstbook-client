@@ -39,6 +39,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ContactComponent } from './contact/contact.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
@@ -55,6 +56,7 @@ import { AddEntityTriggerComponent } from './add-entity-trigger/add-entity-trigg
 import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
+import { LoaderComponent } from './loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +81,8 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     AddEntityTriggerComponent,
     OptionDialogComponent,
     ChatRoomComponent,
-    ChatWindowComponent
+    ChatWindowComponent,
+    LoaderComponent
   ],
   imports: [
     CommonModule,
@@ -104,7 +107,8 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     MatAutocompleteModule,
     MatListModule,
     MatDividerModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     CommentComponent,
@@ -146,7 +150,9 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
     MatDividerModule,
     ChatRoomComponent,
     MatSidenavModule,
-    ChatWindowComponent
+    ChatWindowComponent,
+    MatProgressSpinnerModule,
+    LoaderComponent
   ]
 })
 export class SharedModule { }
