@@ -18,12 +18,10 @@ export class LoaderInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.httpCount++;
     this.helperService.pendingHttpCall.next(true);
-    console.log('httpCount = ', this.httpCount);
 
     return next.handle(request)
       .pipe(finalize(() => {
         this.httpCount--;
-        console.log('httpCount = ', this.httpCount);
         if (!this.httpCount)
           this.helperService.pendingHttpCall.next(false);
       }));

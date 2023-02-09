@@ -31,14 +31,11 @@ export class AppComponent implements OnInit {
   handleHttpCallCounterChange() {
     let ref: MatDialogRef<LoaderComponent> | undefined
     this.helperService.pendingHttpCall.subscribe(pending => {
-      console.log('pending = ', pending)
       if (pending && !ref) {
         ref = this.matDialog.open(LoaderComponent);
-        console.log('loading circle');
       }
       else if (!pending && ref) {
         ref.close();
-        console.log('unloading circle');
       }
     });
   }

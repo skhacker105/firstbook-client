@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Cacheable, CacheBuster } from 'ts-cacheable';
+import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { Contact } from '../models/contact.model';
 import { ServerResponse } from '../models/server-response.model';
 
@@ -15,7 +15,7 @@ const deleteContactEndpoint = domain + 'contact/delete/';
 const rateContactEndpoint = domain + 'contact/rate/';
 const addToFavoritesEndpoint = domain + 'contact/addToFavorites/';
 const searchContactEndpoint = domain + 'contact/search';
-const contactCache$ = new Subject<void>();
+const contactCache$ = new Subject<boolean>();
 
 @Injectable({
   providedIn: 'root'
@@ -24,50 +24,50 @@ export class ContactService {
 
   constructor(private http: HttpClient) { }
 
-  @Cacheable({
-    cacheBusterObserver: contactCache$
+  @HTTPCacheable({
+    refresher: contactCache$
   })
   getSingleContact(id: string): Observable<ServerResponse<Contact>> {
     return this.http.get<ServerResponse<Contact>>(getSingleContactEndpoint + id);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: contactCache$
+  @HTTPCacheBuster({
+    refresher: contactCache$
   })
   createContact(payload: Contact): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(createContactEndpoint, payload);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: contactCache$
+  @HTTPCacheBuster({
+    refresher: contactCache$
   })
   editContact(id: string, payload: Contact): Observable<ServerResponse<Contact>> {
     return this.http.put<ServerResponse<Contact>>(editContactEndpoint + id, payload);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: contactCache$
+  @HTTPCacheBuster({
+    refresher: contactCache$
   })
   deleteContact(id: string): Observable<ServerResponse<Contact>> {
     return this.http.delete<ServerResponse<Contact>>(deleteContactEndpoint + id);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: contactCache$
+  @HTTPCacheBuster({
+    refresher: contactCache$
   })
   rateContact(id: string, payload: object): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(rateContactEndpoint + id, payload);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: contactCache$
+  @HTTPCacheBuster({
+    refresher: contactCache$
   })
   addToFavourites(id: string): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(addToFavoritesEndpoint + id, {});
   }
 
-  @Cacheable({
-    cacheBusterObserver: contactCache$
+  @HTTPCacheable({
+    refresher: contactCache$
   })
   search(query: string): Observable<ServerResponse<Contact[]>> {
     return this.http.get<ServerResponse<Contact[]>>(searchContactEndpoint + query);

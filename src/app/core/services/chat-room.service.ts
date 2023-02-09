@@ -4,7 +4,7 @@ import { map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ChatMessage, ChatRoom, ChatRoomUsers } from '../models/chat.model';
 import { ServerResponse } from '../models/server-response.model';
-import { Cacheable, CacheBuster } from 'ts-cacheable';
+import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 
 const domain = environment.api;
 const getAllLinkedChatRoomsEndpoint = domain + 'chat/getAlLinkedChatlRoom/';
@@ -15,7 +15,7 @@ const addChatRoomEndpoint = domain + 'chat/add';
 const editChatRoomEndpoint = domain + 'chat/edit/';
 const deleteChatRoomEndpoint = domain + 'chat/delete/';
 const undeleteChatRoomEndpoint = domain + 'chat/undelete/';
-const chatRoomCache$ = new Subject<void>();
+const chatRoomCache$ = new Subject<boolean>();
 
 @Injectable({
   providedIn: 'root'
@@ -25,22 +25,22 @@ export class ChatRoomService {
 
   constructor(private http: HttpClient) { }
 
-  @Cacheable({
-    cacheBusterObserver: chatRoomCache$
+  @HTTPCacheable({
+    refresher: chatRoomCache$
   })
   getSingle(id: string): Observable<ServerResponse<ChatRoom>> {
     return this.http.get<ServerResponse<ChatRoom>>(getSingleChatRoomsEndpoint + id);
   }
 
-  @Cacheable({
-    cacheBusterObserver: chatRoomCache$
+  @HTTPCacheable({
+    refresher: chatRoomCache$
   })
   getAllLinkedChatRooms(roomId: string): Observable<ServerResponse<ChatRoom[]>> {
     return this.http.get<ServerResponse<ChatRoom[]>>(getAllLinkedChatRoomsEndpoint + roomId);
   }
 
-  @Cacheable({
-    cacheBusterObserver: chatRoomCache$
+  @HTTPCacheable({
+    refresher: chatRoomCache$
   })
   getAllChatRoomUsers(room: ChatRoom): Observable<ChatRoomUsers> {
     let obs = this.getAllLinkedChatRooms(room._id).pipe(
@@ -60,44 +60,41 @@ export class ChatRoomService {
     return obs;
   }
 
-  @Cacheable({
-    cacheBusterObserver: chatRoomCache$
+  @HTTPCacheable({
+    refresher: chatRoomCache$
   })
   getAllChatRooms(): Observable<ServerResponse<ChatRoom[]>> {
     return this.http.get<ServerResponse<ChatRoom[]>>(getAllChatRoomsEndpoint);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: chatRoomCache$
+  @HTTPCacheBuster({
+    refresher: chatRoomCache$
   })
   addChatRoom(payload: any): Observable<ServerResponse<ChatRoom>> {
     return this.http.post<ServerResponse<ChatRoom>>(addChatRoomEndpoint, payload);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: chatRoomCache$
+  @HTTPCacheBuster({
+    refresher: chatRoomCache$
   })
   editChatRoom(roomId: string, payload: any): Observable<ServerResponse<ChatRoom>> {
     return this.http.put<ServerResponse<ChatRoom>>(editChatRoomEndpoint + roomId, payload);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: chatRoomCache$
+  @HTTPCacheBuster({
+    refresher: chatRoomCache$
   })
   deleteChatRoom(roomId: string): Observable<ServerResponse<ChatRoom>> {
     return this.http.delete<ServerResponse<ChatRoom>>(deleteChatRoomEndpoint + roomId);
   }
 
-  @CacheBuster({
-    cacheBusterNotifier: chatRoomCache$
+  @HTTPCacheBuster({
+    refresher: chatRoomCache$
   })
   undeleteChatRoom(roomId: string): Observable<ServerResponse<ChatRoom>> {
     return this.http.delete<ServerResponse<ChatRoom>>(undeleteChatRoomEndpoint + roomId);
   }
 
-  @Cacheable({
-    cacheBusterObserver: chatRoomCache$
-  })
   search(query: string): Observable<ServerResponse<ChatMessage[]>> {
     return this.http.get<ServerResponse<ChatMessage[]>>(getChatRoomMessagesEndpoint + query);
   }
