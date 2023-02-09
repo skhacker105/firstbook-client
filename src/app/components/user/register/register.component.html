@@ -19,7 +19,7 @@
 
     <mat-form-field class="email">
       <mat-label>Email</mat-label>
-      <input type="text" matInput name="email" placeholder="Email" formControlName="email">
+      <input type="email" matInput name="email" placeholder="Email" formControlName="email">
       <mat-icon matPrefix>email</mat-icon>
     </mat-form-field>
     <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="input-error">

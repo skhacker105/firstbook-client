@@ -12,8 +12,8 @@ import { ServerResponse } from '../models/server-response.model';
 import { User } from '../models/user.model';
 import { Receipt } from '../models/receipt.model';
 import { environment } from 'src/environments/environment';
-import { Product } from '../models/product.model';
 import { ProductService } from './product.service';
+import { Cacheable, CacheBuster } from 'ts-cacheable';
 
 const baseUrl = environment.api + 'user';
 const registerEndpoint = baseUrl + '/register';
@@ -25,6 +25,7 @@ const changeAvatarEndpoint = baseUrl + '/changeAvatar';
 const blockCommentsEndpoint = baseUrl + '/blockComments/';
 const unblockCommentsEndpoint = baseUrl + '/unlockComments/';
 const userSearchEndpoint = baseUrl + '/search';
+const userCache$ = new Subject<void>();
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,9 @@ export class UserService {
 
   constructor(private http: HttpClient, private productService: ProductService) { }
 
+  @CacheBuster({
+    cacheBusterNotifier: userCache$
+  })
   register(payload: object): Observable<ServerResponse<User>> {
     return this.http.post<ServerResponse<User>>(registerEndpoint, payload);
   }
@@ -57,7 +61,6 @@ export class UserService {
   logout() {
     this.userProducts = [];
   }
-
   getProducts() {
     return this.userProducts;
   }
@@ -76,30 +79,54 @@ export class UserService {
       });
   }
 
+
+  @Cacheable({
+    cacheBusterObserver: userCache$
+  })
   getProfile(username: string): Observable<ServerResponse<User>> {
     return this.http.get<ServerResponse<User>>(profileEndpoint + username);
   }
 
+  @CacheBuster({
+    cacheBusterNotifier: userCache$
+  })
   updateProfile(payload: User): Observable<ServerResponse<any>> {
     return this.http.post<ServerResponse<string>>(updateProfileEndpoint, payload);
   }
 
+
+  @Cacheable({
+    cacheBusterObserver: userCache$
+  })
   getPurchaseHistory(): Observable<ServerResponse<Receipt[]>> {
     return this.http.get<ServerResponse<Receipt[]>>(getPurchaseHistoryEndpoint);
   }
 
+  @CacheBuster({
+    cacheBusterNotifier: userCache$
+  })
   changeAvatar(payload: object): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(changeAvatarEndpoint, payload);
   }
 
+  @CacheBuster({
+    cacheBusterNotifier: userCache$
+  })
   blockComments(id: string): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(blockCommentsEndpoint + id, {});
   }
 
+  @CacheBuster({
+    cacheBusterNotifier: userCache$
+  })
   unblockComments(id: string): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(unblockCommentsEndpoint + id, {});
   }
 
+
+  @Cacheable({
+    cacheBusterObserver: userCache$
+  })
   search(query: string): Observable<ServerResponse<User[]>> {
     return this.http.get<ServerResponse<User[]>>(userSearchEndpoint + query);
   }
