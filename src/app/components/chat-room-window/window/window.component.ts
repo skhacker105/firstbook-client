@@ -26,7 +26,6 @@ export class WindowComponent implements OnInit, OnDestroy {
   selectedUsers: ChatRoomUsers | undefined;
   roomUserNames: string = '';
   messageForm: FormGroup | undefined;
-  scrollMe: HTMLElement | null | undefined;
   isTyping: boolean | undefined = false;
   messageArray: ChatMessage[] = [];
   pageSize = 15;
@@ -50,11 +49,6 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.loadChatRoom();
     this.helperService.showGlobalSearch = false;
     this.helperService.showFooter = false;
-    setTimeout(() => {
-      this.scrollMe = document.getElementById('scrollme');
-      console.log('this.scrollme = ', this.scrollMe)
-      this.scrollToBottom();
-    }, 1000)
   }
 
   ngOnDestroy(): void {
@@ -98,10 +92,13 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
 
   loadChats(room: ChatRoom) {
-    console.log('room = ', room)
     this.chatRoomService.search(this.generateQuery(room.roomKey))
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(messagesRes => {
         if (messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
+
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 100)
       })
   }
 
@@ -117,6 +114,9 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.webSocketService.newMessageReceived().pipe(takeUntil(this.isComponentIsActive)).subscribe(message => {
       this.messageArray.push(message);
       this.isTyping = false;
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100)
     });
     this.webSocketService.receivedTyping().pipe(takeUntil(this.isComponentIsActive)).subscribe(message => {
       console.log('isTyping = ', message.isTyping);
@@ -152,9 +152,9 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
 
   scrollToBottom(): void {
-    if (!this.scrollMe) return;
-    this.scrollMe.scrollIntoView({ behavior: 'smooth' });
-    console.log('scrolled')
+    const scrollMe = document.getElementById('scrollme');
+    if (!scrollMe) return;
+    scrollMe.scroll(0, scrollMe.clientHeight);
   }
 
 }

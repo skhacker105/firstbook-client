@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { Contact } from '../models/contact.model';
 import { ServerResponse } from '../models/server-response.model';
+import { HelperService } from './helper.service';
 
 
 const domain = environment.api;
@@ -16,58 +17,61 @@ const rateContactEndpoint = domain + 'contact/rate/';
 const addToFavoritesEndpoint = domain + 'contact/addToFavorites/';
 const searchContactEndpoint = domain + 'contact/search';
 const contactCache$ = new Subject<boolean>();
+const logout$ = new Subject<boolean>();
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private helperService: HelperService) {
+    this.helperService.isUserLogged.subscribe(res => logout$.next(res));
+  }
 
   @HTTPCacheable({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   getSingleContact(id: string): Observable<ServerResponse<Contact>> {
     return this.http.get<ServerResponse<Contact>>(getSingleContactEndpoint + id);
   }
 
   @HTTPCacheBuster({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   createContact(payload: Contact): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(createContactEndpoint, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   editContact(id: string, payload: Contact): Observable<ServerResponse<Contact>> {
     return this.http.put<ServerResponse<Contact>>(editContactEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   deleteContact(id: string): Observable<ServerResponse<Contact>> {
     return this.http.delete<ServerResponse<Contact>>(deleteContactEndpoint + id);
   }
 
   @HTTPCacheBuster({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   rateContact(id: string, payload: object): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(rateContactEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   addToFavourites(id: string): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(addToFavoritesEndpoint + id, {});
   }
 
   @HTTPCacheable({
-    refresher: contactCache$
+    logoutEvent: logout$, refresher: contactCache$
   })
   search(query: string): Observable<ServerResponse<Contact[]>> {
     return this.http.get<ServerResponse<Contact[]>>(searchContactEndpoint + query);

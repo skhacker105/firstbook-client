@@ -7,6 +7,7 @@ import { Product } from '../models/product.model';
 import { ServerResponse } from '../models/server-response.model';
 import { Comment } from '../models/comment.model';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
+import { HelperService } from './helper.service';
 
 const domain = environment.api;
 const userProductEndpoint = domain + 'userproducts';
@@ -31,6 +32,7 @@ const editCommentEndpoint = domain + 'product/comment/edit/';
 const deleteCommentEndpoint = domain + 'product/comment/delete/';
 const productCache$ = new Subject<boolean>();
 const productCommentCache$ = new Subject<boolean>();
+const logout$ = new Subject<boolean>();
 
 
 @Injectable({
@@ -38,66 +40,68 @@ const productCommentCache$ = new Subject<boolean>();
 })
 export class ProductService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private helperService: HelperService) {
+    this.helperService.isUserLogged.subscribe(res => logout$.next(res));
+  }
 
   @HTTPCacheable({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   userProducts(): Observable<ServerResponse<string[]>> {
     return this.http.get<ServerResponse<string[]>>(userProductEndpoint);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   enableProduct(id: string): Observable<ServerResponse<Product>> {
     return this.http.get<ServerResponse<Product>>(enableProductEndpoint + id);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   disableProduct(id: string): Observable<ServerResponse<Product>> {
     return this.http.get<ServerResponse<Product>>(disableProductEndpoint + id);
   }
 
   @HTTPCacheable({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   getSingleProduct(id: string): Observable<ServerResponse<Product>> {
     return this.http.get<ServerResponse<Product>>(getSingleProductEndpoint + id);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   createProduct(payload: Product): Observable<ServerResponse<Product>> {
     return this.http.post<ServerResponse<Product>>(createProductEndpoint, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   editProduct(id: string, payload: Product): Observable<ServerResponse<Product>> {
     return this.http.put<ServerResponse<Product>>(editProductEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   deleteProduct(id: string): Observable<ServerResponse<Product>> {
     return this.http.delete<ServerResponse<Product>>(deleteProductEndpoint + id);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   rateProduct(id: string, payload: object): Observable<ServerResponse<Product>> {
     return this.http.post<ServerResponse<Product>>(rateProductEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   saveImage(product: Product, payload: ItemImage): Observable<ServerResponse<string>> {
     const profileData = new FormData();
@@ -109,14 +113,14 @@ export class ProductService {
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   deleteImage(pictureId: string): Observable<ServerResponse<any>> {
     return this.http.delete<ServerResponse<any>>(deleteImageEndpoint + pictureId);
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   saveMainImage(product: Product, payload: ItemImage): Observable<ServerResponse<any>> {
     const profileData = new FormData();
@@ -127,49 +131,49 @@ export class ProductService {
   }
 
   @HTTPCacheBuster({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   deleteMainImage(product: Product): Observable<ServerResponse<any>> {
     return this.http.delete<ServerResponse<any>>(deleteMainImageEndpoint + product._id);
   }
 
   @HTTPCacheable({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   getImage(imageId: string): Observable<ServerResponse<ItemImage>> {
     return this.http.get<ServerResponse<ItemImage>>(getImageEndpoint + imageId);
   }
 
   @HTTPCacheable({
-    refresher: productCache$
+    logoutEvent: logout$, refresher: productCache$
   })
   search(query: string): Observable<ServerResponse<string[]>> {
     return this.http.get<ServerResponse<string[]>>(searchProductEndpoint + query);
   }
 
   @HTTPCacheable({
-    refresher: productCommentCache$
+    logoutEvent: logout$, refresher: productCommentCache$
   })
   getComments(id: string, page: string): Observable<ServerResponse<Comment[]>> {
     return this.http.get<ServerResponse<Comment[]>>(getCommentEndpoint + `${id}/${page}`);
   }
 
   @HTTPCacheBuster({
-    refresher: productCommentCache$
+    logoutEvent: logout$, refresher: productCommentCache$
   })
   addComment(id: string, payload: Comment): Observable<ServerResponse<Comment>> {
     return this.http.post<ServerResponse<Comment>>(addCommentEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: productCommentCache$
+    logoutEvent: logout$, refresher: productCommentCache$
   })
   editComment(id: string, payload: Comment): Observable<ServerResponse<Comment>> {
     return this.http.put<ServerResponse<Comment>>(editCommentEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: productCommentCache$
+    logoutEvent: logout$, refresher: productCommentCache$
   })
   deleteComment(id: string): Observable<ServerResponse<object>> {
     return this.http.delete<ServerResponse<object>>(deleteCommentEndpoint + id);

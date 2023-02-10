@@ -13,7 +13,7 @@
         </mat-card-subtitle>
     </mat-card-header>
 
-    <mat-card-content class="window-messages" id="scrollme">
+    <mat-card-content class="window-messages" id="scrollme" #scrollme>
         <div class="messages-top-buffer"></div>
         <ng-container *ngFor="let message of messageArray">
             <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id">
@@ -23,8 +23,8 @@
                 <div timestamp>
                     {{ message.creationDate.toString() | commentTime }} ago
                 </div>
-                <div content>
-                    {{ message.message }}
+                <div content *ngIf="message">
+                    <app-string-message [message]="message" *ngIf="message.type === 'string'"></app-string-message>
                 </div>
             </app-chat-window>
             <!-- {{ message.message }} -->
@@ -34,8 +34,8 @@
     <form *ngIf="messageForm" [formGroup]="messageForm" (ngSubmit)="sendMessage()">
         <mat-card-actions class="window-action-container">
             <mat-form-field class="message-input">
-                <!-- <input matInput placeholder="" formControlName="message"> -->
-                <textarea rows="1" matInput formControlName="message"></textarea>
+                <textarea matInput formControlName="message" (keyup)="scrollToBottom()"
+                cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"></textarea>
             </mat-form-field>
 
             <button mat-mini-fab class="message-send" type="submit">

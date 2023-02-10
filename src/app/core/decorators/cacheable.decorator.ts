@@ -5,6 +5,7 @@ export const HTTPCacheable = (config?: ICacheableConfig): MethodDecorator => {
     return (() => {
         let result: any = {};
         config?.refresher?.subscribe(res => result = {} );
+        config?.logoutEvent?.subscribe(loggedIn => result = !loggedIn ? {} : result);
         return (target: Object, key: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
             const originalMethod = descriptor.value;
             descriptor.value = function (...args: any) {

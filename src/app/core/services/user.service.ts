@@ -14,6 +14,7 @@ import { Receipt } from '../models/receipt.model';
 import { environment } from 'src/environments/environment';
 import { ProductService } from './product.service';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
+import { HelperService } from './helper.service';
 
 const baseUrl = environment.api + 'user';
 const registerEndpoint = baseUrl + '/register';
@@ -26,6 +27,7 @@ const blockCommentsEndpoint = baseUrl + '/blockComments/';
 const unblockCommentsEndpoint = baseUrl + '/unlockComments/';
 const userSearchEndpoint = baseUrl + '/search';
 const userCache$ = new Subject<boolean>();
+const logout$ = new Subject<boolean>();
 
 @Injectable({
   providedIn: 'root'
@@ -41,10 +43,12 @@ export class UserService {
     'Business contacts', 'Personal Contacts', 'Hidden Contacts',
     'Family'].sort((a, b) => a > b ? 1 : -1);
 
-  constructor(private http: HttpClient, private productService: ProductService) { }
+  constructor(private http: HttpClient, private productService: ProductService, private helperService: HelperService) {
+    this.helperService.isUserLogged.subscribe(res => logout$.next(res));
+  }
 
   @HTTPCacheBuster({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   register(payload: object): Observable<ServerResponse<User>> {
     return this.http.post<ServerResponse<User>>(registerEndpoint, payload);
@@ -81,14 +85,14 @@ export class UserService {
 
 
   @HTTPCacheable({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   getProfile(username: string): Observable<ServerResponse<User>> {
     return this.http.get<ServerResponse<User>>(profileEndpoint + username);
   }
 
   @HTTPCacheBuster({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   updateProfile(payload: User): Observable<ServerResponse<any>> {
     return this.http.post<ServerResponse<string>>(updateProfileEndpoint, payload);
@@ -96,28 +100,28 @@ export class UserService {
 
 
   @HTTPCacheable({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   getPurchaseHistory(): Observable<ServerResponse<Receipt[]>> {
     return this.http.get<ServerResponse<Receipt[]>>(getPurchaseHistoryEndpoint);
   }
 
   @HTTPCacheBuster({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   changeAvatar(payload: object): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(changeAvatarEndpoint, payload);
   }
 
   @HTTPCacheBuster({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   blockComments(id: string): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(blockCommentsEndpoint + id, {});
   }
 
   @HTTPCacheBuster({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   unblockComments(id: string): Observable<ServerResponse<object>> {
     return this.http.post<ServerResponse<object>>(unblockCommentsEndpoint + id, {});
@@ -125,7 +129,7 @@ export class UserService {
 
 
   @HTTPCacheable({
-    refresher: userCache$
+    logoutEvent: logout$, refresher: userCache$
   })
   search(query: string): Observable<ServerResponse<User[]>> {
     return this.http.get<ServerResponse<User[]>>(userSearchEndpoint + query);
