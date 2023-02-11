@@ -1,0 +1,10 @@
+<div *ngIf="data" class="counter-container">
+    <span matSnackBarLabel>
+        Session timeout in {{ data | numberToTime}} <span class="time-format">(mm:ss)</span>
+    </span>
+    <span matSnackBarActions>
+        <button mat-mini-fab matSnackBarAction (click)="snackBarRef.dismissWithAction()">
+            <mat-icon>close</mat-icon>
+        </button>
+      </span>
+    </div>

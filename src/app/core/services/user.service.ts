@@ -64,6 +64,8 @@ export class UserService {
 
   logout() {
     this.userProducts = [];
+    this.helperService.clearSession();
+    this.helperService.isUserLogged.next(false);
   }
   getProducts() {
     return this.userProducts;

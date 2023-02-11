@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 // RXJS
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, map, mergeMap, Subject, switchMap, take, takeWhile, timer } from 'rxjs';
 
 // JWT Decoding
 import decode from 'jwt-decode';
@@ -17,7 +17,9 @@ export class HelperService {
   cartStatus = new Subject<string>();
   showGlobalSearch = true;
   showFooter = true;
-  pendingHttpCall=new BehaviorSubject<boolean>(false);
+  pendingHttpCall = new BehaviorSubject<boolean>(false);
+  sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
+  sessionEndingAlertLimit = 300; // seconds
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);
@@ -31,6 +33,15 @@ export class HelperService {
     try {
       const decoded: any = decode(this.getToken());
       return decoded.sub;
+    } catch (err) {
+      return undefined;
+    }
+  }
+
+  getExpiryTime(): Date | undefined {
+    try {
+      const decoded: any = decode(this.getToken());
+      return decoded.expiresIn;
     } catch (err) {
       return undefined;
     }
@@ -79,5 +90,38 @@ export class HelperService {
       hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
     }
     return ("0000000" + (hval >>> 0).toString(16));
+  }
+
+  statSessionWatch() {
+    const expiryTime = this.getExpiryTime();
+    if (expiryTime) {
+      const diff = (+expiryTime - Date.now()) / 1000;
+      this.waitTillAlertLimit(diff).pipe(
+        mergeMap(x => this.countDownAfterLimit(diff))
+      ).subscribe(tick => {
+        this.sessionTimeRemaining.next(tick);
+      });
+    }
+  }
+
+  waitTillAlertLimit(diff: number) {
+    const alertInTime = Math.ceil(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? 0 : diff - this.sessionEndingAlertLimit) * 1000;
+    return timer(alertInTime)
+      .pipe(
+        take(1),
+        takeWhile(d => this.isLoggedIn())
+      )
+  }
+
+  countDownAfterLimit(diff: number) {
+    let countLimit = Math.floor(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? diff : this.sessionEndingAlertLimit);
+    return timer(0, 1000)
+      .pipe(
+        take(countLimit+2),
+        takeWhile(d => this.isLoggedIn()),
+        map(tick => {
+          return countLimit - tick - 1;
+        })
+      );
   }
 }

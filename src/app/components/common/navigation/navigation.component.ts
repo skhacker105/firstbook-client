@@ -31,7 +31,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
   username: string | undefined;
   isLogged: boolean | undefined;
   isAdmin: boolean | undefined;
-  statusChecker: number | undefined;
   cartItems: number | undefined;
   isComponentIsActive = new Subject();
 
@@ -43,7 +42,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.statusChecker = window.setInterval(() => this.tick(), 600000);
     this.isLogged = this.helperService.isLoggedIn();
     // this.initForm();
     if (this.isLogged) {
@@ -70,8 +68,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.isComponentIsActive.complete()
-    window.clearInterval(this.statusChecker);
+    this.isComponentIsActive.complete();
     this.isLoggedSub$ ? this.isLoggedSub$.unsubscribe() : null;
     this.cartStatusSub$ ? this.cartStatusSub$.unsubscribe() : null;
   }
@@ -123,11 +120,16 @@ export class NavigationComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    this.helperService.isUserLogged
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(loggedIn => !loggedIn ? this.clearOnLogout() : null)
+    this.userService.logout();
+  }
+
+  clearOnLogout() {
     this.username = undefined;
     this.isAdmin = undefined;
     this.cartItems = undefined;
-    this.userService.logout();
-    this.helperService.clearSession();
-    this.helperService.isUserLogged.next(false);
+    this.isLogged = false;
   }
 }

@@ -7,6 +7,7 @@ import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/fo
 // Router
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { HelperService } from 'src/app/core/services/helper.service';
 
 // Services
 import { UserService } from '../../../core/services/user.service';
@@ -31,7 +32,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private helperService: HelperService
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.userService
       .login(this.loginForm.value)
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
+        this.helperService.statSessionWatch();
         this.router.navigate(['/home']);
       });
   }

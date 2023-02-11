@@ -1,0 +1,7 @@
+.counter-container {
+    display: flex;
+}
+
+.time-format {
+    color: gray;
+}

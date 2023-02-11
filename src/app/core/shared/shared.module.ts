@@ -20,6 +20,7 @@ import { IsIsbnDirective } from '../directives/is-isbn.directive';
 import { CommentTimePipe } from '../pipes/comment-time.pipe';
 import { ShortenStringPipe } from '../pipes/shorten-string.pipe';
 import { MatMenuModule } from '@angular/material/menu';
+import { NumberToTimePipe } from '../pipes/number-to-time.pipe'
 
 // Angular Material
 import { MatInputModule } from '@angular/material/input';
@@ -40,6 +41,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ContactComponent } from './contact/contact.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
@@ -57,6 +59,7 @@ import { OptionDialogComponent } from './option-dialog/option-dialog.component';
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { LoaderComponent } from './loader/loader.component';
+import { TimerCountDownComponent } from './timer-count-down/timer-count-down.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +71,7 @@ import { LoaderComponent } from './loader/loader.component';
     IsIsbnDirective,
     CommentTimePipe,
     ShortenStringPipe,
+    NumberToTimePipe,
     ContactComponent,
     ConfirmationDialogComponent,
     SanitizerUrlPipe,
@@ -82,7 +86,8 @@ import { LoaderComponent } from './loader/loader.component';
     OptionDialogComponent,
     ChatRoomComponent,
     ChatWindowComponent,
-    LoaderComponent
+    LoaderComponent,
+    TimerCountDownComponent
   ],
   imports: [
     CommonModule,
@@ -108,7 +113,8 @@ import { LoaderComponent } from './loader/loader.component';
     MatListModule,
     MatDividerModule,
     MatSidenavModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   exports: [
     CommentComponent,
@@ -119,6 +125,7 @@ import { LoaderComponent } from './loader/loader.component';
     IsIsbnDirective,
     CommentTimePipe,
     ShortenStringPipe,
+    NumberToTimePipe,
     ContactComponent,
     MatInputModule,
     MatIconModule,
@@ -152,7 +159,8 @@ import { LoaderComponent } from './loader/loader.component';
     MatSidenavModule,
     ChatWindowComponent,
     MatProgressSpinnerModule,
-    LoaderComponent
+    LoaderComponent,
+    MatSnackBarModule
   ]
 })
 export class SharedModule { }
