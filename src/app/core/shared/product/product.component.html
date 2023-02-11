@@ -4,20 +4,20 @@
     <mat-card-header class="product-header">
         <mat-card-title class="product-title">
             <p align="end">
-                <button mat-fab extended color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
+                <button mat-fab color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
                     (click)="goToEditDetail()">
                     <mat-icon>edit</mat-icon>
-                    Edit
+                    <!-- Edit -->
                 </button>
-                <button mat-fab extended color="none" class="product-disable" *ngIf="!product.disabled && isEditAllowed"
+                <button mat-fab color="none" class="product-disable" *ngIf="!product.disabled && isEditAllowed"
                     (click)="handleEnableDisable(false)">
                     <mat-icon>visibility_off</mat-icon>
-                    Disable
+                    <!-- Disable -->
                 </button>
-                <button mat-fab extended color="primary" class="product-enable" *ngIf="product.disabled && isEditAllowed"
+                <button mat-fab color="primary" class="product-enable" *ngIf="product.disabled && isEditAllowed"
                     (click)="handleEnableDisable(true)">
                     <mat-icon>visibility_on</mat-icon>
-                    Enable
+                    <!-- Enable -->
                 </button>
             </p>
 

@@ -64,7 +64,7 @@ export class AppComponent implements OnInit {
           this.alertRef.instance.data = remaining;
         }
       } else {
-        if (this.helperService.isLoggedIn() && counterStarted) {
+        if (counterStarted) {
           this.userService.logout();
           this.router.navigateByUrl('/');
         }
