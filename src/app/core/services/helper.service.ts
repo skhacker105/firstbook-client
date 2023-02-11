@@ -41,7 +41,7 @@ export class HelperService {
   getExpiryTime(): Date | undefined {
     try {
       const decoded: any = decode(this.getToken());
-      return decoded.expiresIn;
+      return decoded.exp;
     } catch (err) {
       return undefined;
     }
@@ -95,11 +95,10 @@ export class HelperService {
   statSessionWatch() {
     const expiryTime = this.getExpiryTime();
     if (expiryTime) {
-      const diff = (+expiryTime - Date.now()) / 1000;
+      const diff = +expiryTime - Date.now() / 1000;
       this.waitTillAlertLimit(diff).pipe(
         mergeMap(x => this.countDownAfterLimit(diff))
       ).subscribe(tick => {
-        console.log('tick = ', tick)
         this.sessionTimeRemaining.next(tick);
       });
     }
@@ -107,7 +106,7 @@ export class HelperService {
 
   waitTillAlertLimit(diff: number) {
     const alertInTime = Math.ceil(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? 0 : diff - this.sessionEndingAlertLimit) * 1000;
-    return timer(alertInTime)
+    return timer(alertInTime-1)
       .pipe(
         take(1),
         takeWhile(d => this.isLoggedIn())
@@ -116,12 +115,11 @@ export class HelperService {
 
   countDownAfterLimit(diff: number) {
     let countLimit = Math.floor(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? diff : this.sessionEndingAlertLimit);
-    console.log('countLimit = ', countLimit);
     return timer(0, 1000)
       .pipe(
-        takeWhile(d => this.isLoggedIn()),
+        takeWhile(tick => countLimit - tick >= 0),
         map(tick => {
-          return countLimit - tick - 1;
+          return countLimit - tick;
         })
       );
   }
