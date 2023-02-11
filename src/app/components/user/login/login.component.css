@@ -15,3 +15,7 @@
 .input-error {
   color: #ffc6d4;
 }
+
+.forgot-password::ng-deep .mdc-button__label {
+  color: #8ee700 ;
+}

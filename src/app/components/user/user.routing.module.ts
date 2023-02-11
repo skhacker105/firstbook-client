@@ -15,6 +15,7 @@ import { ReceiptsComponent } from './receipts/receipts.component';
 import { IsAnonymousGuard } from '../../core/guards/is-anonymous.guard';
 import { IsAuthenticatedGuard } from '../../core/guards/is-authenticated.guard';
 import { IsAdminOrProfileOwnerGuard } from 'src/app/core/guards/is-admin-or-profile-owner.guard';
+import { PasswordRecoveryComponent } from './password-recovery/password-recovery.component';
 
 const userRoutes: Routes = [
   {
@@ -51,6 +52,10 @@ const userRoutes: Routes = [
     path: 'login',
     canActivate: [IsAnonymousGuard],
     component: LoginComponent
+  },
+  {
+    path: 'passwordRecovery',
+    component: PasswordRecoveryComponent
   }
 ];
 

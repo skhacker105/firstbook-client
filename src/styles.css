@@ -97,6 +97,10 @@ app-product>mat-card {
   height: 100%;
 }
 
+.half-width {
+  width: 50%;
+}
+
 
 @media screen and (max-width: 600px) {
   .flexible-input {

@@ -12,13 +12,15 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ReceiptsComponent } from './receipts/receipts.component';
+import { PasswordRecoveryComponent } from './password-recovery/password-recovery.component';
 
 @NgModule({
   declarations: [
     RegisterComponent,
     LoginComponent,
     ProfileComponent,
-    ReceiptsComponent
+    ReceiptsComponent,
+    PasswordRecoveryComponent
   ],
   imports: [
     CommonModule,

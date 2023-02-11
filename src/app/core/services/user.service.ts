@@ -25,6 +25,9 @@ const getPurchaseHistoryEndpoint = baseUrl + '/purchaseHistory';
 const changeAvatarEndpoint = baseUrl + '/changeAvatar';
 const blockCommentsEndpoint = baseUrl + '/blockComments/';
 const unblockCommentsEndpoint = baseUrl + '/unlockComments/';
+const verifyAndSendOTPEndpoint = baseUrl + '/verifyAndSendOTP';
+const verifyOTPEndpoint = baseUrl + '/verifyOTP/';
+const resetPasswordEndpoint = baseUrl + '/resetPassword/';
 const userSearchEndpoint = baseUrl + '/search';
 const userCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
@@ -83,6 +86,18 @@ export class UserService {
         if (productsRes.data)
           this.userProducts = productsRes.data
       });
+  }
+
+  verifyAndSendOTP(payload: object): Observable<ServerResponse<string>> {
+    return this.http.post<ServerResponse<string>>(verifyAndSendOTPEndpoint, payload);
+  }
+
+  verifyOTP(userId: string, payload: object): Observable<ServerResponse<boolean>> {
+    return this.http.post<ServerResponse<boolean>>(verifyOTPEndpoint + userId, payload);
+  }
+
+  resetPassword(userId: string, payload: object): Observable<ServerResponse<boolean>> {
+    return this.http.post<ServerResponse<boolean>>(resetPasswordEndpoint + userId, payload);
   }
 
 
