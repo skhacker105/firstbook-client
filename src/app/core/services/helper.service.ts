@@ -19,7 +19,7 @@ export class HelperService {
   showFooter = true;
   pendingHttpCall = new BehaviorSubject<boolean>(false);
   sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
-  sessionEndingAlertLimit = 33; // seconds
+  sessionEndingAlertLimit = 300; // seconds
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);
