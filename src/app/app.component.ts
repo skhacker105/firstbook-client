@@ -45,6 +45,7 @@ export class AppComponent implements OnInit {
       }
       else if (!pending && ref) {
         ref.close();
+        ref = undefined;
       }
     });
   }
