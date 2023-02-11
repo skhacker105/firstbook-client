@@ -19,7 +19,7 @@ export class HelperService {
   showFooter = true;
   pendingHttpCall = new BehaviorSubject<boolean>(false);
   sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
-  sessionEndingAlertLimit = 300; // seconds
+  sessionEndingAlertLimit = 33; // seconds
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);
@@ -115,9 +115,9 @@ export class HelperService {
 
   countDownAfterLimit(diff: number) {
     let countLimit = Math.floor(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? diff : this.sessionEndingAlertLimit);
+    console.log('countLimit = ', countLimit);
     return timer(0, 1000)
       .pipe(
-        take(countLimit+2),
         takeWhile(d => this.isLoggedIn()),
         map(tick => {
           return countLimit - tick - 1;
