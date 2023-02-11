@@ -99,6 +99,7 @@ export class HelperService {
       this.waitTillAlertLimit(diff).pipe(
         mergeMap(x => this.countDownAfterLimit(diff))
       ).subscribe(tick => {
+        console.log('tick = ', tick)
         this.sessionTimeRemaining.next(tick);
       });
     }
