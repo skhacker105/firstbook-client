@@ -4,14 +4,23 @@
     <mat-card class="message">
         <mat-card-header class="message-header">
             <mat-card-title class="message-title">
-                    <div class="message-user-name">
-                        <ng-content *ngIf="!isMe" select="[username]"></ng-content>
-                        <ng-container *ngIf="isMe">ME</ng-container>
-                    </div>
-                    <div class="message-timestamp">
-                        <ng-content select="[timestamp]"></ng-content>
-                    </div>
-                
+                <div class="message-user-name">
+                    <ng-content *ngIf="!isMe" select="[username]"></ng-content>
+                    <ng-container *ngIf="isMe">ME</ng-container>
+                </div>
+                <div class="message-timestamp">
+                    <ng-content select="[timestamp]"></ng-content>
+                </div>
+                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action">
+                    <mat-icon class="message-action-trigger-icon">more_vert</mat-icon>
+                </button>
+                <mat-menu #menu1="matMenu">
+                    <button mat-menu-item routerLink="/user/login">
+                        <mat-icon>reply</mat-icon>
+                        <span>Reply</span>
+                    </button>
+                </mat-menu>
+
             </mat-card-title>
             <mat-card-subtitle>
                 <ng-content select="[replyOf]"></ng-content>

@@ -11,10 +11,12 @@
 }
 
 .message-header, .message-header::ng-deep .mat-mdc-card-header-text {
-    background-color: #5a66ab;
+    background-color: #111d3c;
     width: 100%;
-    color: white;
+    color: gray;
     padding-top: 0px;
+    padding-right: 0px;
+    padding-left: 1px;
 }
 
 .message-title, .message-title {
@@ -24,15 +26,28 @@
 
 .message-user-name {
     flex: 1 1 auto;
-    font-size: 14px;
+    font-size: 11px;
     text-align: left;
 }
 
 .message-timestamp {
-    font-size: 14px;
-    color: #acacac;
+    font-size: 8px;
     padding-left: 10px;
     white-space: nowrap !important;
+}
+
+.message-action {
+    height: 32px;
+    padding: 0px;
+    font-size: smaller;
+}
+
+.message-action-trigger-icon {
+    height: 14px;
+    padding: 0px;
+    font-size: smaller;
+    width: 8px;
+    
 }
 
 .align-right {

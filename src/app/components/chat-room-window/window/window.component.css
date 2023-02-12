@@ -19,7 +19,8 @@
 
 .room-name {
     width: 100%;
-    background-color: #c587bf;
+    background-color: #111d3c;
+    color: white;
 }
 
 .window-subtitle {
@@ -29,7 +30,7 @@
 }
 
 .window-messages {
-    background-color: #b743ac !important;
+    background-color: #111d3c  !important;
     flex: 1 1 auto;
     overflow-y: auto;
     height: 0px;
@@ -51,7 +52,7 @@
 .window-action-container {
     display: flex;
     width: 100%;
-    background-color: #3f51b5;
+    background-color: #111d3c;
 }
 
 .message-input {

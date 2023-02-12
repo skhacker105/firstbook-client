@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-chat-window',
@@ -7,4 +7,5 @@ import { Component, Input } from '@angular/core';
 })
 export class ChatWindowComponent {
   @Input() isMe = false;
+  @Output() selectForReply = new EventEmitter<void>();
 }
