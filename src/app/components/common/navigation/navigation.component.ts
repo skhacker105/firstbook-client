@@ -44,9 +44,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isLogged = this.helperService.isLoggedIn();
     // this.initForm();
-    if (this.isLogged) {
-      this.getCartSize();
-    }
+    // if (this.isLogged) {
+      // this.getCartSize();
+    // }
 
     this.isLoggedSub$ = this.helperService
       .isUserLogged
@@ -54,17 +54,17 @@ export class NavigationComponent implements OnInit, OnDestroy {
         this.isLogged = data;
       });
 
-    this.cartStatusSub$ = this.helperService
-      .cartStatus
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe((data) => {
-        if (data === 'add') {
-          this.cartItems ? this.cartItems++ : this.cartItems = 1;
-        } else if (data === 'remove') {
-          this.cartItems ? this.cartItems-- : this.cartItems = 0;
-        } else if (data === 'updateStatus') {
-          this.getCartSize();
-        }
-      });
+    // this.cartStatusSub$ = this.helperService
+    //   .cartStatus
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((data) => {
+    //     if (data === 'add') {
+    //       this.cartItems ? this.cartItems++ : this.cartItems = 1;
+    //     } else if (data === 'remove') {
+    //       this.cartItems ? this.cartItems-- : this.cartItems = 0;
+    //     } else if (data === 'updateStatus') {
+    //       this.getCartSize();
+    //     }
+    //   });
   }
 
   ngOnDestroy(): void {

@@ -58,11 +58,7 @@ export class UserService {
   }
 
   login(payload: object): Observable<ServerResponse<User>> {
-    return this.http.post<ServerResponse<User>>(loginEndpoint, payload)
-      .pipe(map(userRes => {
-        userRes.data ? this.loadUserProducts(userRes.data) : null;
-        return userRes;
-      }));
+    return this.http.post<ServerResponse<User>>(loginEndpoint, payload);
   }
 
   logout() {

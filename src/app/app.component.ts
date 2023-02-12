@@ -2,8 +2,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { AddEntity } from './core/models/add-entity.model';
+import { User } from './core/models/user.model';
 import { HelperService } from './core/services/helper.service';
 import { UserService } from './core/services/user.service';
 import { LoaderComponent } from './core/shared/loader/loader.component';
@@ -26,15 +28,22 @@ export class AppComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.helperService.isLoggedIn() && !this.userService.userProductsLoaded) {
-      let profile = this.helperService.getProfile();
-      if (profile) {
-        this.helperService.statSessionWatch();
-        this.userService.loadUserProducts(profile);
-      }
+    let profile = this.helperService.getProfile();
+    if (profile) {
+      this.helperService.statSessionWatch();
+      this.handleLoadProducts(profile);
     }
     this.handleHttpCallCounterChange();
     this.handleSessionTrackerSubscription();
+  }
+
+  handleLoadProducts(profile: User) {
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    ).subscribe(e => {
+      if (e.url.split('/')[1] === 'inventory')
+        this.userService.loadUserProducts(profile);
+    });
   }
 
   handleHttpCallCounterChange() {
