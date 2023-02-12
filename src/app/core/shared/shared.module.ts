@@ -60,6 +60,7 @@ import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { LoaderComponent } from './loader/loader.component';
 import { TimerCountDownComponent } from './timer-count-down/timer-count-down.component';
+import { ChatMessageTimePipe } from '../pipes/chat-message-time.pipe';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { TimerCountDownComponent } from './timer-count-down/timer-count-down.com
     CommentTimePipe,
     ShortenStringPipe,
     NumberToTimePipe,
+    ChatMessageTimePipe,
     ContactComponent,
     ConfirmationDialogComponent,
     SanitizerUrlPipe,
@@ -126,6 +128,7 @@ import { TimerCountDownComponent } from './timer-count-down/timer-count-down.com
     CommentTimePipe,
     ShortenStringPipe,
     NumberToTimePipe,
+    ChatMessageTimePipe,
     ContactComponent,
     MatInputModule,
     MatIconModule,

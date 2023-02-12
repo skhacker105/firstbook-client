@@ -21,7 +21,7 @@
                     {{ message.room ? getUserName(message.room) : '' }}
                 </div>
                 <div timestamp>
-                    {{ message.creationDate.toString() | commentTime }} ago
+                    {{ message.creationDate | chatMessageTime }}
                 </div>
                 <div content *ngIf="message">
                     <app-string-message [message]="message" *ngIf="message.type === 'string'"></app-string-message>
