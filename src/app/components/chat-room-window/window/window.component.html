@@ -35,6 +35,7 @@
         <mat-card-actions class="window-action-container">
             <mat-form-field class="message-input">
                 <textarea matInput formControlName="message" (keyup)="scrollToBottom()"
+                (keydown.enter)="handleEnterKey($event)"
                 cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"></textarea>
             </mat-form-field>
 

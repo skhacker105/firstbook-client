@@ -125,6 +125,9 @@ export class WindowComponent implements OnInit, OnDestroy {
   }
 
   sendMessage() {
+    if (!this.messageForm) return;
+    let messageControl = this.messageForm.controls['message'];
+    messageControl.setValue(messageControl.value.trim());
     if (this.messageForm?.invalid) return;
     this.webSocketService.sendMessage(this.messageForm?.value);
     this.initMessageForm(this.room);
@@ -154,7 +157,12 @@ export class WindowComponent implements OnInit, OnDestroy {
   scrollToBottom(): void {
     const scrollMe = document.getElementById('scrollme');
     if (!scrollMe) return;
-    scrollMe.scroll(0, scrollMe.clientHeight);
+    scrollMe.scroll(0, scrollMe.scrollHeight);
+  }
+
+  handleEnterKey(e: any) {
+    e.preventDefault();
+    this.sendMessage();
   }
 
 }
