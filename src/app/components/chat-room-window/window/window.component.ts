@@ -134,6 +134,7 @@ export class WindowComponent implements OnInit, OnDestroy {
     if (this.messageForm?.invalid) return;
     this.webSocketService.sendMessage(this.messageForm?.value);
     this.initMessageForm(this.room);
+    this.chatRoomService.resetChatMessageCache();
   }
 
   accumulateUserNames(roomUsers: ChatRoomUsers): string {
@@ -183,6 +184,12 @@ export class WindowComponent implements OnInit, OnDestroy {
   updateFormRepyOfs() {
     let replyIds= this.replyOf.map(m => m._id);
     this.messageForm?.controls['replyOf'].setValue(replyIds)
+  }
+
+  handleDeleteMessage(message: ChatMessage) {
+    this.chatRoomService.deleteChatMessage(message._id).subscribe(deletedMessage => {
+      message.isDeleted = true;
+    });
   }
 
 }

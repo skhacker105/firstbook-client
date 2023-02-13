@@ -46,8 +46,10 @@
 </mat-card>
 
 <ng-template #messageProjection let-message="message" let-isReplyOf="isReplyOf" let-hideReplyAction="hideReplyAction">
-    <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf" [hideReplyAction]="hideReplyAction"
-        (selectForReply)="handleReplyOF(message)" (doNotUserForReply)="handleRemoveReplyOF(message)">
+    <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf"
+        [hideReplyAction]="hideReplyAction" [isDeleted]="message.isDeleted"
+        (selectForReply)="handleReplyOF(message)" (deleteMessage)="handleDeleteMessage(message)"
+        (doNotUserForReply)="handleRemoveReplyOF(message)">
         <div username>
             {{ message.room ? getUserName(message.room) : '' }}
         </div>

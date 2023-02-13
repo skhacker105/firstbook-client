@@ -5,7 +5,11 @@
         'message-disabled': isReplyOf
     }">
 
-        <mat-card-header class="message-header">
+        <mat-card-content *ngIf="isDeleted" class="deleted-message">
+            <mat-icon>info</mat-icon> Message was deleted
+        </mat-card-content>
+
+        <mat-card-header *ngIf="!isDeleted" class="message-header">
             <mat-card-title class="message-title">
 
                 <!--  Message User -->
@@ -22,7 +26,8 @@
                 </div>
 
                 <!-- Action 3 dots -->
-                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action" *ngIf="!isReplyOf && !hideReplyAction">
+                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action"
+                    *ngIf="!isReplyOf && !hideReplyAction">
                     <mat-icon class="message-action-trigger-icon">more_vert</mat-icon>
                 </button>
                 <mat-menu #menu1="matMenu" class="message-action-reply">
@@ -30,11 +35,15 @@
                         <mat-icon class="reply-icon">reply</mat-icon>
                         <span class="reply-text">Reply</span>
                     </button>
+                    <button mat-menu-item (click)="deleteMessage.emit()" class="reply" *ngIf="isMe">
+                        <mat-icon class="reply-icon">delete</mat-icon>
+                        <span class="reply-text">Delete</span>
+                    </button>
                 </mat-menu>
 
                 <!-- Remove from reply list -->
-                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action" *ngIf="isReplyOf && !hideReplyAction"
-                    (click)="doNotUserForReply.emit()">
+                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action"
+                    *ngIf="isReplyOf && !hideReplyAction" (click)="doNotUserForReply.emit()">
                     <mat-icon class="message-action-trigger-icon">delete_outline</mat-icon>
                 </button>
 
@@ -44,15 +53,17 @@
             </mat-card-subtitle>
         </mat-card-header>
 
-        <mat-card-content class="reply-of">
+        <mat-card-content *ngIf="!isDeleted" class="reply-of">
             <ng-content select="replyOf"></ng-content>
         </mat-card-content>
 
-        <mat-card-content class="message-content" [ngClass]="{
+        <mat-card-content *ngIf="!isDeleted" class="message-content" [ngClass]="{
             'message-content-disabled': isReplyOf
         }">
             <ng-content select="[content]"></ng-content>
         </mat-card-content>
 
     </mat-card>
+
+
 </div>

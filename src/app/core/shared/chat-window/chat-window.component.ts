@@ -9,6 +9,8 @@ export class ChatWindowComponent {
   @Input() isMe = false;
   @Input() isReplyOf = false;
   @Input() hideReplyAction = false;
+  @Input() isDeleted = false;
   @Output() selectForReply = new EventEmitter<void>();
   @Output() doNotUserForReply = new EventEmitter<void>();
+  @Output() deleteMessage = new EventEmitter<void>();
 }

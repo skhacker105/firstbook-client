@@ -16,7 +16,9 @@ const addChatRoomEndpoint = domain + 'chat/add';
 const editChatRoomEndpoint = domain + 'chat/edit/';
 const deleteChatRoomEndpoint = domain + 'chat/delete/';
 const undeleteChatRoomEndpoint = domain + 'chat/undelete/';
+const deleteChatMessageEndpoint = domain + 'chat/message/';
 const chatRoomCache$ = new Subject<boolean>();
+const chatMessageCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
 
 @Injectable({
@@ -99,8 +101,22 @@ export class ChatRoomService {
     return this.http.delete<ServerResponse<ChatRoom>>(undeleteChatRoomEndpoint + roomId);
   }
 
+  resetChatMessageCache(){
+    chatMessageCache$.next(true);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: chatMessageCache$
+  })
   search(query: string): Observable<ServerResponse<ChatMessage[]>> {
     return this.http.get<ServerResponse<ChatMessage[]>>(getChatRoomMessagesEndpoint + query);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: chatMessageCache$
+  })
+  deleteChatMessage(messageId: string): Observable<ServerResponse<ChatMessage>> {
+    return this.http.delete<ServerResponse<ChatMessage>>(deleteChatMessageEndpoint + messageId);
   }
 }
 

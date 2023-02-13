@@ -20,7 +20,8 @@ export class ChatMessage {
         public room?: ChatRoom,
         public replyOf?: ChatMessage[],
         public isTyping?: boolean,
-        public error?: any
+        public error?: any,
+        public isDeleted?: boolean
     ) {}
 }
 

@@ -82,13 +82,12 @@
     font-size: 15px;
 }
 
-.reply {
-    height: 18px;
-    padding-right: 0px;
-    width: 77px;
-    min-height: 0px;
-}
 
 .reply-of {
+    color: gray;
+}
+
+.deleted-message {
+    background-color: #404040;
     color: gray;
 }
