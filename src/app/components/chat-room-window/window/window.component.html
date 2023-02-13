@@ -16,18 +16,17 @@
     <mat-card-content class="window-messages" id="scrollme" #scrollme>
         <div class="messages-top-buffer"></div>
         <ng-container *ngFor="let message of messageArray">
-            <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id">
-                <div username>
-                    {{ message.room ? getUserName(message.room) : '' }}
-                </div>
-                <div timestamp>
-                    {{ message.creationDate | chatMessageTime }}
-                </div>
-                <div content *ngIf="message">
-                    <app-string-message [message]="message" *ngIf="message.type === 'string'"></app-string-message>
-                </div>
-            </app-chat-window>
-            <!-- {{ message.message }} -->
+            <ng-template [ngTemplateOutlet]="messageProjection" [ngTemplateOutletContext]="{
+                message: message, isReplyOf: false
+            }"></ng-template>
+        </ng-container>
+    </mat-card-content>
+
+    <mat-card-content class="window-replyof" *ngIf="replyOf.length > 0">
+        <ng-container *ngFor="let message of replyOf">
+            <ng-template [ngTemplateOutlet]="messageProjection" [ngTemplateOutletContext]="{
+                message: message, isReplyOf: true
+            }"></ng-template>
         </ng-container>
     </mat-card-content>
 
@@ -35,8 +34,8 @@
         <mat-card-actions class="window-action-container">
             <mat-form-field class="message-input">
                 <textarea matInput formControlName="message" (keyup)="scrollToBottom()"
-                (keydown.enter)="handleEnterKey($event)"
-                cdkTextareaAutosize cdkAutosizeMinRows="1" cdkAutosizeMaxRows="6"></textarea>
+                    (keydown.enter)="handleEnterKey($event)" cdkTextareaAutosize cdkAutosizeMinRows="1"
+                    cdkAutosizeMaxRows="6"></textarea>
             </mat-form-field>
 
             <button mat-mini-fab class="message-send" type="submit">
@@ -45,3 +44,25 @@
         </mat-card-actions>
     </form>
 </mat-card>
+
+<ng-template #messageProjection let-message="message" let-isReplyOf="isReplyOf" let-hideReplyAction="hideReplyAction">
+    <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf" [hideReplyAction]="hideReplyAction"
+        (selectForReply)="handleReplyOF(message)" (doNotUserForReply)="handleRemoveReplyOF(message)">
+        <div username>
+            {{ message.room ? getUserName(message.room) : '' }}
+        </div>
+        <div replyOf>
+            <ng-container *ngFor="let reply of message.replyOf">
+                <ng-template [ngTemplateOutlet]="messageProjection" [ngTemplateOutletContext]="{
+                message: reply, isReplyOf: true, hideReplyAction: true
+            }"></ng-template>
+            </ng-container>
+        </div>
+        <div timestamp>
+            {{ message.creationDate | chatMessageTime }}
+        </div>
+        <div content *ngIf="message">
+            <app-string-message [message]="message" *ngIf="message.type === 'string'"></app-string-message>
+        </div>
+    </app-chat-window>
+</ng-template>

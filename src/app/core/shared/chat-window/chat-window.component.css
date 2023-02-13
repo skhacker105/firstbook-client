@@ -10,13 +10,18 @@
     margin-bottom: 5px;
 }
 
+.message-disabled {
+    width: 100%;
+    max-width: 100%;
+    opacity: 0.6;
+}
+
 .message-header, .message-header::ng-deep .mat-mdc-card-header-text {
     background-color: #111d3c;
     width: 100%;
     color: gray;
     padding-top: 0px;
     padding-right: 0px;
-    padding-left: 1px;
 }
 
 .message-title, .message-title {
@@ -46,7 +51,6 @@
     height: 14px;
     padding: 0px;
     font-size: smaller;
-    width: 8px;
     
 }
 
@@ -57,4 +61,34 @@
 .message-content {
     text-align: justify;
     padding: 10px;
+}
+
+.message-content-disabled {
+    background-color: #111d3c;
+    color: #a0a0a0;
+}
+
+.message-action-reply {
+    width: 100px;
+}
+
+.reply-icon {
+    font-size: 15px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.reply-text {
+    font-size: 15px;
+}
+
+.reply {
+    height: 18px;
+    padding-right: 0px;
+    width: 77px;
+    min-height: 0px;
+}
+
+.reply-of {
+    color: gray;
 }

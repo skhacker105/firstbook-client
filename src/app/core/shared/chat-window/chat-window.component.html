@@ -1,25 +1,42 @@
 <div class="message-container" [ngClass]="{
     'align-right': isMe
 }">
-    <mat-card class="message">
+    <mat-card class="message" [ngClass]="{
+        'message-disabled': isReplyOf
+    }">
+
         <mat-card-header class="message-header">
             <mat-card-title class="message-title">
-                <div class="message-user-name">
+
+                <!--  Message User -->
+                <div class="message-user-name" [ngClass]="{
+                    'message-disabled': isReplyOf
+                }">
                     <ng-content *ngIf="!isMe" select="[username]"></ng-content>
                     <ng-container *ngIf="isMe">ME</ng-container>
                 </div>
+
+                <!--  Message TimeStamp -->
                 <div class="message-timestamp">
                     <ng-content select="[timestamp]"></ng-content>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action">
+
+                <!-- Action 3 dots -->
+                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action" *ngIf="!isReplyOf && !hideReplyAction">
                     <mat-icon class="message-action-trigger-icon">more_vert</mat-icon>
                 </button>
-                <mat-menu #menu1="matMenu">
-                    <button mat-menu-item routerLink="/user/login">
-                        <mat-icon>reply</mat-icon>
-                        <span>Reply</span>
+                <mat-menu #menu1="matMenu" class="message-action-reply">
+                    <button mat-menu-item (click)="selectForReply.emit()" class="reply">
+                        <mat-icon class="reply-icon">reply</mat-icon>
+                        <span class="reply-text">Reply</span>
                     </button>
                 </mat-menu>
+
+                <!-- Remove from reply list -->
+                <button mat-icon-button [matMenuTriggerFor]="menu1" class="message-action" *ngIf="isReplyOf && !hideReplyAction"
+                    (click)="doNotUserForReply.emit()">
+                    <mat-icon class="message-action-trigger-icon">delete_outline</mat-icon>
+                </button>
 
             </mat-card-title>
             <mat-card-subtitle>
@@ -27,7 +44,13 @@
             </mat-card-subtitle>
         </mat-card-header>
 
-        <mat-card-content class="message-content">
+        <mat-card-content class="reply-of">
+            <ng-content select="replyOf"></ng-content>
+        </mat-card-content>
+
+        <mat-card-content class="message-content" [ngClass]="{
+            'message-content-disabled': isReplyOf
+        }">
             <ng-content select="[content]"></ng-content>
         </mat-card-content>
 

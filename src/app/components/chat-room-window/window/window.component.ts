@@ -31,6 +31,7 @@ export class WindowComponent implements OnInit, OnDestroy {
   pageSize = 15;
   currentPage = 1;
   isComponentIsActive = new Subject();
+  replyOf: ChatMessage[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -62,8 +63,10 @@ export class WindowComponent implements OnInit, OnDestroy {
       roomKey: new FormControl(room?.roomKey, Validators.required),
       room: new FormControl(room?._id, Validators.required),
       message: new FormControl('', Validators.required),
-      type: new FormControl(RoomTypes.stringMessage, Validators.required)
+      type: new FormControl(RoomTypes.stringMessage, Validators.required),
+      replyOf: new FormControl([] as string[])
     });
+    this.replyOf = [];
   }
 
   loadChatRoom() {
@@ -163,6 +166,23 @@ export class WindowComponent implements OnInit, OnDestroy {
   handleEnterKey(e: any) {
     e.preventDefault();
     this.sendMessage();
+  }
+
+  handleReplyOF(message: ChatMessage) {
+    if (!this.replyOf.some(m => m._id === message._id)) {
+      this.replyOf.unshift(message);
+      this.updateFormRepyOfs();
+    }
+  }
+
+  handleRemoveReplyOF(message: ChatMessage) {
+    this.replyOf = this.replyOf.filter(m => m._id !== message._id);
+    this.updateFormRepyOfs();
+  }
+
+  updateFormRepyOfs() {
+    let replyIds= this.replyOf.map(m => m._id);
+    this.messageForm?.controls['replyOf'].setValue(replyIds)
   }
 
 }

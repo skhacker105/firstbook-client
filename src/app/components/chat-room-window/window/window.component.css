@@ -49,6 +49,12 @@
     }
 }
 
+.window-replyof {
+    background-color: #111d3c  !important;
+    border-top: solid 1px #1f3368;;
+    color: gray;
+}
+
 .window-action-container {
     display: flex;
     width: 100%;

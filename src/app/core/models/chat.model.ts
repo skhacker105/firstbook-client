@@ -18,7 +18,7 @@ export class ChatMessage {
         public type: string,
         public creationDate: Date,
         public room?: ChatRoom,
-        public replyOf?: string[],
+        public replyOf?: ChatMessage[],
         public isTyping?: boolean,
         public error?: any
     ) {}

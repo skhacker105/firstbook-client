@@ -7,5 +7,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class ChatWindowComponent {
   @Input() isMe = false;
+  @Input() isReplyOf = false;
+  @Input() hideReplyAction = false;
   @Output() selectForReply = new EventEmitter<void>();
+  @Output() doNotUserForReply = new EventEmitter<void>();
 }
