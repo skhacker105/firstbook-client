@@ -49,7 +49,8 @@
 <ng-template #messageProjection let-message="message" let-isReplyOf="isReplyOf" let-hideReplyAction="hideReplyAction">
     <app-chat-window [id]="message._id" [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf"
         [hideReplyAction]="hideReplyAction" [isDeleted]="message.isDeleted" (selectForReply)="handleReplyOF(message)"
-        (deleteMessage)="handleDeleteMessage(message)" (doNotUserForReply)="handleRemoveReplyOF(message)">
+        (deleteMessage)="handleDeleteMessage(message)" (doNotUserForReply)="handleRemoveReplyOF(message)"
+        (gotoMessage)="scrollToMessage(message)">
         <div username>
             {{ message.room ? getUserName(message.room) : '' }}
         </div>

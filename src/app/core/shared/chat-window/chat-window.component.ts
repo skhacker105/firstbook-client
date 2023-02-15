@@ -13,4 +13,5 @@ export class ChatWindowComponent {
   @Output() selectForReply = new EventEmitter<void>();
   @Output() doNotUserForReply = new EventEmitter<void>();
   @Output() deleteMessage = new EventEmitter<void>();
+  @Output() gotoMessage = new EventEmitter<void>();
 }

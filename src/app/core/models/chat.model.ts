@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import { User } from "./user.model";
 
 export class ChatRoom {
@@ -7,7 +8,7 @@ export class ChatRoom {
         public name?: string,
         public user?: User,
         public inactive?: boolean
-    ){}
+    ) { }
 }
 
 export class ChatMessage {
@@ -22,7 +23,7 @@ export class ChatMessage {
         public isTyping?: boolean,
         public error?: any,
         public isDeleted?: boolean
-    ) {}
+    ) { }
 }
 
 export class ChatRoomUsers {
@@ -34,5 +35,5 @@ export class ChatRoomUsers {
         public name?: string,
         public profile?: User,
         public inactive?: boolean
-    ){}
+    ) { }
 }

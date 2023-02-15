@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { ChatMessage, ChatRoom, ChatRoomUsers } from 'src/app/core/models/chat.model';
 import { User } from 'src/app/core/models/user.model';
@@ -41,7 +42,8 @@ export class WindowComponent implements OnInit, OnDestroy {
     private helperService: HelperService,
     private fb: FormBuilder,
     private webSocketService: WebsocketService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -178,6 +180,19 @@ export class WindowComponent implements OnInit, OnDestroy {
     const scrollMe = document.getElementById('scrollme');
     if (!scrollMe) return;
     scrollMe.scroll(0, scrollMe.scrollHeight);
+  }
+
+  scrollToMessage(message: ChatMessage) {
+    let loadedMessage = this.messageArray.find(m => m._id===message._id);
+    if(!loadedMessage) return this.toastr.error('This message is not loaded in this chat room yet. Scroll top to load more data.');
+
+    const messageDOMElement = document.getElementById(message._id);
+    messageDOMElement?.scrollIntoView({ behavior: 'smooth'});
+    messageDOMElement?.classList.add('message-blink');
+    setTimeout(() => {
+      messageDOMElement?.classList.remove('message-blink');
+    }, 3000);
+    return;
   }
 
   handleEnterKey(e: any) {
