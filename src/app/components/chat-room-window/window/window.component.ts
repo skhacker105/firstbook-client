@@ -101,7 +101,8 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadChats(room: ChatRoom) {
     this.chatRoomService.search(this.generateQuery(room.roomKey))
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(messagesRes => {
-        if (messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
+        const newData = messagesRes.data ? JSON.parse(JSON.stringify(messagesRes.data)) : []
+        if (newData) this.messageArray = newData.reverse().concat(this.messageArray);
       })
   }
 
