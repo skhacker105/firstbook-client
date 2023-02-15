@@ -74,7 +74,7 @@ export class UserService {
     return this.userProducts.find(p => p === productId) ? true : false
   }
 
-  loadUserProducts(user: User) {
+  loadUserProducts() {
     this.productService
       .userProducts()
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(productsRes => {

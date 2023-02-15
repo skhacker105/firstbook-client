@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,7 +17,7 @@ enum RoomTypes {
   templateUrl: './window.component.html',
   styleUrls: ['./window.component.css']
 })
-export class WindowComponent implements OnInit, OnDestroy {
+export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   id: string | undefined | null;
   room: ChatRoom | undefined;
@@ -56,6 +56,10 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.helperService.showGlobalSearch = true;
     this.helperService.showFooter = true;
     this.isComponentIsActive.complete()
+  }
+  
+  ngAfterViewChecked(): void {
+    this.scrollToBottom();
   }
 
   initMessageForm(room?: ChatRoom) {
@@ -98,10 +102,6 @@ export class WindowComponent implements OnInit, OnDestroy {
     this.chatRoomService.search(this.generateQuery(room.roomKey))
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(messagesRes => {
         if (messagesRes.data) this.messageArray = messagesRes.data.reverse().concat(this.messageArray);
-
-        setTimeout(() => {
-          this.scrollToBottom();
-        }, 100)
       })
   }
 

@@ -1,0 +1,18 @@
+<mat-card>
+    <mat-card-header>
+        <mat-form-field class="flexible-input">
+            <mat-label>Regitered Users</mat-label>
+            <input type="search" matInput placeholder="admin" [formControl]="user" [matAutocomplete]="auto">
+        
+            <mat-icon matSuffix *ngIf="user?.value" (click)="user.setValue('')">clear</mat-icon>
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="getOptionText"
+                (optionSelected)="handleUserSelection()">
+                <mat-option *ngFor="let option of userChangeSub$ | async" [value]="option">
+                    {{ option.username }}
+                </mat-option>
+            </mat-autocomplete>
+        
+            <mat-hint>Search by name, username and phone numbers</mat-hint>
+        </mat-form-field>
+    </mat-card-header>
+</mat-card>

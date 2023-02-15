@@ -4,6 +4,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { AddEntity } from 'src/app/core/models/add-entity.model';
 import { HelperService } from 'src/app/core/services/helper.service';
 import { ProductService } from 'src/app/core/services/product.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-inventory-store',
@@ -21,17 +22,19 @@ export class InventoryStoreComponent implements OnInit, OnDestroy {
   maxPages = 8;
   querySub$: Subscription | undefined;
   routeChangeSub$: Subscription | undefined;
-  addEntity: AddEntity = { url: '/inventory/create'};
+  addEntity: AddEntity = { url: '/inventory/create' };
   isComponentIsActive = new Subject();
 
   constructor(
     private helperService: HelperService,
     private route: ActivatedRoute,
-    private productService: ProductService
-    ) {}
+    private productService: ProductService,
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
     this.calculateBreakpoint(window.innerWidth);
+    this.userService.loadUserProducts();
     this.routeChangeSub$ = this.route.params.pipe(takeUntil(this.isComponentIsActive)).subscribe((params) => {
       this.currentQuery = params['query'] ? params['query'] : '';
       this.initRequest(this.currentQuery);
@@ -66,7 +69,8 @@ export class InventoryStoreComponent implements OnInit, OnDestroy {
     if (query === 'default') {
       return `?sort={"firstName":1}`
         + `&skip=${(this.currentPage - 1) * this.pageSize}`
-        + `&limit=${this.pageSize}`;
+        + `&limit=${this.pageSize}`
+        + (!this.helperService.isAdmin() ? `&createdBy=${this.helperService.getProfile()?.id}` : '');
     }
 
     return `?query={"searchTerm":"${query}"}`

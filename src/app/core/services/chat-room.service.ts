@@ -17,6 +17,7 @@ const editChatRoomEndpoint = domain + 'chat/edit/';
 const deleteChatRoomEndpoint = domain + 'chat/delete/';
 const undeleteChatRoomEndpoint = domain + 'chat/undelete/';
 const deleteChatMessageEndpoint = domain + 'chat/message/';
+const shareProductWithUserEndpoint = domain + 'chat/shareProductWithUser/';
 const chatRoomCache$ = new Subject<boolean>();
 const chatMessageCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
@@ -101,11 +102,15 @@ export class ChatRoomService {
     return this.http.delete<ServerResponse<ChatRoom>>(undeleteChatRoomEndpoint + roomId);
   }
 
+  resetChatroomCache() {
+    chatRoomCache$.next(true);
+  }
+
   resetChatMessageCache(){
     chatMessageCache$.next(true);
   }
 
-  @HTTPCacheBuster({
+  @HTTPCacheable({
     logoutEvent: logout$, refresher: chatMessageCache$
   })
   search(query: string): Observable<ServerResponse<ChatMessage[]>> {
@@ -117,6 +122,13 @@ export class ChatRoomService {
   })
   deleteChatMessage(messageId: string): Observable<ServerResponse<ChatMessage>> {
     return this.http.delete<ServerResponse<ChatMessage>>(deleteChatMessageEndpoint + messageId);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: chatMessageCache$
+  })
+  shareProductWithUser(id: string, payload: any): Observable<ServerResponse<ChatMessage>> {
+    return this.http.post<ServerResponse<ChatMessage>>(shareProductWithUserEndpoint + id, payload);
   }
 }
 

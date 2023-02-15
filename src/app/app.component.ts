@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
       filter((e): e is NavigationEnd => e instanceof NavigationEnd)
     ).subscribe(e => {
       if (e.url.split('/')[1] === 'inventory')
-        this.userService.loadUserProducts(profile);
+        this.userService.loadUserProducts();
     });
   }
 

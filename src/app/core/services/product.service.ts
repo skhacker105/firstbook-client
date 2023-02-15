@@ -30,6 +30,7 @@ const getCommentEndpoint = domain + 'product/comment/';
 const addCommentEndpoint = domain + 'product/comment/add/';
 const editCommentEndpoint = domain + 'product/comment/edit/';
 const deleteCommentEndpoint = domain + 'product/comment/delete/';
+
 const productCache$ = new Subject<boolean>();
 const productCommentCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
