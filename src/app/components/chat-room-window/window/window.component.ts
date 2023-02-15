@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,7 +17,7 @@ enum RoomTypes {
   templateUrl: './window.component.html',
   styleUrls: ['./window.component.css']
 })
-export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class WindowComponent implements OnInit, OnDestroy {
 
   id: string | undefined | null;
   room: ChatRoom | undefined;
@@ -30,8 +30,10 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
   messageArray: ChatMessage[] = [];
   pageSize = 15;
   currentPage = 1;
+  total = 0;
   isComponentIsActive = new Subject();
   replyOf: ChatMessage[] = [];
+  scrollHeight = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,16 +52,19 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loadChatRoom();
     this.helperService.showGlobalSearch = false;
     this.helperService.showFooter = false;
+    this.helperService.pendingHttpCall
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(res => {
+        if (!res) setTimeout(() => {
+          this.scrollToBottom();
+        }, 100);
+      });
   }
 
   ngOnDestroy(): void {
     this.helperService.showGlobalSearch = true;
     this.helperService.showFooter = true;
     this.isComponentIsActive.complete()
-  }
-  
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
   }
 
   initMessageForm(room?: ChatRoom) {
@@ -77,7 +82,8 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (!this.id) return;
 
     this.chatRoomService.getSingle(this.id)
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe(roomRes => {
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(roomRes => {
         if (!roomRes.data || !this.loginProfile) return;
         roomRes.data.user = this.loginProfile;
         this.room = roomRes.data;
@@ -99,11 +105,20 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   loadChats(room: ChatRoom) {
+    let currentTopNode = this.messageArray.length >= 0 ? this.messageArray[0] : undefined;
     this.chatRoomService.search(this.generateQuery(room.roomKey))
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(messagesRes => {
-        const newData = messagesRes.data ? JSON.parse(JSON.stringify(messagesRes.data)) : []
-        if (newData) this.messageArray = newData.reverse().concat(this.messageArray);
+        const newData: ChatMessage[] = messagesRes.data ? JSON.parse(JSON.stringify(messagesRes.data)) : []
+        if (newData) newData.forEach(data => this.messageArray.unshift(data))
+        this.total = messagesRes.itemsCount ? messagesRes.itemsCount : 0;
+        setTimeout(() => currentTopNode ? document.getElementById(currentTopNode._id)?.scrollIntoView() : null, 150);
       })
+  }
+
+  loadPreviousMessages() {
+    if (!this.room) return;
+    this.currentPage += 1;
+    this.loadChats(this.room);
   }
 
   generateQuery(query: string): string {
@@ -183,7 +198,7 @@ export class WindowComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   updateFormRepyOfs() {
-    let replyIds= this.replyOf.map(m => m._id);
+    let replyIds = this.replyOf.map(m => m._id);
     this.messageForm?.controls['replyOf'].setValue(replyIds)
   }
 

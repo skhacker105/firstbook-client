@@ -5,11 +5,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-// Components
-import { CommentComponent } from './comment/comment.component';
-import { CartComponent } from './cart/cart.component';
-import { BookComponent } from './book/book.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 // Directives
 import { MustMatchDirective } from '../directives/must-match.directive';
@@ -19,7 +17,6 @@ import { IsIsbnDirective } from '../directives/is-isbn.directive';
 // Pipes
 import { CommentTimePipe } from '../pipes/comment-time.pipe';
 import { ShortenStringPipe } from '../pipes/shorten-string.pipe';
-import { MatMenuModule } from '@angular/material/menu';
 import { NumberToTimePipe } from '../pipes/number-to-time.pipe'
 
 // Angular Material
@@ -43,11 +40,15 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
+
+// Components
+import { CommentComponent } from './comment/comment.component';
+import { CartComponent } from './cart/cart.component';
+import { BookComponent } from './book/book.component';
 import { ContactComponent } from './contact/contact.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { SanitizerUrlPipe } from '../pipes/sanitizer-url.pipe';
 import { PreviewComponent } from './preview/preview.component';
-import { CarouselModule } from 'ngx-owl-carousel-o';
 import { InputDialogComponent } from './input-dialog/input-dialog.component';
 import { ProductComponent } from './product/product.component';
 import { ProductSpecificationComponent } from './product-specification/product-specification.component';
@@ -118,7 +119,8 @@ import { UserSearchComponent } from './user-search/user-search.component';
     MatDividerModule,
     MatSidenavModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    InfiniteScrollModule
   ],
   exports: [
     CommentComponent,
@@ -166,7 +168,8 @@ import { UserSearchComponent } from './user-search/user-search.component';
     MatProgressSpinnerModule,
     LoaderComponent,
     MatSnackBarModule,
-    UserSearchComponent
+    UserSearchComponent,
+    InfiniteScrollModule
   ]
 })
 export class SharedModule { }

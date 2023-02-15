@@ -43,6 +43,10 @@
     flex: 1 1 auto;
 }
 
+.window-load-more {
+    color: white;
+}
+
 @keyframes a {
     to {
         background-position: 0 -200%

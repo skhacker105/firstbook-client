@@ -13,12 +13,13 @@
         </mat-card-subtitle>
     </mat-card-header>
 
-    <mat-card-content class="window-messages" id="scrollme" #scrollme>
+    <mat-card-content class="window-messages" id="scrollme" #scrollme infinite-scroll [scrollWindow]="false"
+        [infiniteScrollDistance]="1" [infiniteScrollThrottle]="50" (scrolledUp)="loadPreviousMessages()">
         <div class="messages-top-buffer"></div>
         <ng-container *ngFor="let message of messageArray">
-            <ng-template [ngTemplateOutlet]="messageProjection" [ngTemplateOutletContext]="{
-                message: message, isReplyOf: false
-            }"></ng-template>
+            <ng-template [ngTemplateOutlet]="messageProjection"
+                [ngTemplateOutletContext]="{ message: message, isReplyOf: false}">
+            </ng-template>
         </ng-container>
     </mat-card-content>
 
@@ -46,10 +47,9 @@
 </mat-card>
 
 <ng-template #messageProjection let-message="message" let-isReplyOf="isReplyOf" let-hideReplyAction="hideReplyAction">
-    <app-chat-window [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf"
-        [hideReplyAction]="hideReplyAction" [isDeleted]="message.isDeleted"
-        (selectForReply)="handleReplyOF(message)" (deleteMessage)="handleDeleteMessage(message)"
-        (doNotUserForReply)="handleRemoveReplyOF(message)">
+    <app-chat-window [id]="message._id" [isMe]="loginProfile?.id === message.room?.user?._id" [isReplyOf]="isReplyOf"
+        [hideReplyAction]="hideReplyAction" [isDeleted]="message.isDeleted" (selectForReply)="handleReplyOF(message)"
+        (deleteMessage)="handleDeleteMessage(message)" (doNotUserForReply)="handleRemoveReplyOF(message)">
         <div username>
             {{ message.room ? getUserName(message.room) : '' }}
         </div>
@@ -64,7 +64,8 @@
             {{ message.creationDate | chatMessageTime }}
         </div>
         <div content *ngIf="message">
-            <app-product [productId]="message.product" [showChatVersion]="true" *ngIf="message.type === 'internal_product'"></app-product>
+            <app-product [productId]="message.product" [showChatVersion]="true"
+                *ngIf="message.type === 'internal_product'"></app-product>
             <app-string-message [message]="message"></app-string-message>
         </div>
     </app-chat-window>
