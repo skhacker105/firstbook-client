@@ -90,9 +90,9 @@ export class ProductComponent implements OnInit, OnDestroy {
         mergeMap(productRes => {
           if (!productRes.data) return of(undefined)
           this.product = productRes.data;
+          this.specs = this.product.specifications ? this.product.specifications : [];
 
           return forkJoin([
-            this.loadProductSpecification(productRes.data),
             this.loadProductMainImage(productRes.data),
             !this.mainImageOnly ? this.loadProductImages(productRes.data) : of([])
           ])
@@ -100,16 +100,11 @@ export class ProductComponent implements OnInit, OnDestroy {
       ).pipe(takeUntil(this.isComponentIsActive))
       .subscribe((res: any) => {
         setTimeout(() => {
-          this.specs = res[0] ? res[0].data : [];
-          this.mainImage = res[1] ? res[1].data : undefined;
-          this.images = res[2] ? res[2].map((r: any) => r.data) : [];
+          this.mainImage = res[0] ? res[0].data : undefined;
+          this.images = res[1] ? res[1].map((r: any) => r.data) : [];
           this.divideSpecsByCategory();
         }, 10);
       })
-  }
-
-  loadProductSpecification(product: Product): Observable<ServerResponse<ProductSpecification[]>> {
-    return this.productSpecsService.getProductSpecs(product._id)
   }
 
   loadProductMainImage(product: Product): Observable<ServerResponse<ItemImage> | undefined> {
