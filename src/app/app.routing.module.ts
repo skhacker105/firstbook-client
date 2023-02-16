@@ -7,6 +7,7 @@ import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 // Components
 import { HomeComponent } from './components/landing/home/home.component';
 import { IsAuthenticatedGuard } from './core/guards/is-authenticated.guard';
+import { LoadUserProductResolver } from './core/resolvers/load-user-product.resolver';
 
 const routes: Routes = [
   {
@@ -24,6 +25,7 @@ const routes: Routes = [
   },
   {
     path: 'inventory',
+    resolve: [LoadUserProductResolver],
     loadChildren: () => import('./components/inventory/inventory.module').then(m => m.InventoryModule)
   },
   {

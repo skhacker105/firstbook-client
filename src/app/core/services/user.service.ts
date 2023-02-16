@@ -15,6 +15,7 @@ import { environment } from 'src/environments/environment';
 import { ProductService } from './product.service';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { HelperService } from './helper.service';
+import { Product } from '../models/product.model';
 
 const baseUrl = environment.api + 'user';
 const registerEndpoint = baseUrl + '/register';
@@ -74,14 +75,8 @@ export class UserService {
     return this.userProducts.find(p => p === productId) ? true : false
   }
 
-  loadUserProducts() {
-    this.productService
-      .userProducts()
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe(productsRes => {
-        this.userProductsLoaded = true;
-        if (productsRes.data)
-          this.userProducts = productsRes.data
-      });
+  loadUserProducts(productIds: string[]) {
+    this.userProducts = productIds;
   }
 
   verifyAndSendOTP(payload: object): Observable<ServerResponse<string>> {

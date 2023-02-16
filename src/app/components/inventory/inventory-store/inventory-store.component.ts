@@ -34,7 +34,6 @@ export class InventoryStoreComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.calculateBreakpoint(window.innerWidth);
-    this.userService.loadUserProducts();
     this.routeChangeSub$ = this.route.params.pipe(takeUntil(this.isComponentIsActive)).subscribe((params) => {
       this.currentQuery = params['query'] ? params['query'] : '';
       this.initRequest(this.currentQuery);

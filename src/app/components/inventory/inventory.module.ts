@@ -8,13 +8,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/core/shared/shared.module';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { QuillModule } from 'ngx-quill';
+import { CatalogComponent } from './catalog/catalog.component';
 
 
 @NgModule({
   declarations: [
     InventoryStoreComponent,
     ProductCreateComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
+    CatalogComponent
   ],
   imports: [
     CommonModule,

@@ -12,25 +12,25 @@
     </button>
 
     <ng-template [ngIf]="isUserLogged()">
-      <button mat-menu-item routerLink="/chatroom">
-        <mat-icon>chat</mat-icon>
-        <span>Chat</span>
+      <button mat-menu-item routerLink="/inventory">
+        <mat-icon>create</mat-icon>
+        <span>Inventory</span>
       </button>
       <button mat-menu-item routerLink="/contact">
         <mat-icon>contacts</mat-icon>
         <span>Contacts</span>
       </button>
-      <button mat-menu-item routerLink="/user/profile/ME">
-        <mat-icon>account_box</mat-icon>
-        <span>Profile</span>
+      <button mat-menu-item routerLink="/chatroom">
+        <mat-icon>chat</mat-icon>
+        <span>Chat</span>
       </button>
       <button mat-menu-item routerLink="/user/purchaseHistory">
         <mat-icon>history</mat-icon>
         <span>Transactions</span>
       </button>
-      <button mat-menu-item routerLink="/inventory">
-        <mat-icon>create</mat-icon>
-        <span>Inventory</span>
+      <button mat-menu-item routerLink="/user/profile/ME">
+        <mat-icon>account_box</mat-icon>
+        <span>Profile</span>
       </button>
     </ng-template>
 

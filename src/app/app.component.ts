@@ -31,19 +31,9 @@ export class AppComponent implements OnInit {
     let profile = this.helperService.getProfile();
     if (profile) {
       this.helperService.statSessionWatch();
-      this.handleLoadProducts(profile);
     }
     this.handleHttpCallCounterChange();
     this.handleSessionTrackerSubscription();
-  }
-
-  handleLoadProducts(profile: User) {
-    this.router.events.pipe(
-      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
-    ).subscribe(e => {
-      if (e.url.split('/')[1] === 'inventory')
-        this.userService.loadUserProducts();
-    });
   }
 
   handleHttpCallCounterChange() {
