@@ -24,6 +24,14 @@
         <app-preview *ngIf="!product.disabled" [customOptions]="customOptions" [files]="images" [mainImage]="mainImage"
             [showActions]="false"></app-preview>
 
+            <mat-toolbar *ngIf="(isAdmin || isEditAllowed) && (product.purchaseCost || product.sellingCost)" class="product-cost">
+                <b>Purchase Cost: &nbsp;</b> &#8377; {{ product.purchaseCost | number: '.2' }}
+                <span class="spacer"></span>
+                <b>Selling Cost: &nbsp;</b> &#8377; {{ product.sellingCost | number: '.2' }}
+            </mat-toolbar>
+
+        <br>
+
         <mat-card-content *ngIf="!product.disabled">
             <p align="justify" [innerHTML]="product.description">
             </p>

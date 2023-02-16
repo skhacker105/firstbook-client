@@ -17,7 +17,7 @@ import { IsIsbnDirective } from '../directives/is-isbn.directive';
 // Pipes
 import { CommentTimePipe } from '../pipes/comment-time.pipe';
 import { ShortenStringPipe } from '../pipes/shorten-string.pipe';
-import { NumberToTimePipe } from '../pipes/number-to-time.pipe'
+import { NumberToTimePipe } from '../pipes/number-to-time.pipe';
 
 // Angular Material
 import { MatInputModule } from '@angular/material/input';
@@ -76,9 +76,9 @@ import { UserSearchComponent } from './user-search/user-search.component';
     ShortenStringPipe,
     NumberToTimePipe,
     ChatMessageTimePipe,
+    SanitizerUrlPipe,
     ContactComponent,
     ConfirmationDialogComponent,
-    SanitizerUrlPipe,
     PreviewComponent,
     InputDialogComponent,
     ProductComponent,
@@ -133,6 +133,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
     ShortenStringPipe,
     NumberToTimePipe,
     ChatMessageTimePipe,
+    SanitizerUrlPipe,
     ContactComponent,
     MatInputModule,
     MatIconModule,
@@ -146,7 +147,6 @@ import { UserSearchComponent } from './user-search/user-search.component';
     MatDialogModule,
     ConfirmationDialogComponent,
     MatButtonToggleModule,
-    SanitizerUrlPipe,
     PreviewComponent,
     CarouselModule,
     InputDialogComponent,

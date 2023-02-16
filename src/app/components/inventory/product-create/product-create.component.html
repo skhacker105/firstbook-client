@@ -35,7 +35,19 @@
                 <!-- Name -->
                 <mat-form-field class="flexible-input">
                     <mat-label>Name</mat-label>
-                    <input type="text" matInput formControlName="name">
+                    <input type="text" name="'productName" matInput formControlName="name">
+                </mat-form-field>
+
+                <!-- Purchase Cost -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Purchase Cost</mat-label>
+                    <input type="number" name="purchaseCost" matInput formControlName="purchaseCost">
+                </mat-form-field>
+
+                <!-- Selling Cost -->
+                <mat-form-field class="flexible-input">
+                    <mat-label>Selling Cost</mat-label>
+                    <input type="number" name="sellingCost" matInput formControlName="sellingCost">
                 </mat-form-field>
 
                 <!-- Description -->

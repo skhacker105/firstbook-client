@@ -132,7 +132,9 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
     this.createProductForm = this.fb.group({
       name: new FormControl(product?.name, Validators.required),
       description: new FormControl(product?.description),
-      specifications: this.fb.array([])
+      specifications: this.fb.array([]),
+      purchaseCost: new FormControl(product?.purchaseCost),
+      sellingCost: new FormControl(product?.sellingCost)
     });
   }
 

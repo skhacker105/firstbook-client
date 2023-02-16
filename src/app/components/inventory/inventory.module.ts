@@ -9,6 +9,7 @@ import { SharedModule } from 'src/app/core/shared/shared.module';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { QuillModule } from 'ngx-quill';
 import { CatalogComponent } from './catalog/catalog.component';
+import { CreateCatalogComponent } from './create-catalog/create-catalog.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { CatalogComponent } from './catalog/catalog.component';
     InventoryStoreComponent,
     ProductCreateComponent,
     ProductDetailComponent,
-    CatalogComponent
+    CatalogComponent,
+    CreateCatalogComponent
   ],
   imports: [
     CommonModule,

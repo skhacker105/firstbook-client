@@ -87,6 +87,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
         if (!this.id) return;
 
         this.product = productRes.data;
+        this.checkIfEditAllowed();
         this.loadProductSpecs(productRes.data);
         this.loadProductMainImage(productRes.data);
         this.loadProductImages(productRes.data);
@@ -157,7 +158,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   checkIfEditAllowed() {
-    this.isEditAllowed = this.loggedInUser?._id === this.product?.createdBy;
+    this.isEditAllowed = this.loggedInUser?.id === this.product?.createdBy;
   }
 
   loadLoggedInUser() {

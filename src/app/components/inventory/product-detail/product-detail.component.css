@@ -3,3 +3,7 @@
 .product-disabled {
     background-color: #808080;
 }
+
+.product-cost {
+    font-size: smaller;
+}

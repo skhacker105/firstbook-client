@@ -15,7 +15,9 @@ export class Product {
         public ratedBy?: string[],
         public ratingPoints?: number,
         public ratedCount?: number,
-        public comments?: Comment[]
+        public comments?: Comment[],
+        public purchaseCost?: number,
+        public sellingCost?: number
     ) {}
 }
 
