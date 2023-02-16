@@ -1,4 +1,5 @@
 import { Comment } from './comment.model';
+import { User } from './user.model';
 
 export class Contact {
     constructor(
@@ -10,7 +11,7 @@ export class Contact {
         public contact1: string,
         public contact2: string,
         public address: string,
-        public appUserId: string,
+        public appUserId: User,
         public notes?: string,
         public createdBy?: string,
         public creationDate?: Date,

@@ -18,6 +18,7 @@ const deleteChatRoomEndpoint = domain + 'chat/delete/';
 const undeleteChatRoomEndpoint = domain + 'chat/undelete/';
 const deleteChatMessageEndpoint = domain + 'chat/message/';
 const shareProductWithUserEndpoint = domain + 'chat/shareProductWithUser/';
+const userChatRoomEndpoint = domain + 'chat/userChatRoom/';
 const chatRoomCache$ = new Subject<boolean>();
 const chatMessageCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
@@ -129,6 +130,13 @@ export class ChatRoomService {
   })
   shareProductWithUser(id: string, payload: any): Observable<ServerResponse<ChatMessage>> {
     return this.http.post<ServerResponse<ChatMessage>>(shareProductWithUserEndpoint + id, payload);
+  }
+
+  @HTTPCacheable({
+    logoutEvent: logout$, refresher: chatRoomCache$
+  })
+  getUserChatRoom(id: string): Observable<ServerResponse<ChatRoom>> {
+    return this.http.get<ServerResponse<ChatRoom>>(userChatRoomEndpoint + id);
   }
 }
 

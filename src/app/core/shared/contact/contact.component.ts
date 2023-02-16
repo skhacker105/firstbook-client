@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Contact } from '../../models/contact.model';
 import { IInputDialogConfig } from '../../models/input-dialog-config';
+import { ChatRoomService } from '../../services/chat-room.service';
 import { ContactService } from '../../services/contact.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { InputDialogComponent } from '../input-dialog/input-dialog.component';
@@ -53,7 +54,12 @@ export class ContactComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private router: Router, public dialog: MatDialog, private contactService: ContactService) { }
+  constructor(
+    private router: Router,
+    public dialog: MatDialog,
+    private contactService: ContactService,
+    private chatRoomService: ChatRoomService
+  ) { }
 
   ngOnInit(): void {
     const chatAction = this.actions.find(a => a.action === 'chat');
@@ -69,6 +75,7 @@ export class ContactComponent implements OnInit, OnDestroy {
       case 'edit': this.editClick(); break;
       case 'delete': this.deleteClick(); break;
       case 'notes': this.notesClick(); break;
+      case 'chat': this.chatClick(); break;
     }
   }
 
@@ -118,6 +125,15 @@ export class ContactComponent implements OnInit, OnDestroy {
           if (!this.contact) return;
           this.contact.notes = result;
         });
+    })
+  }
+
+  chatClick() {
+    if (!this.contact) return;
+    this.chatRoomService.getUserChatRoom(this.contact.appUserId._id)
+    .pipe(takeUntil(this.isComponentIsActive))
+    .subscribe(roomRes => {
+      if (roomRes.data) this.router.navigate(['/chatroomwindow/default/', roomRes.data._id]);
     })
   }
 }
