@@ -1,16 +1,19 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { Contact } from '../../models/contact.model';
+import { IInputDialogConfig } from '../../models/input-dialog-config';
 import { ContactService } from '../../services/contact.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { InputDialogComponent } from '../input-dialog/input-dialog.component';
 
 interface IAction {
   maticon: string,
   action: string,
   display: string,
-  isDelete: boolean
+  isDelete: boolean,
+  disabled?: boolean
 }
 
 @Component({
@@ -18,7 +21,7 @@ interface IAction {
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css']
 })
-export class ContactComponent implements OnDestroy {
+export class ContactComponent implements OnInit, OnDestroy {
   @Input('contact') contact: Contact | undefined;
   @Output('deleted') deletedEvent = new EventEmitter<boolean>();
   isComponentIsActive = new Subject();
@@ -52,10 +55,20 @@ export class ContactComponent implements OnDestroy {
 
   constructor(private router: Router, public dialog: MatDialog, private contactService: ContactService) { }
 
+  ngOnInit(): void {
+    const chatAction = this.actions.find(a => a.action === 'chat');
+    if (!this.contact?.appUserId && chatAction) chatAction.disabled = true;
+  }
+
+  ngOnDestroy(): void {
+    this.isComponentIsActive.complete()
+  }
+
   onActionClick(a: IAction) {
     switch (a.action) {
       case 'edit': this.editClick(); break;
       case 'delete': this.deleteClick(); break;
+      case 'notes': this.notesClick(); break;
     }
   }
 
@@ -82,7 +95,29 @@ export class ContactComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.isComponentIsActive.complete()
+  notesClick() {
+    if (!this.contact) return;
+    const notesPopupDataConfig: IInputDialogConfig = {
+      initialValue: this.contact.notes,
+      multiLine: true,
+      inputLabel: 'NOTES',
+      placeHolder: 'This will only be visible to you',
+      title: 'Notes for ' + this.contact?.firstName
+    }
+    let notesPopupRef = this.dialog.open(InputDialogComponent, {
+      data: notesPopupDataConfig
+    });
+
+    notesPopupRef.afterClosed().subscribe((result: string) => {
+      if (!result || !this.contact) return;
+      result = result.trim();
+      if (!result) return;
+      this.contactService.updateContactNotes(this.contact._id, { notes: result })
+        .pipe(takeUntil(this.isComponentIsActive))
+        .subscribe(updatedContact => {
+          if (!this.contact) return;
+          this.contact.notes = result;
+        });
+    })
   }
 }

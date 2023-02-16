@@ -3,7 +3,10 @@
   <div mat-dialog-content>
     <mat-form-field>
       <mat-label>{{ data ? data.inputLabel : 'Input' }}</mat-label>
-      <input type="text" matInput [(ngModel)]="input" name="data" placeholder="{{data.placeHolder}}">
+      <input type="text" matInput [(ngModel)]="input" name="data" placeholder="{{data.placeHolder}}"
+        *ngIf="!data.multiLine">
+      <textarea matInput [(ngModel)]="input" name="data" placeholder="{{data.placeHolder}}"
+        cdkTextareaAutosize cdkAutosizeMinRows="10" cdkAutosizeMaxRows="30" *ngIf="data.multiLine"></textarea>
     </mat-form-field>
   </div>
   <div mat-dialog-actions align="end">

@@ -11,6 +11,7 @@ import { HelperService } from './helper.service';
 const domain = environment.api;
 const getSingleContactEndpoint = domain + 'contact/details/';
 const createContactEndpoint = domain + 'contact/add';
+const saveContactNotesEndpoint = domain + 'contact/saveNotes/';
 const editContactEndpoint = domain + 'contact/edit/';
 const deleteContactEndpoint = domain + 'contact/delete/';
 const rateContactEndpoint = domain + 'contact/rate/';
@@ -54,6 +55,13 @@ export class ContactService {
   })
   deleteContact(id: string): Observable<ServerResponse<Contact>> {
     return this.http.delete<ServerResponse<Contact>>(deleteContactEndpoint + id);
+  }
+
+  // @HTTPCacheBuster({
+  //   logoutEvent: logout$, refresher: contactCache$
+  // })
+  updateContactNotes(id: string, payload: any): Observable<ServerResponse<Contact>> {
+    return this.http.post<ServerResponse<Contact>>(saveContactNotesEndpoint + id, payload);
   }
 
   @HTTPCacheBuster({

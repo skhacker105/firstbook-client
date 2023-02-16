@@ -11,11 +11,12 @@ export class Contact {
         public contact2: string,
         public address: string,
         public appUserId: string,
+        public notes?: string,
         public createdBy?: string,
         public creationDate?: Date,
         public currentRating?: number,
         public ratingPoints?: number,
         public ratedCount?: number,
-        public comments?: Comment[]
+        public comments?: Comment[],
     ) { }
 }

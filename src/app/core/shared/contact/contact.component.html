@@ -21,7 +21,7 @@
             <div class="action" [ngClass]="{
                 'delete-action': action.isDelete
             }">
-                <button mat-icon-button (click)="onActionClick(action)">
+                <button mat-icon-button (click)="onActionClick(action)" [disabled]="action.disabled">
                     <mat-icon>{{action.maticon}}</mat-icon>
                 </button><br>
                 {{action.display}}
