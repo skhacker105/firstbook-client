@@ -60,7 +60,7 @@
 }
 
 .catalog-product-cost {
-    width: 50px;
+    white-space: nowrap;
     background-color: #ebc9f9;
     padding: 10px;
     margin-bottom: 10px;
