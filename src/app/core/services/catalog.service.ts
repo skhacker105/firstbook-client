@@ -11,7 +11,8 @@ const domain = environment.api;
 const userCatalogsEndpoint = domain + 'catalog/usercatalogs';
 const singleCatalogEndpoint = domain + 'catalog/getSingle/';
 const addCatalogEndpoint = domain + 'catalog/add';
-const deleteCatalogEndpoint = domain + 'catalog/delete/';
+const enableCatalogEndpoint = domain + 'catalog/enable/';
+const disableCatalogEndpoint = domain + 'catalog/disable/';
 const editCatalogEndpoint = domain + 'catalog/edit/';
 const searchEndpoint = domain + 'catalog/search';
 const catalogCache$ = new Subject<boolean>();
@@ -57,8 +58,15 @@ export class CatalogService {
   @HTTPCacheBuster({
     logoutEvent: logout$, refresher: catalogCache$
   })
-  deleteCatalogt(id: string): Observable<ServerResponse<Catalog>> {
-    return this.http.delete<ServerResponse<Catalog>>(deleteCatalogEndpoint + id);
+  enableCatalog(id: string): Observable<ServerResponse<Catalog>> {
+    return this.http.delete<ServerResponse<Catalog>>(enableCatalogEndpoint + id);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: catalogCache$
+  })
+  disableCatalog(id: string): Observable<ServerResponse<Catalog>> {
+    return this.http.delete<ServerResponse<Catalog>>(disableCatalogEndpoint + id);
   }
 
   @HTTPCacheable({

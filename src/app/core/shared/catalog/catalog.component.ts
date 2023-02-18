@@ -1,8 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Subject, takeUntil } from 'rxjs';
 import { Catalog } from '../../models/catalog.model';
+import { Product } from '../../models/product.model';
 import { User } from '../../models/user.model';
+import { CatalogService } from '../../services/catalog.service';
 import { HelperService } from '../../services/helper.service';
 import { ProductService } from '../../services/product.service';
 
@@ -33,7 +36,11 @@ export class CatalogComponent implements OnInit, OnDestroy {
     lazyLoad: true
   };
 
-  constructor(private productService: ProductService, private helperService: HelperService) { }
+  constructor(
+    private productService: ProductService,
+    private helperService: HelperService,
+    private router: Router,
+    private catalogService: CatalogService) { }
 
   ngOnInit(): void {
     this.isAdmin = this.helperService.isAdmin();
@@ -60,5 +67,29 @@ export class CatalogComponent implements OnInit, OnDestroy {
             p.product.loadedImage = imageRes.data;
           })
     });
+  }
+
+  loadProductDetails(product: Product) {
+    this.router.navigate(['/inventory/detail/', product._id]);
+  }
+
+  handleEnableCatalog() {
+    if (!this.catalog) return;
+    this.catalogService.enableCatalog(this.catalog._id)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(catalogRes => {
+        if (!this.catalog) return;
+        this.catalog.isDeleted = catalogRes.data?.isDeleted;
+      })
+  }
+
+  handleDisableCatalog() {
+    if (!this.catalog) return;
+    this.catalogService.disableCatalog(this.catalog._id)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(catalogRes => {
+        if (!this.catalog) return;
+        this.catalog.isDeleted = catalogRes.data?.isDeleted;
+      })
   }
 }

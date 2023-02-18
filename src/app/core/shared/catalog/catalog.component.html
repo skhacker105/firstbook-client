@@ -1,4 +1,8 @@
-<mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded">
+<mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded"
+[ngClass]="{
+    'catalog-enabled': !catalog.isDeleted,
+    'catalog-disabled': catalog.isDeleted
+}">
     <mat-expansion-panel-header class="catalog-expansion-panel-header" collapsedHeight="70px" expandedHeight="70px">
         <mat-panel-title> {{ catalog.name }}</mat-panel-title>
         <mat-panel-description>
@@ -8,18 +12,35 @@
     </mat-expansion-panel-header>
 
     <p align="end" class="catalog-edit" *ngIf="isAdmin || isEditAllowed">
-        <button mat-icon-button
-            [routerLink]="['/inventory/catalog/edit/', catalog._id]"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!catalog.isDeleted" (click)="handleDisableCatalog()">
+            <mat-icon>visibility_off</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="catalog.isDeleted" (click)="handleEnableCatalog()">
+            <mat-icon>visibility_on</mat-icon>
+        </button>
     </p>
-    <mat-card class="catalog-products-card">
+    <div *ngIf="catalog.isDeleted"> <mat-icon>info</mat-icon> Catalog is disabled</div>
+    <mat-card [ngClass]="{
+        'catalog-products-card-enabled': !catalog.isDeleted,
+        'catalog-products-card-disabled': catalog.isDeleted
+    }">
         <mat-card-content class="catalog-products-container">
             <ng-container *ngFor="let catProduct of catalog.products">
                 <app-preview [mainImage]="catProduct.product.loadedImage" [showActions]="false"
                     [customOptions]="customOptions" *ngIf="!isEditAllowed"></app-preview>
 
-                <div class="full-width catalog-product-detail">
-                    <div class="catalog-product-name">{{ catProduct.name }}</div>
-                    <div class="catalog-product-cost">&#8377; {{ catProduct.cost }}</div>
+                <div class="full-width catalog-product-detail" (click)="loadProductDetails(catProduct.product)">
+                    <div [ngClass]="{
+                        'catalog-product-name-enabled': !catalog.isDeleted,
+                        'catalog-product-name-disabled': catalog.isDeleted
+                    }">{{ catProduct.name }}</div>
+                    <div  [ngClass]="{
+                        'catalog-product-cost-enabled': !catalog.isDeleted,
+                        'catalog-product-cost-disabled': catalog.isDeleted
+                    }">&#8377; {{ catProduct.cost | number: '.2' }}</div>
                 </div>
             </ng-container>
         </mat-card-content>
