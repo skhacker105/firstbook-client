@@ -14,8 +14,13 @@
     height: 50px;
 }
 
-.catalog-expansion-panel-header {
+.catalog-expansion-panel-header-enabled {
     background-color: #9ba0e1 !important;
+}
+
+.catalog-expansion-panel-header-disabled {
+    background-color: #525252 !important;
+    color: #878787;
 }
 
 .catalog-enabled::ng-deep .mat-expansion-panel-content {
@@ -57,8 +62,12 @@
     display: flex;
 }
 
-.catalog-product-count {
+.catalog-product-count-enabled {
     background-color: #d5dcff !important;
+}
+
+.catalog-product-count-disabled {
+    background-color: #696868 !important;
 }
 
 .catalog-product-name-enabled {

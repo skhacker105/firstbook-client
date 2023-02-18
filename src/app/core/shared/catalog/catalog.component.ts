@@ -17,11 +17,12 @@ import { ProductService } from '../../services/product.service';
 export class CatalogComponent implements OnInit, OnDestroy {
 
   @Input() catalog: Catalog | undefined;
+  @Input() expanded = false;
+  @Input() overideToShowImage = false;
   isComponentIsActive = new Subject();
   isAdmin = false;
   isEditAllowed: boolean = false;
   loggedInUser: User | undefined;
-  expanded = false;
   customOptions: OwlOptions = {
     loop: true,
     margin: 10,
@@ -40,7 +41,8 @@ export class CatalogComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private helperService: HelperService,
     private router: Router,
-    private catalogService: CatalogService) { }
+    private catalogService: CatalogService
+  ) { }
 
   ngOnInit(): void {
     this.isAdmin = this.helperService.isAdmin();

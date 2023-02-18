@@ -10,6 +10,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { QuillModule } from 'ngx-quill';
 import { CreateCatalogComponent } from './create-catalog/create-catalog.component';
 import { CatalogStoreComponent } from './catalog-store/catalog-store.component';
+import { CatalogDetailsComponent } from './catalog-details/catalog-details.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { CatalogStoreComponent } from './catalog-store/catalog-store.component';
     ProductCreateComponent,
     ProductDetailComponent,
     CreateCatalogComponent,
-    CatalogStoreComponent
+    CatalogStoreComponent,
+    CatalogDetailsComponent
   ],
   imports: [
     CommonModule,

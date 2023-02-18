@@ -3,15 +3,24 @@
     'catalog-enabled': !catalog.isDeleted,
     'catalog-disabled': catalog.isDeleted
 }">
-    <mat-expansion-panel-header class="catalog-expansion-panel-header" collapsedHeight="70px" expandedHeight="70px">
+    <mat-expansion-panel-header [ngClass]="{
+        'catalog-expansion-panel-header-enabled': !catalog.isDeleted,
+        'catalog-expansion-panel-header-disabled': catalog.isDeleted
+    }" collapsedHeight="70px" expandedHeight="70px">
         <mat-panel-title> {{ catalog.name }}</mat-panel-title>
         <mat-panel-description>
             {{ catalog.createdDate | date: 'dd/MM/yyyy' }}
-            <mat-chip class="catalog-product-count">{{ catalog.products.length }}</mat-chip>
+            <mat-chip [ngClass]="{
+                'catalog-product-count-enabled': !catalog.isDeleted,
+                'catalog-product-count-disabled': catalog.isDeleted
+            }">{{ catalog.products.length }}</mat-chip>
         </mat-panel-description>
     </mat-expansion-panel-header>
 
     <p align="end" class="catalog-edit" *ngIf="isAdmin || isEditAllowed">
+        <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]" *ngIf="!catalog.isDeleted">
+            <mat-icon>zoom_out_map</mat-icon>
+        </button>
         <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
             <mat-icon>edit</mat-icon>
         </button>
@@ -30,7 +39,7 @@
         <mat-card-content class="catalog-products-container">
             <ng-container *ngFor="let catProduct of catalog.products">
                 <app-preview [mainImage]="catProduct.product.loadedImage" [showActions]="false"
-                    [customOptions]="customOptions" *ngIf="!isEditAllowed"></app-preview>
+                    [customOptions]="customOptions" *ngIf="!isEditAllowed || overideToShowImage"></app-preview>
 
                 <div class="full-width catalog-product-detail" (click)="loadProductDetails(catProduct.product)">
                     <div [ngClass]="{

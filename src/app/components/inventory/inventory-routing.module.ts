@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IsAuthenticatedGuard } from 'src/app/core/guards/is-authenticated.guard';
 import { IsCatalogOwnerGuard } from 'src/app/core/guards/is-catalog-owner.guard';
 import { IsProductOwnerGuard } from 'src/app/core/guards/is-product-owner.guard';
+import { CatalogDetailsComponent } from './catalog-details/catalog-details.component';
 import { CatalogStoreComponent } from './catalog-store/catalog-store.component';
 import { CreateCatalogComponent } from './create-catalog/create-catalog.component';
 import { InventoryStoreComponent } from './inventory-store/inventory-store.component';
@@ -58,10 +59,10 @@ const routes: Routes = [
         canActivate: [IsAuthenticatedGuard, IsCatalogOwnerGuard],
         component: CreateCatalogComponent
       },
-      // {
-      //   path: 'catalog/detail/:catalogId',
-      //   component: ProductDetailComponent
-      // }
+      {
+        path: 'detail/:catalogId',
+        component: CatalogDetailsComponent
+      },
       {
         path: '**',
         redirectTo: 'store/default',
