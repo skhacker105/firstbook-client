@@ -5,22 +5,22 @@
     <mat-card-header class="product-header">
         <mat-card-title class="product-title">
             <p align="end" *ngIf="!showChatVersion">
-                <button mat-fab color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
+                <button mat-icon-button color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
                     (click)="handleShareProduct()">
                     <mat-icon>share</mat-icon>
                     <!-- Edit -->
                 </button>
-                <button mat-fab color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
+                <button mat-icon-button color="none" class="product-edit" *ngIf="!product.disabled && isEditAllowed"
                     (click)="goToEditDetail()">
                     <mat-icon>edit</mat-icon>
                     <!-- Edit -->
                 </button>
-                <button mat-fab color="none" class="product-disable" *ngIf="!product.disabled && isEditAllowed"
+                <button mat-icon-button color="none" class="product-disable" *ngIf="!product.disabled && isEditAllowed"
                     (click)="handleEnableDisable(false)">
                     <mat-icon>visibility_off</mat-icon>
                     <!-- Disable -->
                 </button>
-                <button mat-fab color="primary" class="product-enable" *ngIf="product.disabled && isEditAllowed"
+                <button mat-icon-button color="primary" class="product-enable" *ngIf="product.disabled && isEditAllowed"
                     (click)="handleEnableDisable(true)">
                     <mat-icon>visibility_on</mat-icon>
                     <!-- Enable -->
