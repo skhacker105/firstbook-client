@@ -1,5 +1,5 @@
 <mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded">
-    <mat-expansion-panel-header class="catalog-expansion-panel-header">
+    <mat-expansion-panel-header class="catalog-expansion-panel-header" collapsedHeight="70px" expandedHeight="70px">
         <mat-panel-title> {{ catalog.name }}</mat-panel-title>
         <mat-panel-description>
             {{ catalog.createdDate | date: 'dd/MM/yyyy' }}

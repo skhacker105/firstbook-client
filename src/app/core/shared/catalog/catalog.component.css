@@ -1,7 +1,8 @@
 .catalog-expansion-panel {
     margin-left: 15px;
     margin-right: 15px;
-    /* height: 70px; */
+    box-shadow: none;
+    border-radius: 0px;
 }
 
 .catalog-expansion-panel .mat-expansion-panel-header-description {
