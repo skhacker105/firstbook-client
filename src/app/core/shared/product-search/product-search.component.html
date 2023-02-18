@@ -1,0 +1,23 @@
+<mat-toolbar>
+    Search Product
+    <span class="spacer"></span>
+    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</mat-toolbar>
+<mat-card>
+    <mat-card-header>
+        <mat-form-field class="flexible-input">
+            <mat-label>Product</mat-label>
+            <input type="search" matInput placeholder="admin" [formControl]="product" [matAutocomplete]="auto">
+
+            <mat-icon matSuffix *ngIf="product?.value" (click)="product.setValue('')">clear</mat-icon>
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="getOptionText"
+                (optionSelected)="handleProductSelection()">
+                <mat-option *ngFor="let option of productChangeSub$ | async" [value]="option" class="product-option">
+                    {{ option.name }}
+                </mat-option>
+            </mat-autocomplete>
+
+            <mat-hint>Search by product name</mat-hint>
+        </mat-form-field>
+    </mat-card-header>
+</mat-card>

@@ -1,1 +1,49 @@
-<p>create-catalog works!</p>
+<mat-card class="catalog-container">
+    <mat-card-header>
+        <mat-card-title>Create Catalog</mat-card-title>
+    </mat-card-header>
+
+    <form [formGroup]="createCatalogGroup" class="catalog-form" (ngSubmit)="onSubmit()" *ngIf="createCatalogGroup">
+        <mat-card-content class="catalog-form-content" >
+
+            <!-- Name -->
+            <mat-form-field class="username">
+                <mat-label>Catalog Title</mat-label>
+                <input matInput type="text" formControlName="name">
+            </mat-form-field>
+
+            <!-- Products -->
+            <div class="catalog-products-container" formArrayName="products">
+
+                <div class="catalog-product-name-header">Product Name</div>
+                <div class="catalog-product-cost-header">Cost</div>
+
+                <ng-container *ngFor="let product of products?.controls; let i = index;" [formGroupName]="i">
+
+                    <!-- Product -->
+                    <mat-form-field class="catalog-product-name">
+                        <input matInput type="text" formControlName="name">
+                        <mat-hint>Updated values will only be for Catalog</mat-hint>
+                    </mat-form-field>
+
+                    <!-- Cost -->
+                    <mat-form-field class="catalog-product-cost">
+                        <input matInput type="number" formControlName="cost">
+                    </mat-form-field>
+
+                </ng-container>
+            </div>
+
+            <br>
+            <button type="button" mat-raised-button color="primary" (click)="handleAddProduct()">Add Product</button>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+            <p align="end" class="full-width">
+                <button type="button" mat-raised-button routerLink="/inventory/catalog/store/default">Cancel</button>
+                <button type="submit" mat-raised-button color="primary">Save</button>
+            </p>
+        </mat-card-actions>
+    </form>
+</mat-card>

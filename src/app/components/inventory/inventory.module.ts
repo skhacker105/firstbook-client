@@ -8,8 +8,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/core/shared/shared.module';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { QuillModule } from 'ngx-quill';
-import { CatalogComponent } from './catalog/catalog.component';
 import { CreateCatalogComponent } from './create-catalog/create-catalog.component';
+import { CatalogStoreComponent } from './catalog-store/catalog-store.component';
 
 
 @NgModule({
@@ -17,8 +17,8 @@ import { CreateCatalogComponent } from './create-catalog/create-catalog.componen
     InventoryStoreComponent,
     ProductCreateComponent,
     ProductDetailComponent,
-    CatalogComponent,
-    CreateCatalogComponent
+    CreateCatalogComponent,
+    CatalogStoreComponent
   ],
   imports: [
     CommonModule,

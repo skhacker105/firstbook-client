@@ -1,4 +1,5 @@
 <ng-container *ngIf="customOptions && (mainImage || files.length > 0)">
+    <!-- <p align="end" *ngIf="files.length === 0 && showLoadMore"><mat-chip>{{ loadMoreText }}</mat-chip></p> -->
     <owl-carousel-o [options]="customOptions">
         <ng-template carouselSlide *ngIf="mainImage">
             <ng-template [ngTemplateOutlet]="imagepreview"
@@ -19,8 +20,7 @@
     </div><br>
 
     <button mat-fab color="primary" class="preview-action preview-add" *ngIf="showActions"
-    [disabled]="isMain || !picture._id"
-        (click)="handleSetMainImage(picture._id)">
+        [disabled]="isMain || !picture._id" (click)="handleSetMainImage(picture._id)">
         <mat-icon>label_important</mat-icon>
     </button>
     <button mat-fab color="none" class="preview-action preview-delete" *ngIf="showActions"

@@ -1,4 +1,5 @@
 import { Comment } from './comment.model';
+import { ItemImage } from './image';
 
 export class Product {
     constructor(
@@ -17,7 +18,8 @@ export class Product {
         public ratedCount?: number,
         public comments?: Comment[],
         public purchaseCost?: number,
-        public sellingCost?: number
+        public sellingCost?: number,
+        public loadedImage?: ItemImage
     ) {}
 }
 

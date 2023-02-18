@@ -1,0 +1,27 @@
+<mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded">
+    <mat-expansion-panel-header class="catalog-expansion-panel-header">
+        <mat-panel-title> {{ catalog.name }}</mat-panel-title>
+        <mat-panel-description>
+            {{ catalog.createdDate | date: 'dd/MM/yyyy' }}
+            <mat-chip class="catalog-product-count">{{ catalog.products.length }}</mat-chip>
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <p align="end" class="catalog-edit" *ngIf="isAdmin || isEditAllowed">
+        <button mat-icon-button
+            [routerLink]="['/inventory/catalog/edit/', catalog._id]"><mat-icon>edit</mat-icon></button>
+    </p>
+    <mat-card class="catalog-products-card">
+        <mat-card-content class="catalog-products-container">
+            <ng-container *ngFor="let catProduct of catalog.products">
+                <app-preview [mainImage]="catProduct.product.loadedImage" [showActions]="false"
+                    [customOptions]="customOptions" *ngIf="!isEditAllowed"></app-preview>
+
+                <div class="full-width catalog-product-detail">
+                    <div class="catalog-product-name">{{ catProduct.name }}</div>
+                    <div class="catalog-product-cost">&#8377; {{ catProduct.cost }}</div>
+                </div>
+            </ng-container>
+        </mat-card-content>
+    </mat-card>
+</mat-expansion-panel>

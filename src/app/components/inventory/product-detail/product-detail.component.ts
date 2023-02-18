@@ -158,7 +158,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   }
 
   checkIfEditAllowed() {
-    this.isEditAllowed = this.loggedInUser?.id === this.product?.createdBy;
+    this.isEditAllowed = this.loggedInUser?.id === this.product?.createdBy || this.loggedInUser?._id === this.product?.createdBy;
   }
 
   loadLoggedInUser() {

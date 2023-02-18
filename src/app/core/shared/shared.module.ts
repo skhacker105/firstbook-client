@@ -63,6 +63,8 @@ import { LoaderComponent } from './loader/loader.component';
 import { TimerCountDownComponent } from './timer-count-down/timer-count-down.component';
 import { ChatMessageTimePipe } from '../pipes/chat-message-time.pipe';
 import { UserSearchComponent } from './user-search/user-search.component';
+import { ProductSearchComponent } from './product-search/product-search.component';
+import { CatalogComponent } from './catalog/catalog.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +94,9 @@ import { UserSearchComponent } from './user-search/user-search.component';
     ChatWindowComponent,
     LoaderComponent,
     TimerCountDownComponent,
-    UserSearchComponent
+    UserSearchComponent,
+    ProductSearchComponent,
+    CatalogComponent
   ],
   imports: [
     CommonModule,
@@ -169,7 +173,9 @@ import { UserSearchComponent } from './user-search/user-search.component';
     LoaderComponent,
     MatSnackBarModule,
     UserSearchComponent,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    ProductSearchComponent,
+    CatalogComponent
   ]
 })
 export class SharedModule { }

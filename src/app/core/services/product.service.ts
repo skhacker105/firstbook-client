@@ -18,7 +18,8 @@ const createProductEndpoint = domain + 'product/add';
 const editProductEndpoint = domain + 'product/edit/';
 const deleteProductEndpoint = domain + 'product/delete/';
 const rateProductEndpoint = domain + 'product/rate/';
-const searchProductEndpoint = domain + 'product/search';
+const searchProductIdsEndpoint = domain + 'product/search/getIds';
+const searchProductsEndpoint = domain + 'product/search';
 
 const saveImageEndpoint = domain + 'product/gallery';
 const deleteImageEndpoint = domain + 'product/gallery/';
@@ -149,7 +150,14 @@ export class ProductService {
     logoutEvent: logout$, refresher: productCache$
   })
   search(query: string): Observable<ServerResponse<string[]>> {
-    return this.http.get<ServerResponse<string[]>>(searchProductEndpoint + query);
+    return this.http.get<ServerResponse<string[]>>(searchProductIdsEndpoint + query);
+  }
+
+  @HTTPCacheable({
+    logoutEvent: logout$, refresher: productCache$
+  })
+  searchProducts(query: string): Observable<ServerResponse<Product[]>> {
+    return this.http.get<ServerResponse<Product[]>>(searchProductsEndpoint + query);
   }
 
   @HTTPCacheable({

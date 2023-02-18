@@ -57,9 +57,6 @@ export class ContactService {
     return this.http.delete<ServerResponse<Contact>>(deleteContactEndpoint + id);
   }
 
-  // @HTTPCacheBuster({
-  //   logoutEvent: logout$, refresher: contactCache$
-  // })
   updateContactNotes(id: string, payload: any): Observable<ServerResponse<Contact>> {
     return this.http.post<ServerResponse<Contact>>(saveContactNotesEndpoint + id, payload);
   }

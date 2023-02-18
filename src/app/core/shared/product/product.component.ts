@@ -13,7 +13,6 @@ import { ISpecs } from '../../models/specs';
 import { User } from '../../models/user.model';
 import { ChatRoomService } from '../../services/chat-room.service';
 import { HelperService } from '../../services/helper.service';
-import { ProductSpecsService } from '../../services/product-specs.service';
 import { ProductService } from '../../services/product.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { ImageViewComponent } from '../image-view/image-view.component';
@@ -42,7 +41,6 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   constructor(
     private productService: ProductService,
-    private productSpecsService: ProductSpecsService,
     private router: Router,
     private helperService: HelperService,
     public dialog: MatDialog,
@@ -148,7 +146,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   checkIfEditAllowed() {
-    this.isEditAllowed = this.loggedInUser?.id === this.product?.createdBy;
+    this.isEditAllowed = this.loggedInUser?._id === this.product?.createdBy || this.loggedInUser?.id === this.product?.createdBy;
   }
 
   handleEnableDisable(state: boolean) {
