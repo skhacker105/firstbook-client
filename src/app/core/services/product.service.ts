@@ -10,7 +10,7 @@ import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorato
 import { HelperService } from './helper.service';
 
 const domain = environment.api;
-const userProductEndpoint = domain + 'userproducts';
+const userProductsEndpoint = domain + 'product/userproducts';
 const enableProductEndpoint = domain + 'product/enable/';
 const disableProductEndpoint = domain + 'product/disable/';
 const getSingleProductEndpoint = domain + 'product/details/';
@@ -50,7 +50,7 @@ export class ProductService {
     logoutEvent: logout$, refresher: productCache$
   })
   userProducts(): Observable<ServerResponse<string[]>> {
-    return this.http.get<ServerResponse<string[]>>(userProductEndpoint);
+    return this.http.get<ServerResponse<string[]>>(userProductsEndpoint);
   }
 
   @HTTPCacheBuster({

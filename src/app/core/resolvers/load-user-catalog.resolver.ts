@@ -5,27 +5,27 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { map, Observable, of, tap } from 'rxjs';
+import { CatalogService } from '../services/catalog.service';
 import { HelperService } from '../services/helper.service';
-import { ProductService } from '../services/product.service';
 import { UserService } from '../services/user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoadUserProductResolver implements Resolve<boolean> {
+export class LoadUserCatalogResolver implements Resolve<boolean> {
 
   constructor(
     private userService: UserService,
-    private productService: ProductService,
+    private catalogService: CatalogService,
     private helperService: HelperService
     ) { }
-
+    
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     if (!this.helperService.isLoggedIn()) return of(true)
-    return this.productService.userProducts()
+    return this.catalogService.userCatalogs()
       .pipe(
         tap(res => {
-          res.data ? this.userService.loadUserProducts(res.data) : null
+          res.data ? this.userService.loadUserCatalogs(res.data) : null
         }),
         map(x => true)
       );

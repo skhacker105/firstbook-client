@@ -39,6 +39,7 @@ const logout$ = new Subject<boolean>();
 export class UserService {
 
   private userProducts: string[] = [];
+  private userCatalogs: string[] = [];
   userProductsLoaded = false;
   isComponentIsActive = new Subject();
   titles = ['Mr.', 'Mrs.', 'Miss', 'Ms'];
@@ -75,8 +76,16 @@ export class UserService {
     return this.userProducts.find(p => p === productId) ? true : false
   }
 
+  isOwnerOfCatalog(catalogId: string): boolean {
+    return this.userCatalogs.find(c => c === catalogId) ? true : false
+  }
+
   loadUserProducts(productIds: string[]) {
     this.userProducts = productIds;
+  }
+
+  loadUserCatalogs(catalogIds: string[]) {
+    this.userCatalogs = catalogIds;
   }
 
   verifyAndSendOTP(payload: object): Observable<ServerResponse<string>> {

@@ -8,11 +8,12 @@ import { ServerResponse } from '../models/server-response.model';
 import { HelperService } from './helper.service';
 
 const domain = environment.api;
-const singleCatalogEndpoint = domain + 'product/catalog/getSingle/';
-const addCatalogEndpoint = domain + 'product/catalog/add';
-const deleteCatalogEndpoint = domain + 'product/catalog/delete/';
-const editCatalogEndpoint = domain + 'product/catalog/edit/';
-const searchEndpoint = domain + 'product/catalog/search';
+const userCatalogsEndpoint = domain + 'catalog/usercatalogs';
+const singleCatalogEndpoint = domain + 'catalog/getSingle/';
+const addCatalogEndpoint = domain + 'catalog/add';
+const deleteCatalogEndpoint = domain + 'catalog/delete/';
+const editCatalogEndpoint = domain + 'catalog/edit/';
+const searchEndpoint = domain + 'catalog/search';
 const catalogCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
 
@@ -30,6 +31,13 @@ export class CatalogService {
   })
   getSingleCatalog(id: string): Observable<ServerResponse<Catalog>> {
     return this.http.get<ServerResponse<Catalog>>(singleCatalogEndpoint + id);
+  }
+
+  @HTTPCacheable({
+    logoutEvent: logout$, refresher: catalogCache$
+  })
+  userCatalogs(): Observable<ServerResponse<string[]>> {
+    return this.http.get<ServerResponse<string[]>>(userCatalogsEndpoint);
   }
 
   @HTTPCacheBuster({
