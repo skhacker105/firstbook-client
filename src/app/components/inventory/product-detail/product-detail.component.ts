@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Meta } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { forkJoin, Observable, Subject, takeUntil } from 'rxjs';
@@ -36,9 +37,12 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private productSpecsService: ProductSpecsService,
     private router: Router,
-    private helperService: HelperService) { }
+    private helperService: HelperService,
+    private meta: Meta
+  ) { }
 
   ngOnInit(): void {
+    this.updateMetaInfo();
     this.id = this.route.snapshot.paramMap.get('productId');
     this.isLogged = this.helperService.isLoggedIn();
     this.isAdmin = this.helperService.isAdmin();
@@ -151,6 +155,11 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           });
         });
     }
+  }
+
+  updateMetaInfo(loadedProduct?: Product) {
+      this.meta.updateTag({ property: 'og:title', content: 'PRODUCT' });
+      this.meta.updateTag({ property: 'og:url', content: window.location.href });
   }
 
   goToEditDetail() {
