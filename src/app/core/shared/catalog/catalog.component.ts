@@ -19,6 +19,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   @Input() catalog: Catalog | undefined;
   @Input() expanded = false;
   @Input() overideToShowImage = false;
+  @Input() showActions = true;
   isComponentIsActive = new Subject();
   isAdmin = false;
   isEditAllowed: boolean = false;

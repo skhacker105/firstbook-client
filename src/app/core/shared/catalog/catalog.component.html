@@ -17,7 +17,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p align="end" class="catalog-edit" *ngIf="isAdmin || isEditAllowed">
+    <p align="end" class="catalog-edit" *ngIf="(isAdmin || isEditAllowed) && showActions">
         <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]" *ngIf="!catalog.isDeleted">
             <mat-icon>zoom_out_map</mat-icon>
         </button>
