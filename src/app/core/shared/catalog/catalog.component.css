@@ -58,9 +58,6 @@
     margin: auto;
 }
 
-.catalog-product-detail {
-    display: flex;
-}
 
 .catalog-product-count-enabled {
     background-color: #d5dcff !important;
@@ -73,19 +70,17 @@
 .catalog-product-name-enabled {
     flex: 1 1 auto;
     text-align: justify;
-    background-color: #ebc9f9;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    background-color: #f5deff;
+    margin-bottom: 20px;
     padding: 10px;
 }
 
 .catalog-product-cost-enabled {
     white-space: nowrap;
-    background-color: #ebc9f9;
+    background-color: #f5deff;
     padding: 10px;
-    margin-bottom: 10px;
-    text-orientation: mixed;
-    writing-mode: vertical-rl;
+    margin-bottom: 5px;
+    width: 50%;
 }
 
 .catalog-product-name-disabled {
@@ -93,8 +88,7 @@
     text-align: justify;
     background-color: #525252 !important;
     color: #878787;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     padding: 10px;
 }
 
@@ -102,8 +96,7 @@
     white-space: nowrap;
     background-color: #525252 !important;
     color: #878787;
-    padding: 10px;
+    padding: 5px;
     margin-bottom: 10px;
-    text-orientation: mixed;
-    writing-mode: vertical-rl;
+    width: 50%;
 }

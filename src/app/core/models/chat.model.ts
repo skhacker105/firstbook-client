@@ -1,4 +1,6 @@
 import { Subject } from "rxjs";
+import { Catalog } from "./catalog.model";
+import { Product } from "./product.model";
 import { User } from "./user.model";
 
 export class ChatRoom {
@@ -22,7 +24,9 @@ export class ChatMessage {
         public replyOf?: ChatMessage[],
         public isTyping?: boolean,
         public error?: any,
-        public isDeleted?: boolean
+        public isDeleted?: boolean,
+        public product?: Product,
+        public catalog?: Catalog
     ) { }
 }
 

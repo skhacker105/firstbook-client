@@ -67,6 +67,10 @@
         <div content *ngIf="message">
             <app-product [productId]="message.product" [showChatVersion]="true"
                 *ngIf="message.type === 'internal_product'"></app-product>
+
+            <app-catalog [catalog]="message.catalog" [expanded]="false" [overideToShowImage]="true"
+                [showActions]="false" *ngIf="message.type === 'internal_product_catalog'"></app-catalog>
+
             <app-string-message [message]="message"></app-string-message>
         </div>
     </app-chat-window>

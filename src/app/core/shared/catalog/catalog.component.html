@@ -1,5 +1,4 @@
-<mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded"
-[ngClass]="{
+<mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded" [ngClass]="{
     'catalog-enabled': !catalog.isDeleted,
     'catalog-disabled': catalog.isDeleted
 }">
@@ -17,19 +16,28 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p align="end" class="catalog-edit" *ngIf="(isAdmin || isEditAllowed) && showActions">
-        <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]" *ngIf="!catalog.isDeleted">
+    <p align="end" class="catalog-edit">
+        <button mat-icon-button (click)="handleShareCatalog()" *ngIf="!catalog.isDeleted">
+            <mat-icon>share</mat-icon>
+        </button>
+        <button mat-icon-button (click)="copyURL()" *ngIf="!catalog.isDeleted">
+            <mat-icon>copyright</mat-icon>
+        </button>
+        <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]"
+            *ngIf="!catalog.isDeleted && !hideGotoDetailButton">
             <mat-icon>zoom_out_map</mat-icon>
         </button>
-        <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
-            <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button *ngIf="!catalog.isDeleted" (click)="handleDisableCatalog()">
-            <mat-icon>visibility_off</mat-icon>
-        </button>
-        <button mat-icon-button *ngIf="catalog.isDeleted" (click)="handleEnableCatalog()">
-            <mat-icon>visibility_on</mat-icon>
-        </button>
+        <ng-container *ngIf="(isAdmin || isEditAllowed) && showActions">
+            <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="!catalog.isDeleted" (click)="handleDisableCatalog()">
+                <mat-icon>visibility_off</mat-icon>
+            </button>
+            <button mat-icon-button *ngIf="catalog.isDeleted" (click)="handleEnableCatalog()">
+                <mat-icon>visibility_on</mat-icon>
+            </button>
+        </ng-container>
     </p>
     <div *ngIf="catalog.isDeleted"> <mat-icon>info</mat-icon> Catalog is disabled</div>
     <mat-card [ngClass]="{
@@ -43,13 +51,13 @@
 
                 <div class="full-width catalog-product-detail" (click)="loadProductDetails(catProduct.product)">
                     <div [ngClass]="{
-                        'catalog-product-name-enabled': !catalog.isDeleted,
-                        'catalog-product-name-disabled': catalog.isDeleted
-                    }">{{ catProduct.name }}</div>
-                    <div  [ngClass]="{
                         'catalog-product-cost-enabled': !catalog.isDeleted,
                         'catalog-product-cost-disabled': catalog.isDeleted
                     }">&#8377; {{ catProduct.cost | number: '.2' }}</div>
+                    <div [ngClass]="{
+                        'catalog-product-name-enabled': !catalog.isDeleted,
+                        'catalog-product-name-disabled': catalog.isDeleted
+                    }">{{ catProduct.name }}</div>
                 </div>
             </ng-container>
         </mat-card-content>

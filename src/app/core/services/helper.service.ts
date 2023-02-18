@@ -106,7 +106,7 @@ export class HelperService {
 
   waitTillAlertLimit(diff: number) {
     const alertInTime = Math.ceil(diff < 0 ? 0 : diff < this.sessionEndingAlertLimit ? 0 : diff - this.sessionEndingAlertLimit) * 1000;
-    return timer(alertInTime-1)
+    return timer(alertInTime - 1)
       .pipe(
         take(1),
         takeWhile(d => this.isLoggedIn())
@@ -122,5 +122,15 @@ export class HelperService {
           return countLimit - tick;
         })
       );
+  }
+
+  copyToClipboard(data: string) {
+    document.addEventListener('copy', (e: ClipboardEvent) => {
+      if (!e.clipboardData) return
+      e.clipboardData.setData('text/plain', (data));
+      e.preventDefault();
+      document.removeEventListener('copy', () => { });
+    });
+    document.execCommand('copy');
   }
 }

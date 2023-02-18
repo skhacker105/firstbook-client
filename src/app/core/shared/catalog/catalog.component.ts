@@ -1,13 +1,21 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import { Subject, takeUntil } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Catalog } from '../../models/catalog.model';
+import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
+import { IInputDialogConfig } from '../../models/input-dialog-config';
 import { Product } from '../../models/product.model';
 import { User } from '../../models/user.model';
 import { CatalogService } from '../../services/catalog.service';
+import { ChatRoomService } from '../../services/chat-room.service';
 import { HelperService } from '../../services/helper.service';
 import { ProductService } from '../../services/product.service';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { InputDialogComponent } from '../input-dialog/input-dialog.component';
+import { UserSearchComponent } from '../user-search/user-search.component';
 
 @Component({
   selector: 'app-catalog',
@@ -20,6 +28,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   @Input() expanded = false;
   @Input() overideToShowImage = false;
   @Input() showActions = true;
+  @Input() hideGotoDetailButton = false;
   isComponentIsActive = new Subject();
   isAdmin = false;
   isEditAllowed: boolean = false;
@@ -42,7 +51,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private helperService: HelperService,
     private router: Router,
-    private catalogService: CatalogService
+    private catalogService: CatalogService,
+    private toastr: ToastrService,
+    private dialog: MatDialog,
+    private chatRoomService: ChatRoomService
   ) { }
 
   ngOnInit(): void {
@@ -67,7 +79,9 @@ export class CatalogComponent implements OnInit, OnDestroy {
         this.productService.getImage(p.product.defaultImage)
           .pipe(takeUntil(this.isComponentIsActive))
           .subscribe(imageRes => {
-            p.product.loadedImage = imageRes.data;
+            setTimeout(() => {
+              p.product.loadedImage = imageRes.data;
+            }, 10);
           })
     });
   }
@@ -77,6 +91,19 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   handleEnableCatalog() {
+    let confirmData = new ConfirmationDialogData('Are you sure to enable this Catalog?');
+    let confirmSetRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: confirmData
+    });
+
+    confirmSetRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: string) => {
+        if (result) this.enableCatalog()
+      });
+  }
+
+  enableCatalog() {
     if (!this.catalog) return;
     this.catalogService.enableCatalog(this.catalog._id)
       .pipe(takeUntil(this.isComponentIsActive))
@@ -87,6 +114,19 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   handleDisableCatalog() {
+    let confirmData = new ConfirmationDialogData('Are you sure to disable this Catalog?');
+    let confirmSetRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: confirmData
+    });
+
+    confirmSetRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: string) => {
+        if (result) this.disableCatalog()
+      });
+  }
+
+  disableCatalog() {
     if (!this.catalog) return;
     this.catalogService.disableCatalog(this.catalog._id)
       .pipe(takeUntil(this.isComponentIsActive))
@@ -94,5 +134,48 @@ export class CatalogComponent implements OnInit, OnDestroy {
         if (!this.catalog) return;
         this.catalog.isDeleted = catalogRes.data?.isDeleted;
       })
+  }
+
+  copyURL() {
+    if (!this.catalog?._id) return;
+    this.helperService.copyToClipboard(location.origin + '/inventory/catalog/detail/' + this.catalog._id);
+    this.toastr.show('Catalog link saved to clipboard.')
+  }
+
+  handleShareCatalog() {
+    let userRef = this.dialog.open(UserSearchComponent);
+    userRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((user: User | undefined) => {
+        if (user) {
+          this.getMessageForCatalogShare(user)
+            .pipe(takeUntil(this.isComponentIsActive))
+            .subscribe((message: string) => {
+              if (!this.catalog) return;
+              let sharePayload = {
+                catalogId: this.catalog._id,
+                message: message
+              }
+              this.chatRoomService.shareCatalogWithUser(user._id, sharePayload)
+                .pipe(takeUntil(this.isComponentIsActive))
+                .subscribe(res => {
+                  this.chatRoomService.resetChatroomCache();
+                  this.toastr.success('Catalog shared with ' + (user.firstName ? user.firstName : user.username) + ' on chat.')
+                })
+            })
+        }
+      });
+  }
+
+  getMessageForCatalogShare(user: User): Observable<string> {
+    const popupConfig: IInputDialogConfig = {
+      title: 'Sharing with ' + (user.firstName ? user.firstName : user.username),
+      inputLabel: 'Comment',
+      placeHolder: 'Any comments for ' + this.catalog?.name
+    }
+    let commentRef = this.dialog.open(InputDialogComponent, {
+      data: popupConfig
+    });
+    return commentRef.afterClosed().pipe(takeUntil(this.isComponentIsActive));
   }
 }
