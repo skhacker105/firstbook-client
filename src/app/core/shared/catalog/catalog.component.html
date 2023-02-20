@@ -21,7 +21,7 @@
             <mat-icon>share</mat-icon>
         </button>
         <button mat-icon-button (click)="copyURL()" *ngIf="!catalog.isDeleted">
-            <mat-icon>copyright</mat-icon>
+            <mat-icon>link</mat-icon>
         </button>
         <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]"
             *ngIf="!catalog.isDeleted && !hideGotoDetailButton">
