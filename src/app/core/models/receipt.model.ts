@@ -1,10 +1,10 @@
+import { Product } from './product.model';
 import { User } from './user.model';
-import { Book } from './book.model';
 
 export class Receipt {
   constructor(
     public user: User,
-    public productsInfo: Book[],
+    public productsInfo: Product[],
     public totalPrice: number
   ) { }
 }

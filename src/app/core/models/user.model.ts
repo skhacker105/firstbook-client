@@ -1,5 +1,4 @@
 import { Cart } from './cart.model';
-import { Book } from './book.model';
 import { Receipt } from './receipt.model';
 
 export class User {
@@ -12,7 +11,6 @@ export class User {
     public id: string,
     public commentsCount: number,
     public cart: Cart,
-    public favoriteBooks: Book[],
     public receipts: Receipt[],
     public userItems?: string[],
     public firstName?: string,

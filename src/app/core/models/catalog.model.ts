@@ -15,6 +15,9 @@ export class CatalogProduct {
     constructor(
         public product: Product,
         public name: string,
-        public cost: number
-    ){}
+        public cost: number,
+        public count?: number
+    ){
+        if (!this.count) this.count = 0;
+    }
 }

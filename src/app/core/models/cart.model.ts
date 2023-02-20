@@ -1,10 +1,10 @@
 import { User } from './user.model';
-import { Book } from '../models/book.model';
+import { Product } from './product.model';
 
 export class Cart {
   constructor(
-    public user: User,
-    public books: Book[],
-    public totalPrice: number
+    public totalPrice: number,
+    public products: Product[],
+    public user?: User
   ) { }
 }

@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { Catalog } from '../../models/catalog.model';
+import { Cart } from '../../models/cart.model';
+import { Catalog, CatalogProduct } from '../../models/catalog.model';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { IInputDialogConfig } from '../../models/input-dialog-config';
 import { Product } from '../../models/product.model';
 import { User } from '../../models/user.model';
+import { CartService } from '../../services/cart.service';
 import { CatalogService } from '../../services/catalog.service';
 import { ChatRoomService } from '../../services/chat-room.service';
 import { HelperService } from '../../services/helper.service';
@@ -33,6 +35,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   isAdmin = false;
   isEditAllowed: boolean = false;
   loggedInUser: User | undefined;
+  currentCart: Cart | undefined;
   customOptions: OwlOptions = {
     loop: true,
     margin: 10,
@@ -54,10 +57,14 @@ export class CatalogComponent implements OnInit, OnDestroy {
     private catalogService: CatalogService,
     private toastr: ToastrService,
     private dialog: MatDialog,
-    private chatRoomService: ChatRoomService
+    private chatRoomService: ChatRoomService,
+    private cartService: CartService
   ) { }
 
   ngOnInit(): void {
+    this.currentCart = this.cartService.getCart();
+    this.mapCartProducts();
+
     this.isAdmin = this.helperService.isAdmin();
     this.loggedInUser = this.helperService.getProfile();
     this.checkIfEditAllowed();
@@ -66,6 +73,19 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.isComponentIsActive.complete();
+  }
+
+  mapCartProducts() {
+    if (!this.catalog) return;
+    if (!this.currentCart) {
+      this.catalog.products.forEach(catalogProduct => catalogProduct.count = 0);
+    } else {
+      this.catalog.products.forEach(catalogProduct => {
+        const matchingCartProducts = this.currentCart?.products
+          .filter(cartProduct => cartProduct._id === catalogProduct.product._id);
+        catalogProduct.count = matchingCartProducts ? matchingCartProducts.length : 0;
+      });
+    }
   }
 
   checkIfEditAllowed() {
@@ -177,5 +197,15 @@ export class CatalogComponent implements OnInit, OnDestroy {
       data: popupConfig
     });
     return commentRef.afterClosed().pipe(takeUntil(this.isComponentIsActive));
+  }
+
+  addToCart(catProduct: CatalogProduct) {
+    this.currentCart = this.cartService.addToCart(catProduct.product);
+    this.mapCartProducts();
+  }
+
+  removeFromCart(catProduct: CatalogProduct) {
+    this.currentCart = this.cartService.removeFromCart(catProduct.product);
+    this.mapCartProducts();
   }
 }

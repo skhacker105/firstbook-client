@@ -44,7 +44,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 // Components
 import { CommentComponent } from './comment/comment.component';
 import { CartComponent } from './cart/cart.component';
-import { BookComponent } from './book/book.component';
 import { ContactComponent } from './contact/contact.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { SanitizerUrlPipe } from '../pipes/sanitizer-url.pipe';
@@ -70,7 +69,6 @@ import { CatalogComponent } from './catalog/catalog.component';
   declarations: [
     CommentComponent,
     CartComponent,
-    BookComponent,
     MustMatchDirective,
     IsUrlDirective,
     IsIsbnDirective,
@@ -129,7 +127,6 @@ import { CatalogComponent } from './catalog/catalog.component';
   exports: [
     CommentComponent,
     CartComponent,
-    BookComponent,
     MustMatchDirective,
     IsUrlDirective,
     IsIsbnDirective,

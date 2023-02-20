@@ -40,7 +40,6 @@ const userRoutes: Routes = [
   },
   {
     path: 'cart',
-    canActivate: [IsAuthenticatedGuard],
     component: CartComponent
   },
   {

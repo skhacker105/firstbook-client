@@ -16,10 +16,6 @@ const routes: Routes = [
     loadChildren: () => import('./components/user/user.module').then(m => m.UserModule)
   },
   {
-    path: 'book',
-    loadChildren: () => import('./components/book/book.module').then(m => m.BookModule)
-  },
-  {
     path: 'contact',
     canActivate: [IsAuthenticatedGuard],
     loadChildren: () => import('./components/contact/contact.module').then(m => m.ContactModule)

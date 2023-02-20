@@ -1,8 +1,9 @@
 // Decorators and Lifehooks
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 
 // Forms
 import { FormControl, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 
 // Router
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ import { UserService } from '../../../core/services/user.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  @Input() returnResultOnly = false;
   loginForm: FormGroup = new FormGroup({
     'username': new FormControl('', [
       Validators.required
@@ -33,7 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private router: Router,
-    private helperService: HelperService
+    private helperService: HelperService,
+    @Optional() private dialogRef: MatDialogRef<LoginComponent>
   ) { }
 
   ngOnInit(): void {
@@ -49,7 +52,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(this.loginForm.value)
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.helperService.statSessionWatch();
-        this.router.navigate(['/home']);
+        if (!this.returnResultOnly)
+          this.router.navigate(['/home']);
+          else this.dialogRef?.close('done');
       });
   }
 

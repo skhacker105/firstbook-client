@@ -2,10 +2,10 @@
 import { Component, OnInit } from '@angular/core';
 
 // Services
-import { BookService } from '../../../core/services/book.service';
+import { ProductService } from 'src/app/core/services/product.service';
 
 // Models
-import { Book } from '../../../core/models/book.model';
+import { Product } from '../../../core/models/product.model';
 
 const newestBooksQuery = '?sort={"creationDate":-1}&limit=5';
 const bestRatedBooksQuery = '?sort={"currentRating":-1}&limit=5';
@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
   // bestRatedBooks: Book[];
   // mostPurchasedBooks: Book[];
 
-  constructor(private bookService: BookService) { }
+  constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
     // this.bookService

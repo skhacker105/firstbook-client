@@ -5,9 +5,14 @@
     border-radius: 0px;
 }
 
+.mat-expansion-panel-header-title {
+    font-size: smaller;
+}
+
 .catalog-expansion-panel .mat-expansion-panel-header-description {
     justify-content: space-between;
     align-items: center;
+    font-size: xx-small;
 }
 
 .catalog-edit {
@@ -58,6 +63,15 @@
     margin: auto;
 }
 
+.catalog-product-detail-header {
+    display: flex;
+}
+
+.counter-button {
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+}
 
 .catalog-product-count-enabled {
     background-color: #d5dcff !important;

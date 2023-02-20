@@ -19,7 +19,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 
 // Models
 import { Cart } from '../../models/cart.model';
-import { Book } from '../../models/book.model';
+import { Product } from '../../models/product.model';
 
 @Component({
   selector: 'app-cart',
@@ -43,14 +43,14 @@ export class CartComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.cartService
-      .getCart()
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
-        this.cart = res.data;
-        if (this.cart)
-          this.cartForm = this.toFormGroup(this.cart.books);
-        this.onChanges();
-      });
+    // this.cartService
+    //   .getCart()
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
+    //     this.cart = res.data;
+    //     if (this.cart && this.cart.books)
+    //       this.cartForm = this.toFormGroup(this.cart.books);
+    //     this.onChanges();
+    //   });
   }
 
   ngOnDestroy(): void {
@@ -58,17 +58,17 @@ export class CartComponent implements OnInit, OnDestroy {
     this.isComponentIsActive.complete()
   }
 
-  toFormGroup(books: Book[]): FormGroup {
+  toFormGroup(books: Product[]): FormGroup {
     const group: any = {};
 
-    books.forEach(book => {
-      group[book._id] = new FormControl(
-        book.qty || '', [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(20)
-      ]);
-    });
+    // books.forEach(book => {
+    //   group[book._id] = new FormControl(
+    //     book.qty || '', [
+    //     Validators.required,
+    //     Validators.min(1),
+    //     Validators.max(20)
+    //   ]);
+    // });
 
     return new FormGroup(group);
   }
@@ -98,35 +98,35 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onRemove(): void {
-    if (!this.lastDeleteId) return;
-    this.cartService
-      .removeFromCart(this.lastDeleteId)
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
-        if (!this.cart) return;
-        this.helperService.cartStatus.next('remove');
-        this.cart.books = this.cart.books.filter(b => b._id !== this.lastDeleteId);
-        this.reCalcSum(this.cartForm?.value);
-        this.removeModalRef?.hide();
-      });
+    // if (!this.lastDeleteId) return;
+    // this.cartService
+    //   .removeFromCart(this.lastDeleteId)
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
+    //     if (!this.cart) return;
+    //     this.helperService.cartStatus.next('remove');
+    //     this.cart.books = this.cart.books?.filter(b => b._id !== this.lastDeleteId);
+    //     this.reCalcSum(this.cartForm?.value);
+    //     this.removeModalRef?.hide();
+    //   });
   }
 
   onSubmit(): void {
-    this.cartService
-      .checkout(this.cartForm?.value)
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
-        this.helperService.cartStatus.next('updateStatus');
-        this.router.navigate(['/user/purchaseHistory']);
-      });
+    // this.cartService
+    //   .checkout(this.cartForm?.value)
+    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
+    //     this.helperService.cartStatus.next('updateStatus');
+    //     this.router.navigate(['/user/purchaseHistory']);
+    //   });
   }
 
   reCalcSum(formValues: any): void {
-    if (!this.cart) return;
-    let price = 0;
-    for (const b of this.cart.books) {
-      price += b.price * formValues[b._id];
-    }
+    // if (!this.cart || !this.cart.books) return;
+    // let price = 0;
+    // for (const b of this.cart.books) {
+    //   price += b.price * formValues[b._id];
+    // }
 
-    this.cart.totalPrice = price;
+    // this.cart.totalPrice = price;
   }
 
   getControl(id: string) {

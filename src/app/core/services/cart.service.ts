@@ -1,54 +1,63 @@
 // Decorators
-import { Injectable } from '@angular/core';
-
-// RXJS
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { EventEmitter, Injectable } from '@angular/core';
 
 // HTTP
 import { HttpClient } from '@angular/common/http';
 
-// Models
-import { ServerResponse } from '../models/server-response.model';
-import { Cart } from '../models/cart.model';
+// Environment
 import { environment } from 'src/environments/environment';
 
-const baseUrl = environment.api+ 'user/cart';
-const getCartSizeEndpoint = environment.api+ 'cart/getSize';
-const addToCartEndpoint = '/add/';
-const removeFromCartEndpoint = '/delete/';
-const checkoutEndpoint = '/checkout';
+// Models
+import { Cart } from '../models/cart.model';
+import { Product } from '../models/product.model';
+import { User } from '../models/user.model';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
 
+  cartUpdated = new Subject<Cart>()
+
   constructor(private http: HttpClient) { }
 
-  getCartSize(): Observable<ServerResponse<number>> {
-    return this.http.get<ServerResponse<number>>(getCartSizeEndpoint);
+  getCartSize(): number {
+    const cart = this.getCart();
+    return cart && cart.products ? cart.products.length : 0
   }
 
-  getCart(): Observable<ServerResponse<Cart>> {
-    return this.http.get<ServerResponse<Cart>>(baseUrl)
-      .pipe(
-        map(res => {
-          res.data?.books.map(b => b.qty = 1);
-          return res;
-        })
-      );
+  getCart(): Cart | undefined {
+    let val = localStorage.getItem('cart');
+    return val ? JSON.parse(val) as Cart : undefined;
   }
 
-  addToCart(id: string): Observable<ServerResponse<Cart>> {
-    return this.http.post<ServerResponse<Cart>>(baseUrl + addToCartEndpoint + id, {});
+  addToCart(product: Product, user?: User): Cart {
+    let cart = this.getCart();
+    if (cart) {
+      cart.products.push(product);
+      cart.user = user
+    } else {
+      cart = new Cart(0, [product], user);
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    this.cartUpdated.next(cart);
+    return cart;
   }
 
-  removeFromCart(id: string): Observable<ServerResponse<Cart>> {
-    return this.http.delete<ServerResponse<Cart>>(baseUrl + removeFromCartEndpoint + id);
+  removeFromCart(product: Product): Cart | undefined {
+    let cart = this.getCart();
+    if (cart) {
+      const prodAt = cart.products.findIndex(p => p._id === product._id);
+      if (prodAt >= 0) cart.products.splice(prodAt, 1);
+    }
+    if (cart?.products.length === 0) { localStorage.removeItem('cart'); cart = undefined; }
+    else localStorage.setItem('cart', JSON.stringify(cart));
+    if (cart) this.cartUpdated.next(cart);
+    return cart;
   }
 
-  checkout(payload: object): Observable<ServerResponse<object>> {
-    return this.http.post<ServerResponse<object>>(baseUrl + checkoutEndpoint, payload);
-  }
+  // checkout(payload: object): Observable<ServerResponse<object>> {
+  //   return this.http.post<ServerResponse<object>>(baseUrl + checkoutEndpoint, payload);
+  // }
 }
