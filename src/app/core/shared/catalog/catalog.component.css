@@ -7,6 +7,7 @@
 
 .mat-expansion-panel-header-title {
     font-size: smaller;
+    text-align: left;
 }
 
 .catalog-expansion-panel .mat-expansion-panel-header-description {
