@@ -55,7 +55,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
     this.cartService.cartUpdated
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(cart => {
-        this.cartItems = cart.products.length;
+        this.cartItems = cart ? cart.products.length : 0;
       })
   }
 

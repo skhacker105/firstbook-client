@@ -18,7 +18,7 @@ import { Subject } from 'rxjs';
 })
 export class CartService {
 
-  cartUpdated = new Subject<Cart>()
+  cartUpdated = new Subject<Cart | undefined>()
 
   constructor(private http: HttpClient) { }
 
@@ -51,9 +51,9 @@ export class CartService {
       const prodAt = cart.products.findIndex(p => p._id === product._id);
       if (prodAt >= 0) cart.products.splice(prodAt, 1);
     }
-    if (cart?.products.length === 0) { localStorage.removeItem('cart'); cart = undefined; }
+    if (cart?.products.length === 0) localStorage.removeItem('cart');
     else localStorage.setItem('cart', JSON.stringify(cart));
-    if (cart) this.cartUpdated.next(cart);
+    this.cartUpdated.next(cart);
     return cart;
   }
 
