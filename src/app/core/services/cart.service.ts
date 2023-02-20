@@ -29,6 +29,10 @@ export class CartService {
 
   getCart(): Cart | undefined {
     let val = localStorage.getItem('cart');
+    if (val === 'undefined') {
+      val = null;
+      localStorage.removeItem('cart');
+    }
     return val ? JSON.parse(val) as Cart : undefined;
   }
 
@@ -52,7 +56,7 @@ export class CartService {
       if (prodAt >= 0) cart.products.splice(prodAt, 1);
     }
     if (cart?.products.length === 0) localStorage.removeItem('cart');
-    else localStorage.setItem('cart', JSON.stringify(cart));
+    else if (cart) localStorage.setItem('cart', JSON.stringify(cart));
     this.cartUpdated.next(cart);
     return cart;
   }
