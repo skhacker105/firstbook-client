@@ -24,7 +24,7 @@ export class JwtInterceptor implements HttpInterceptor {
     if (this.heplerService.isLoggedIn()) {
       request = request.clone({
         setHeaders: {
-          'Accept': 'application/json',
+          // 'Accept': 'application/json',
           'Authorization': 'Bearer ' + this.heplerService.getToken()
         }
       });

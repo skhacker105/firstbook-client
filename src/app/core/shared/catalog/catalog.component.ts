@@ -208,4 +208,20 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.currentCart = this.cartService.removeFromCart(catProduct.product);
     this.mapCartProducts();
   }
+
+  downalodExcel() {
+    if (!this.catalog) return;
+    this.catalogService.downloadCatalogAsExcel(this.catalog._id)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(data => {
+        if (!this.catalog) return;
+        const fileName = this.catalog.name + `.xlsx`;
+        let file = new File([data], fileName);
+        let fileUrl = URL.createObjectURL(file);
+        var a = document.createElement("a");
+        a.href = fileUrl;
+        a.download = fileName;
+        a.click();
+      });
+  }
 }

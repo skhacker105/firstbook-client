@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -8,6 +8,7 @@ import { ServerResponse } from '../models/server-response.model';
 import { HelperService } from './helper.service';
 
 const domain = environment.api;
+const downloadCatalAsExcelEndpoint = domain + 'catalog/downloadCatalAsExcel/';
 const userCatalogsEndpoint = domain + 'catalog/usercatalogs';
 const singleCatalogEndpoint = domain + 'catalog/getSingle/';
 const addCatalogEndpoint = domain + 'catalog/add';
@@ -39,6 +40,16 @@ export class CatalogService {
   })
   userCatalogs(): Observable<ServerResponse<string[]>> {
     return this.http.get<ServerResponse<string[]>>(userCatalogsEndpoint);
+  }
+
+  @HTTPCacheable({
+    logoutEvent: logout$, refresher: catalogCache$
+  })
+  downloadCatalogAsExcel(catalogId: string): Observable<any> {
+    const headers = new HttpHeaders({
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    return this.http.get(downloadCatalAsExcelEndpoint + catalogId, { headers, responseType: 'blob' });
   }
 
   @HTTPCacheBuster({
