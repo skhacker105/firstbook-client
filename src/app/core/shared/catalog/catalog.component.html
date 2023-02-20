@@ -16,6 +16,19 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
+    <!-- Catalog owner actions -->
+    <p align="end" class="catalog-edit" *ngIf="(isAdmin || isEditAllowed) && showActions">
+        <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!catalog.isDeleted" (click)="handleDisableCatalog()">
+            <mat-icon>visibility_off</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="catalog.isDeleted" (click)="handleEnableCatalog()">
+            <mat-icon>visibility_on</mat-icon>
+        </button>
+    </p>
+    <!-- Any user actions -->
     <p align="end" class="catalog-edit">
         <button mat-icon-button (click)="handleShareCatalog()" *ngIf="!catalog.isDeleted && loggedInUser">
             <mat-icon>share</mat-icon>
@@ -27,16 +40,7 @@
             *ngIf="!catalog.isDeleted && !hideGotoDetailButton">
             <mat-icon>zoom_out_map</mat-icon>
         </button>
-        <ng-container *ngIf="(isAdmin || isEditAllowed) && showActions">
-            <button mat-icon-button [routerLink]="['/inventory/catalog/edit/', catalog._id]" *ngIf="!catalog.isDeleted">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button *ngIf="!catalog.isDeleted" (click)="handleDisableCatalog()">
-                <mat-icon>visibility_off</mat-icon>
-            </button>
-            <button mat-icon-button *ngIf="catalog.isDeleted" (click)="handleEnableCatalog()">
-                <mat-icon>visibility_on</mat-icon>
-            </button>
+        <ng-container>
         </ng-container>
         <button mat-icon-button [matMenuTriggerFor]="menu1">
             <mat-icon>download</mat-icon>
