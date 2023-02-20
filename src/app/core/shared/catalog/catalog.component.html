@@ -23,7 +23,7 @@
         <!-- Select -->
         <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]"
             *ngIf="!catalog.isDeleted && !hideGotoDetailButton">
-            <mat-icon>zoom_out_map</mat-icon>
+            <mat-icon>file_open</mat-icon>
         </button>
 
         <!--  Download -->
@@ -92,35 +92,42 @@
         'catalog-products-card-disabled': catalog.isDeleted
     }">
         <mat-card-content class="catalog-products-container">
-            <ng-container *ngFor="let catProduct of catalog.products">
+            <ng-container *ngFor="let catProduct of catalog.products; let i = index;">
+
+                <mat-divider></mat-divider>
+                <!-- Cost -->
+                <div [ngClass]="{
+                    'catalog-product-cost-enabled': !catalog.isDeleted,
+                    'catalog-product-cost-disabled': catalog.isDeleted
+                        }">
+                    &#8377; {{ catProduct.cost | number: '.2' }}
+                </div>
+                <br>
+
+                <!-- Image Preview -->
                 <app-preview [mainImage]="catProduct.product.loadedImage" [showActions]="false"
                     [customOptions]="customOptions" *ngIf="!isEditAllowed || overideToShowImage"></app-preview>
 
                 <div class="full-width catalog-product-detail">
 
-                    <div class="full-width catalog-product-detail-header">
-                        <div [ngClass]="{
-                        'catalog-product-cost-enabled': !catalog.isDeleted,
-                        'catalog-product-cost-disabled': catalog.isDeleted
-                    }">&#8377; {{ catProduct.cost | number: '.2' }}</div>
-                        <div *ngIf="!catalog.isDeleted && !isEditAllowed" class="half-width">
-                            <button mat-icon-button (click)="removeFromCart(catProduct)"
-                                class="counter-button"><mat-icon>remove_circle_outline</mat-icon>
-                            </button>
-                            <button mat-button>
-                                {{ catProduct.count }}
-                            </button>
-                            <button mat-icon-button (click)="addToCart(catProduct)"
-                                class="counter-button"><mat-icon>add_circle_outline</mat-icon>
-                            </button>
-                        </div>
+                    <div class="full-width" *ngIf="!catalog.isDeleted && !isEditAllowed">
+                        <button mat-icon-button (click)="removeFromCart(catProduct)"
+                            class="counter-button"><mat-icon>remove_circle_outline</mat-icon>
+                        </button>
+                        <button mat-button>
+                            {{ catProduct.count }}
+                        </button>
+                        <button mat-icon-button (click)="addToCart(catProduct)"
+                            class="counter-button"><mat-icon>add_circle_outline</mat-icon>
+                        </button>
                     </div>
                     <div [ngClass]="{
                         'catalog-product-name-enabled': !catalog.isDeleted,
                         'catalog-product-name-disabled': catalog.isDeleted
                     }" (click)="loadProductDetails(catProduct.product)">
-                        {{ catProduct.name }}
+                        <b>{{ catProduct.name }}</b>
                     </div>
+                    <div [innerHTML]="catProduct.product.description" *ngIf="!hideDescription" class="catalog-product-description"></div>
                 </div>
             </ng-container>
         </mat-card-content>

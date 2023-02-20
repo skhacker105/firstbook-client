@@ -38,7 +38,7 @@
 }
 
 .catalog-products-card-enabled {
-    background-color: #edc0ff;
+    background-color: #ffffff;
 }
 
 .catalog-products-card-disabled {
@@ -63,10 +63,6 @@
     margin: auto;
 }
 
-.catalog-product-detail-header {
-    display: flex;
-}
-
 .counter-button {
     width: 24px;
     height: 24px;
@@ -84,7 +80,7 @@
 .catalog-product-name-enabled {
     flex: 1 1 auto;
     text-align: justify;
-    background-color: #f5deff;
+    background-color: #ffffff;
     margin-bottom: 20px;
     padding: 10px;
 }
@@ -113,4 +109,8 @@
     padding: 5px;
     margin-bottom: 10px;
     width: 50%;
+}
+
+.catalog-product-description {
+    text-align: left;
 }
