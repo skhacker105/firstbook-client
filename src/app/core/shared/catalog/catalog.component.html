@@ -127,7 +127,7 @@
                     }" (click)="loadProductDetails(catProduct.product)">
                         <b>{{ catProduct.name }}</b>
                     </div>
-                    <div [innerHTML]="catProduct.product.description" *ngIf="!hideDescription" class="catalog-product-description"></div>
+                    <div [innerHTML]="catProduct.product.description" *ngIf="!hideDescription && !isEditAllowed" class="catalog-product-description"></div>
                 </div>
             </ng-container>
         </mat-card-content>
