@@ -43,6 +43,13 @@ app-product>mat-card {
   white-space: nowrap;
 }
 
+@media print {
+  .noprint {
+     visibility: hidden;
+     display: none;
+  }
+}
+
 /* Forms Start */
 .add-entity {
   position: fixed;

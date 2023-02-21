@@ -1,13 +1,13 @@
 <mat-expansion-panel *ngIf="catalog" class="catalog-expansion-panel" [expanded]="expanded" [ngClass]="{
     'catalog-enabled': !catalog.isDeleted,
     'catalog-disabled': catalog.isDeleted
-}">
+}" [hideToggle]="isPrintTriggered ? true : false">
     <mat-expansion-panel-header [ngClass]="{
         'catalog-expansion-panel-header-enabled': !catalog.isDeleted,
         'catalog-expansion-panel-header-disabled': catalog.isDeleted
     }" collapsedHeight="70px" expandedHeight="70px">
         <mat-panel-title> {{ catalog.name }}</mat-panel-title>
-        <mat-panel-description>
+        <mat-panel-description class="noprint">
             {{ catalog.createdDate | date: 'dd/MM/yyyy' }}
             <mat-chip [ngClass]="{
                 'catalog-product-count-enabled': !catalog.isDeleted,
@@ -18,7 +18,34 @@
 
 
     <!-- Any user actions -->
-    <p align="end" class="catalog-edit">
+    <div class="catalog-edit noprint">
+
+        <!-- User Selection -->
+        <div class="global-client-filter-container">
+            <button mat-icon-button type="button" [matMenuTriggerFor]="menu1" *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+                <mat-icon>manage_accounts</mat-icon>
+            </button>
+            <mat-menu #menu1="matMenu">
+                <button mat-menu-item type="button" (click)="changeClient(undefined)">
+                    Generic Cost
+                </button>
+                <ng-container *ngIf="cumulativeClients.length > 0">
+                    <button mat-menu-item type="button" *ngFor="let client of cumulativeClients;"
+                    (click)="changeClient(client)">
+                        {{ client.firstName }}
+                    </button>
+                </ng-container>
+
+            </mat-menu>
+
+            <ng-container *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+                {{
+                    selectedClient
+                    ? selectedClient.firstName
+                    : 'Generic Cost'
+                }}
+            </ng-container>
+        </div>
 
         <!-- Select -->
         <button mat-icon-button [routerLink]="['/inventory/catalog/detail/', catalog._id]"
@@ -27,7 +54,7 @@
         </button>
 
         <!--  Download -->
-        <button mat-icon-button [matMenuTriggerFor]="menu2">
+        <button mat-icon-button [matMenuTriggerFor]="menu2" *ngIf="!catalog.isDeleted && !hideDownload">
             <mat-icon>download</mat-icon>
         </button>
         <mat-menu #menu2="matMenu">
@@ -43,7 +70,7 @@
                 </button>
             </ng-template>
 
-            <button mat-menu-item>
+            <button mat-menu-item (click)="exportToPDF()">
                 <mat-icon>picture_as_pdf</mat-icon>
                 <span>PDF</span>
             </button>
@@ -85,7 +112,7 @@
                 </button>
             </ng-container>
         </mat-menu>
-    </p>
+    </div>
     <div *ngIf="catalog.isDeleted"> <mat-icon>info</mat-icon> Catalog is disabled</div>
     <mat-card [ngClass]="{
         'catalog-products-card-enabled': !catalog.isDeleted,
@@ -96,21 +123,67 @@
 
                 <mat-divider></mat-divider>
                 <!-- Cost -->
-                <div [ngClass]="{
+                <div class="catalog-product-header">
+
+                    <!-- Price -->
+                    <div [ngClass]="{
                     'catalog-product-cost-enabled': !catalog.isDeleted,
                     'catalog-product-cost-disabled': catalog.isDeleted
                         }">
-                    &#8377; {{ catProduct.cost | number: '.2' }}
+
+                        <ng-container *ngIf="!catProduct.product.clientCostSelected">
+                            &#8377; {{ catProduct.cost | number: '.2' }}
+                        </ng-container>
+                        <ng-container *ngIf="catProduct.product.clientCostSelected">
+                            &#8377; {{ catProduct.product.clientCostSelected.cost | number: '.2' }}
+                        </ng-container>
+                    </div>
+
+                    <!-- Cost Selection Based on User Variance -->
+                    <div class="catalog-product-contact-variance-container noprint"
+                        *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (catProduct.product.clientCosts && catProduct.product.clientCosts.length > 0)">
+
+                        <div class="contact-cost-label">
+                            <ng-container *ngIf="!catProduct.product.clientCostSelected">
+                                Generic Cost
+                            </ng-container>
+                            <ng-container *ngIf="catProduct.product.clientCostSelected">
+                                {{ catProduct.product.clientCostSelected.client.firstName }}
+                            </ng-container>
+                        </div>
+
+                        <button mat-icon-button type="button" [matMenuTriggerFor]="menu4" [disabled]="selectedClient ? true : false">
+                            <mat-icon>manage_accounts</mat-icon>
+                        </button>
+                        <mat-menu #menu4="matMenu">
+                            <button mat-menu-item type="button" (click)="selectProductContactCost(catProduct, undefined)">
+                                Generic Cost &#8377; <span class="client-cost-select-item">{{ catProduct.cost | number:
+                                    '.2' }}</span>
+                            </button>
+                            <ng-container *ngIf="catProduct.product.clientCosts">
+                                <button mat-menu-item type="button"
+                                    (click)="selectProductContactCost(catProduct, clientCost)"
+                                    *ngFor="let clientCost of catProduct.product.clientCosts;">
+                                    {{ clientCost.client.firstName }} <span class="client-cost-select-item">&#8377; {{
+                                        clientCost.cost | number: '.2' }}</span>
+                                </button>
+                            </ng-container>
+
+                        </mat-menu>
+                    </div>
                 </div>
                 <br>
 
                 <!-- Image Preview -->
                 <app-preview [mainImage]="catProduct.product.loadedImage" [showActions]="false"
-                    [customOptions]="customOptions" *ngIf="!isEditAllowed || overideToShowImage"></app-preview>
+                    [customOptions]="customOptions"
+                    *ngIf="(!isEditAllowed || overideToShowImage) && !catalog.isDeleted"></app-preview>
 
+                <!-- Product Info -->
                 <div class="full-width catalog-product-detail">
 
-                    <div class="full-width" *ngIf="!catalog.isDeleted && !isEditAllowed">
+                    <!-- Cart ADD/REMOVE Controls -->
+                    <div class="full-width noprint" *ngIf="!catalog.isDeleted && !isEditAllowed">
                         <button mat-icon-button (click)="removeFromCart(catProduct)"
                             class="counter-button"><mat-icon>remove_circle_outline</mat-icon>
                         </button>
@@ -121,13 +194,18 @@
                             class="counter-button"><mat-icon>add_circle_outline</mat-icon>
                         </button>
                     </div>
+
+                    <!-- Product Name -->
                     <div [ngClass]="{
                         'catalog-product-name-enabled': !catalog.isDeleted,
                         'catalog-product-name-disabled': catalog.isDeleted
                     }" (click)="loadProductDetails(catProduct.product)">
                         <b>{{ catProduct.name }}</b>
                     </div>
-                    <div [innerHTML]="catProduct.product.description" *ngIf="!hideDescription && !isEditAllowed" class="catalog-product-description"></div>
+
+                    <!-- Product Description -->
+                    <div [innerHTML]="catProduct.product.description" *ngIf="isPrintTriggered || (!hideDescription && !isEditAllowed)"
+                        class="catalog-product-description"></div>
                 </div>
             </ng-container>
         </mat-card-content>

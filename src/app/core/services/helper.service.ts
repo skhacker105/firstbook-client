@@ -15,6 +15,7 @@ export class HelperService {
   isUserLogged = new Subject<boolean>();
   searchQuery = new Subject<string>();
   cartStatus = new Subject<string>();
+  printTriggered=new BehaviorSubject<boolean>(false);
   showGlobalSearch = true;
   showFooter = true;
   pendingHttpCall = new BehaviorSubject<boolean>(false);

@@ -18,6 +18,12 @@
 
 .catalog-edit {
     height: 50px;
+    display: flex;
+}
+
+.global-client-filter-container {
+    flex: 1 1 auto;
+    text-align: left;
 }
 
 .catalog-expansion-panel-header-enabled {
@@ -112,6 +118,30 @@
     width: 50%;
 }
 
+.catalog-product-contact-variance-container {
+    width: 50%;
+    text-align: end;
+    display: flex;
+    padding-left: 10px;
+}
+
+.catalog-product-header {
+    display: flex;
+}
+
 .catalog-product-description {
     text-align: left;
+}
+
+.client-cost-select-item {
+    font-size: 15px;
+    color: gray;
+}
+
+.contact-cost-label {
+    height: 100%;
+    vertical-align: middle;
+    flex: 1 1 auto;
+    text-align: center;
+    margin-top: 14px;
 }

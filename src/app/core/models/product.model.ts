@@ -21,7 +21,8 @@ export class Product {
         public purchaseCost?: number,
         public sellingCost?: number,
         public loadedImage?: ItemImage,
-        public clientCosts?: ProductClientCost[]
+        public clientCosts?: ProductClientCost[],
+        public clientCostSelected?: ProductClientCost
     ) {}
 }
 

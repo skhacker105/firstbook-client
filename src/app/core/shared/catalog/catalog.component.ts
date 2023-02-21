@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -7,8 +7,9 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { Cart } from '../../models/cart.model';
 import { Catalog, CatalogProduct } from '../../models/catalog.model';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
+import { Contact } from '../../models/contact.model';
 import { IInputDialogConfig } from '../../models/input-dialog-config';
-import { Product } from '../../models/product.model';
+import { Product, ProductClientCost } from '../../models/product.model';
 import { User } from '../../models/user.model';
 import { CartService } from '../../services/cart.service';
 import { CatalogService } from '../../services/catalog.service';
@@ -32,11 +33,18 @@ export class CatalogComponent implements OnInit, OnDestroy {
   @Input() showActions = true;
   @Input() hideGotoDetailButton = false;
   @Input() hideDescription = false;
+  @Input() hideClientCostFilter = false;
+  @Input() hideDownload = false;
+  @Input() selectedClient: Contact | undefined;
+  @Output() clientChanged = new EventEmitter<Contact | undefined>();
   isComponentIsActive = new Subject();
   isAdmin = false;
+  isPrintTriggered = false;
   isEditAllowed: boolean = false;
   loggedInUser: User | undefined;
   currentCart: Cart | undefined;
+  cumulativeClients: Contact[] = [];
+  lstProductClientCosts: ProductClientCost[] = [];
   customOptions: OwlOptions = {
     loop: true,
     margin: 10,
@@ -65,15 +73,29 @@ export class CatalogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentCart = this.cartService.getCart();
     this.mapCartProducts();
+    this.accumulateClients();
 
     this.isAdmin = this.helperService.isAdmin();
     this.loggedInUser = this.helperService.getProfile();
     this.checkIfEditAllowed();
     this.loadImage();
+
+    this.helperService.printTriggered.pipe(takeUntil(this.isComponentIsActive)).subscribe(state => { this.isPrintTriggered = state });
   }
 
   ngOnDestroy(): void {
     this.isComponentIsActive.complete();
+  }
+
+  accumulateClients() {
+    const cumulativeClients: Contact[] = [];
+    this.catalog?.products.forEach(p => {
+      p.product.clientCosts?.forEach(cc => {
+        if (!cumulativeClients.some(c => c._id === cc.client._id))
+          cumulativeClients.push(cc.client)
+      });
+    });
+    this.cumulativeClients = cumulativeClients;
   }
 
   mapCartProducts() {
@@ -159,7 +181,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   copyURL() {
     if (!this.catalog?._id) return;
-    this.helperService.copyToClipboard(location.origin + '/inventory/catalog/detail/' + this.catalog._id);
+    this.helperService.copyToClipboard(location.origin + '/inventory/catalog/detail/' + this.catalog._id + (this.selectedClient ? '/' + this.selectedClient._id : ''));
     this.toastr.show('Catalog link saved to clipboard.')
   }
 
@@ -224,5 +246,23 @@ export class CatalogComponent implements OnInit, OnDestroy {
         a.download = fileName;
         a.click();
       });
+  }
+
+  selectProductContactCost(catProduct: CatalogProduct, userCostSelected: ProductClientCost | undefined) {
+    catProduct.product.clientCostSelected = userCostSelected;
+  }
+
+  changeClient(client: Contact | undefined) {
+    this.clientChanged.emit(client);
+  }
+
+  exportToPDF() {
+    this.helperService.printTriggered.next(true);
+    window.addEventListener('afterprint', (event) => {
+      this.helperService.printTriggered.next(false);
+    });
+    setTimeout(() => {
+      window.print();
+    }, 10);
   }
 }

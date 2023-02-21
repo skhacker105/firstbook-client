@@ -1,2 +1,2 @@
-<app-catalog *ngIf="catalog" [catalog]="catalog" [expanded]="true" [overideToShowImage]="true"
-[hideGotoDetailButton]="true"></app-catalog>
+<app-catalog *ngIf="catalog" [catalog]="catalog" [expanded]="true" [overideToShowImage]="true" [selectedClient]="client"
+[hideGotoDetailButton]="true" (clientChanged)="handleClientChanged($event)"></app-catalog>

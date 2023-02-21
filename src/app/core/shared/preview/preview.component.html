@@ -1,6 +1,6 @@
 <ng-container *ngIf="customOptions && (mainImage || files.length > 0)">
     <!-- <p align="end" *ngIf="files.length === 0 && showLoadMore"><mat-chip>{{ loadMoreText }}</mat-chip></p> -->
-    <owl-carousel-o [options]="customOptions">
+    <owl-carousel-o [options]="customOptions" *ngIf="!isPrintTriggered">
         <ng-template carouselSlide *ngIf="mainImage">
             <ng-template [ngTemplateOutlet]="imagepreview"
                 [ngTemplateOutletContext]="{picture: mainImage, isMain: true}"></ng-template>
@@ -12,6 +12,17 @@
             </ng-template>
         </ng-container>
     </owl-carousel-o>
+
+    <ng-container *ngIf="isPrintTriggered">
+        <ng-template [ngTemplateOutlet]="imagepreview"
+            [ngTemplateOutletContext]="{picture: mainImage, isMain: true}"></ng-template>
+        <ng-container *ngFor="let slide of files; let i = index;">
+            <ng-template carouselSlide>
+                <ng-template [ngTemplateOutlet]="imagepreview"
+                    [ngTemplateOutletContext]="{picture: slide}"></ng-template>
+            </ng-template>
+        </ng-container>
+    </ng-container>
 </ng-container>
 
 <ng-template let-picture="picture" let-isMain="isMain" #imagepreview>

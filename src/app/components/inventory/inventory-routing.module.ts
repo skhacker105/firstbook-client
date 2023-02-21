@@ -64,6 +64,10 @@ const routes: Routes = [
         component: CatalogDetailsComponent
       },
       {
+        path: 'detail/:catalogId/:clientFilter',
+        component: CatalogDetailsComponent
+      },
+      {
         path: '**',
         redirectTo: 'store/default',
         pathMatch: 'full'
