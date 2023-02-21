@@ -115,7 +115,7 @@ export class ContactComponent implements OnInit, OnDestroy {
       data: notesPopupDataConfig
     });
 
-    notesPopupRef.afterClosed().subscribe((result: string) => {
+    notesPopupRef.afterClosed().pipe(takeUntil(this.isComponentIsActive)).subscribe((result: string) => {
       if (!result || !this.contact) return;
       result = result.trim();
       if (!result) return;

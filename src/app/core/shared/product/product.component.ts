@@ -37,6 +37,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   customOptions: OwlOptions | undefined;
   loggedInUser: User | undefined;
   isEditAllowed: boolean = false;
+  isAdmin = false;
   isComponentIsActive = new Subject();
 
   constructor(
@@ -61,6 +62,10 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   loadLoggedInUser() {
     this.loggedInUser = this.helperService.getProfile();
+  }
+
+  checkIfAdmin() {
+    this.isAdmin = this.helperService.isAdmin();
   }
 
   carouselOptions() {

@@ -20,6 +20,17 @@ export class HelperService {
   pendingHttpCall = new BehaviorSubject<boolean>(false);
   sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
   sessionEndingAlertLimit = 300; // seconds
+  contactTypes = {
+    friend: 'Friend',
+    vendor: 'Vendor',
+    client: 'Client',
+    other: 'Other',
+    otherFriend: 'Other Friend',
+    businessContact: 'Business contacts',
+    personalContact: 'Personal Contacts',
+    hiddenContacts: 'Hidden Contacts',
+    family: 'Family'
+  };
 
   saveSession(token: any): void {
     localStorage.setItem('token', token);

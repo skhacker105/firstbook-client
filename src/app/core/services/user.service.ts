@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 // RXJS
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 // HTTP
 import { HttpClient } from '@angular/common/http';
@@ -12,10 +12,8 @@ import { ServerResponse } from '../models/server-response.model';
 import { User } from '../models/user.model';
 import { Receipt } from '../models/receipt.model';
 import { environment } from 'src/environments/environment';
-import { ProductService } from './product.service';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { HelperService } from './helper.service';
-import { Product } from '../models/product.model';
 
 const baseUrl = environment.api + 'user';
 const registerEndpoint = baseUrl + '/register';
@@ -43,13 +41,21 @@ export class UserService {
   userProductsLoaded = false;
   isComponentIsActive = new Subject();
   titles = ['Mr.', 'Mrs.', 'Miss', 'Ms'];
-  userRelationTypes = [
-    'Friend', 'Vendor', 'Client', 'Other', 'Other Friend',
-    'Business contacts', 'Personal Contacts', 'Hidden Contacts',
-    'Family'].sort((a, b) => a > b ? 1 : -1);
+  userRelationTypes: string[];
 
-  constructor(private http: HttpClient, private productService: ProductService, private helperService: HelperService) {
+  constructor(private http: HttpClient, private helperService: HelperService) {
     this.helperService.isUserLogged.subscribe(res => logout$.next(res));
+    this.userRelationTypes = [
+      this.helperService.contactTypes.friend,
+      this.helperService.contactTypes.vendor,
+      this.helperService.contactTypes.client,
+      this.helperService.contactTypes.other,
+      this.helperService.contactTypes.otherFriend,
+      this.helperService.contactTypes.businessContact,
+      this.helperService.contactTypes.personalContact,
+      this.helperService.contactTypes.hiddenContacts,
+      this.helperService.contactTypes.family
+    ].sort((a, b) => a > b ? 1 : -1);
   }
 
   @HTTPCacheBuster({

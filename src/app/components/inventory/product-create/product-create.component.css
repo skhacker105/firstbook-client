@@ -35,4 +35,14 @@
 
 .key-value-input {
     width: calc(50% - 30px);
-  }
+}
+
+.cost-header {
+    font-size: 15px;
+    text-align: left;
+    display: flex;
+}
+
+.cost-header div {
+    margin: auto;
+}

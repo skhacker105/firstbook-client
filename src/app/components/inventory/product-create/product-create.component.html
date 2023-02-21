@@ -27,9 +27,13 @@
     <!-- Create Product form -->
     <form #formDir="ngForm" [formGroup]="createProductForm" (ngSubmit)="onSubmit()" class="form">
         <mat-card class="contact-card entity">
+
+            <!-- Add Edit Item title -->
             <mat-card-header>
-                <mat-card-title>{{ id ? 'Edit': 'New' }}  Item <br><br></mat-card-title>
+                <mat-card-title>{{ id ? 'Edit': 'New' }} Item <br><br></mat-card-title>
             </mat-card-header>
+
+            <!-- Input Fields -->
             <mat-card-content>
 
                 <!-- Name -->
@@ -45,17 +49,41 @@
                 </mat-form-field>
 
                 <!-- Selling Cost -->
-                <mat-form-field class="flexible-input">
-                    <mat-label>Selling Cost</mat-label>
-                    <input type="number" name="sellingCost" matInput formControlName="sellingCost">
-                </mat-form-field>
+                <fieldset>
+                    <legend class="cost-header">Generic Cost</legend>
+                    <mat-form-field class="flexible-input">
+                        <mat-label>Selling Cost</mat-label>
+                        <input type="number" name="sellingCost" matInput formControlName="sellingCost">
+                    </mat-form-field>
+                </fieldset>
+                <!-- Selling Cost For Clients -->
+                <div formArrayName="clientCosts">
+                    <ng-container *ngFor="let clientCostControl of clientCosts.controls; let i = index;">
+                        <fieldset [formGroupName]="i">
+                            <legend class="cost-header">
+                                <div>{{ clientCostControl.get('client')?.value.firstName }}</div>
+                                <span class="spacer"></span>
+                                <button mat-icon-button type="button" (click)="handleDeleteClientCost(clientCostControl.get('client')?.value._id)"><mat-icon>delete</mat-icon></button>
+                            </legend>
+                            <mat-form-field class="flexible-input">
+                                <mat-label>Selling Cost</mat-label>
+                                <input type="number" name="cost" matInput formControlName="cost">
+                            </mat-form-field>
+                        </fieldset>
+                    </ng-container>
+                </div>
+                <button mat-fab extended color="primary" type="button" (click)="handleAddNewClientCost()">
+                    <mat-icon>add</mat-icon>
+                    Add Client Specific Cost
+                </button>
+                <br><br>
 
                 <!-- Description -->
                 <mat-form-field class="flexible-input">
                     <mat-label>Description</mat-label>
                     <textarea matInput formControlName="description" style="display: none;"></textarea>
-                    <quill-editor [placeholder]="''" formControlName="description"
-                    [formControl]="descriptionControl"> </quill-editor>
+                    <quill-editor [placeholder]="''" formControlName="description" [formControl]="descriptionControl">
+                    </quill-editor>
                 </mat-form-field>
 
                 <!-- Specifications -->
@@ -139,6 +167,7 @@
 
             </mat-card-content>
 
+            <!-- Action -->
             <mat-card-actions align="end">
                 <button mat-raised-button type="button" routerLink="/inventory">Cancel</button>
                 <button mat-raised-button type="submit" color="primary" type="submit">Save</button>

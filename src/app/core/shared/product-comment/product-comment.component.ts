@@ -12,7 +12,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogData } from '../../models/confirmation-dialog.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-import { User } from '../../models/user.model';
 import { HelperService } from '../../services/helper.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -26,6 +25,7 @@ export class ProductCommentComponent implements OnInit, OnDestroy {
   @Input('isLogged') isLogged: boolean | undefined = false;
   @Input('isAdmin') isAdmin: boolean | undefined = false;
   @Input('userId') userId: string | undefined | null;
+  @Input() addAllowed = true;
   commentForm: FormGroup = new FormGroup({
     'content': new FormControl('', Validators.required)
   });;

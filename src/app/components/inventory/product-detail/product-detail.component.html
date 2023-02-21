@@ -3,8 +3,25 @@
     'product-disabled' : product.disabled
 }">
         <p align="end">
-            <button mat-fab *ngIf="!product?.disabled && (isEditAllowed || isAdmin)" (click)="goToEditDetail()">
+            <button mat-icon-button color="none" class="product-edit" *ngIf="!product.disabled && (isEditAllowed || isAdmin)"
+                (click)="handleShareProduct()">
+                <mat-icon>share</mat-icon>
+                <!-- Edit -->
+            </button>
+            <button mat-icon-button color="none" class="product-edit" *ngIf="!product.disabled && (isEditAllowed || isAdmin)"
+                (click)="goToEditDetail()">
                 <mat-icon>edit</mat-icon>
+                <!-- Edit -->
+            </button>
+            <button mat-icon-button color="none" class="product-disable" *ngIf="!product.disabled && (isEditAllowed || isAdmin)"
+                (click)="handleEnableDisable(false)">
+                <mat-icon>visibility_off</mat-icon>
+                <!-- Disable -->
+            </button>
+            <button mat-icon-button color="primary" class="product-enable" *ngIf="product.disabled && (isEditAllowed || isAdmin)"
+                (click)="handleEnableDisable(true)">
+                <mat-icon>visibility_on</mat-icon>
+                <!-- Enable -->
             </button>
         </p>
         <mat-card-header>
@@ -21,7 +38,7 @@
         <app-preview *ngIf="!product.disabled" [customOptions]="customOptions" [files]="images" [mainImage]="mainImage"
             [showActions]="false"></app-preview>
 
-        <mat-toolbar *ngIf="(isAdmin || isEditAllowed) && (product.purchaseCost || product.sellingCost)"
+        <mat-toolbar *ngIf="!product.disabled && (isAdmin || isEditAllowed) && (product.purchaseCost || product.sellingCost)"
             class="product-cost">
             <b>Purchase Cost: &nbsp;</b> &#8377; {{ product.purchaseCost | number: '.2' }}
             <span class="spacer"></span>
@@ -30,6 +47,7 @@
 
         <br>
 
+        <!--  Product description -->
         <mat-card-content *ngIf="!product.disabled">
             <p align="justify" [innerHTML]="product.description">
             </p>
@@ -44,5 +62,5 @@
         </mat-card-actions>
     </mat-card>
     <app-product-comment [productId]="id" [isLogged]="isLogged" [isAdmin]="isAdmin"
-        [userId]="userId"></app-product-comment>
+        [userId]="userId" [addAllowed]="!product.disabled"></app-product-comment>
 </ng-container>

@@ -5,7 +5,7 @@
     </mat-card-title>
     <mat-card-subtitle>
       <br>
-      <button mat-fab extended color="none" (click)="openFormModal(commentFormTemplate)">
+      <button mat-fab extended color="none" (click)="openFormModal(commentFormTemplate)" *ngIf="addAllowed">
         <mat-icon>add</mat-icon>
         Add Comment
       </button><br><br>

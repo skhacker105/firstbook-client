@@ -1,4 +1,5 @@
 import { Comment } from './comment.model';
+import { Contact } from './contact.model';
 import { ItemImage } from './image';
 
 export class Product {
@@ -19,7 +20,16 @@ export class Product {
         public comments?: Comment[],
         public purchaseCost?: number,
         public sellingCost?: number,
-        public loadedImage?: ItemImage
+        public loadedImage?: ItemImage,
+        public clientCosts?: ProductClientCost[]
+    ) {}
+}
+
+export class ProductClientCost {
+    constructor(
+        public _id: string,
+        public client: Contact,
+        public cost: number
     ) {}
 }
 

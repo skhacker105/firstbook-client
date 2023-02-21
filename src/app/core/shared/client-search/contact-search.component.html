@@ -1,0 +1,20 @@
+<mat-card>
+    <mat-card-header>
+        <mat-form-field class="flexible-input">
+            <mat-label>Search Contact</mat-label>
+            <input type="search" matInput placeholder="First Name, Last Name, Contact Type" [formControl]="contact" [matAutocomplete]="auto">
+
+            <mat-icon matSuffix *ngIf="contact?.value" (click)="contact.setValue('')">clear</mat-icon>
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="getOptionText"
+                (optionSelected)="handleUserSelection()">
+                <mat-option *ngFor="let option of contactChangeSub$ | async" [value]="option">
+                    {{ option.firstName }}
+                    <span class="spacer"></span>
+                    <span class="contact-type">{{ option.type }}</span>
+                </mat-option>
+            </mat-autocomplete>
+
+            <mat-hint>Search by name, username and phone numbers</mat-hint>
+        </mat-form-field>
+    </mat-card-header>
+</mat-card>

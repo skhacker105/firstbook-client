@@ -64,6 +64,7 @@ import { ChatMessageTimePipe } from '../pipes/chat-message-time.pipe';
 import { UserSearchComponent } from './user-search/user-search.component';
 import { ProductSearchComponent } from './product-search/product-search.component';
 import { CatalogComponent } from './catalog/catalog.component';
+import { ContactSearchComponent } from './client-search/contact-search.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { CatalogComponent } from './catalog/catalog.component';
     TimerCountDownComponent,
     UserSearchComponent,
     ProductSearchComponent,
-    CatalogComponent
+    CatalogComponent,
+    ContactSearchComponent
   ],
   imports: [
     CommonModule,
@@ -172,7 +174,8 @@ import { CatalogComponent } from './catalog/catalog.component';
     UserSearchComponent,
     InfiniteScrollModule,
     ProductSearchComponent,
-    CatalogComponent
+    CatalogComponent,
+    ContactSearchComponent
   ]
 })
 export class SharedModule { }

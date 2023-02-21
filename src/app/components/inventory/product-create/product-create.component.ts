@@ -7,13 +7,16 @@ import { ToastrService } from 'ngx-toastr';
 import { forkJoin, from, mergeMap, Observable, of, Subject, takeUntil } from 'rxjs';
 import { ConfirmationDialogData } from 'src/app/core/models/confirmation-dialog.model';
 import { ItemImage } from 'src/app/core/models/image';
-import { Product, ProductSpecification } from 'src/app/core/models/product.model';
+import { Product, ProductClientCost, ProductSpecification } from 'src/app/core/models/product.model';
 import { ServerResponse } from 'src/app/core/models/server-response.model';
 import { ProductSpecsService } from 'src/app/core/services/product-specs.service';
 import { ProductService } from 'src/app/core/services/product.service';
 import { ConfirmationDialogComponent } from 'src/app/core/shared/confirmation-dialog/confirmation-dialog.component';
 import { InputDialogComponent } from 'src/app/core/shared/input-dialog/input-dialog.component';
 import { ISpecs } from 'src/app/core/models/specs';
+import { HelperService } from 'src/app/core/services/helper.service';
+import { ContactSearchComponent } from 'src/app/core/shared/client-search/contact-search.component';
+import { Contact } from 'src/app/core/models/contact.model';
 
 @Component({
   selector: 'app-product-create',
@@ -38,10 +41,15 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     public dialog: MatDialog,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    private helperService: HelperService) { }
 
   get specs(): FormArray {
     return this.createProductForm?.controls?.['specifications'] as FormArray;
+  }
+
+  get clientCosts(): FormArray {
+    return this.createProductForm?.controls?.['clientCosts'] as FormArray;
   }
 
   get descriptionControl(): FormControl {
@@ -52,10 +60,12 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
     this.id = this.route.snapshot.paramMap.get('productId');
     this.carouselOptions();
     this.loadProduct();
+    this.helperService.showGlobalSearch = false;
   }
 
   ngOnDestroy(): void {
-    this.isComponentIsActive.complete()
+    this.isComponentIsActive.complete();
+    this.helperService.showGlobalSearch = true;
   }
 
   loadProduct(): void {
@@ -134,7 +144,15 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
       description: new FormControl(product?.description),
       specifications: this.fb.array([]),
       purchaseCost: new FormControl(product?.purchaseCost),
-      sellingCost: new FormControl(product?.sellingCost)
+      sellingCost: new FormControl(product?.sellingCost),
+      clientCosts: this.fb.array(product?.clientCosts ? product.clientCosts.map(cc => this.newClientCostForm(cc)) : [])
+    });
+  }
+
+  newClientCostForm(clientCost?: ProductClientCost): FormGroup {
+    return this.fb.group({
+      client: new FormControl(clientCost?.client, Validators.required),
+      cost: new FormControl(clientCost?.cost, Validators.required)
     });
   }
 
@@ -487,8 +505,61 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
     else {
       specs.forEach(s => s.category = s.category === from ? to : s.category);
       this.specs.patchValue(specs);
-      let us=this.unique_specs.find(s => s.name === from);
+      let us = this.unique_specs.find(s => s.name === from);
       us ? us.name = to : null;
     }
+  }
+
+  handleAddNewClientCost() {
+    const contactSearchRef = this.dialog.open(ContactSearchComponent);
+    contactSearchRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: Contact | undefined) => {
+        if (result) {
+          if (result.type != this.helperService.contactTypes.client) {
+            this.toastr.error('Please select only client type contact.');
+            this.handleAddNewClientCost();
+          } else {
+            const newForm = this.newClientForm(result);
+            if (newForm) this.clientCosts.push(newForm);
+          }
+        }
+      });
+  }
+
+  newClientForm(client: Contact): FormGroup | undefined {
+    if (this.clientCosts.value.some((cc: ProductClientCost) => cc.client._id === client._id)) {
+      this.toastr.show('This client is already in your client cost list.')
+      return undefined;
+    }
+    return this.fb.group({
+      client: new FormControl(client, Validators.required),
+      cost: new FormControl(
+        this.createProductForm
+          ? this.createProductForm.controls['sellingCost'].value
+          : this.product && this.product.sellingCost
+            ? this.product.sellingCost
+            : 0, Validators.required
+      )
+    });
+  }
+
+  handleDeleteClientCost(clientId: string) {
+    let confirmData = new ConfirmationDialogData('Are you sure to delete this cost specific to this client?');
+    let confirmSetRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: confirmData
+    });
+
+    confirmSetRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: string) => {
+        if (result) this.deleteClientCost(clientId);
+      });
+  }
+
+  deleteClientCost(clientId: string) {
+    let currentClients = this.clientCosts.value as ProductClientCost[];
+    const clientAt = currentClients.findIndex(cc => cc.client._id === clientId);
+    this.clientCosts.removeAt(clientAt);
   }
 }
