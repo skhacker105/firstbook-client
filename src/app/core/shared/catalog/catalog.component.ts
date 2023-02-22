@@ -257,12 +257,11 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   exportToPDF() {
-    this.helperService.printTriggered.next(true);
-    window.addEventListener('afterprint', (event) => {
-      this.helperService.printTriggered.next(false);
-    });
-    setTimeout(() => {
-      window.print();
-    }, 10);
+    // window.addEventListener('afterprint', (event) => {
+    //   this.helperService.printTriggered.next(false);
+    // });
+    // setTimeout(() => {
+    //   window.print();
+    // }, 10);
   }
 }
