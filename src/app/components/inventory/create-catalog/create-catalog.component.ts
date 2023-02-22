@@ -5,9 +5,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { Catalog, CatalogProduct } from 'src/app/core/models/catalog.model';
+import { ConfirmationDialogData } from 'src/app/core/models/confirmation-dialog.model';
 import { Product } from 'src/app/core/models/product.model';
 import { CatalogService } from 'src/app/core/services/catalog.service';
 import { HelperService } from 'src/app/core/services/helper.service';
+import { ConfirmationDialogComponent } from 'src/app/core/shared/confirmation-dialog/confirmation-dialog.component';
 import { ProductSearchComponent } from 'src/app/core/shared/product-search/product-search.component';
 
 @Component({
@@ -93,6 +95,20 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
           this.products.push(this.getProductForm(product));
         }
       });
+  }
+
+  handleDeleteProduct(i: number, product: Product) {
+    const config: ConfirmationDialogData = {
+      message: 'Are you sure to remove <b>' + product.name + '</b> from this catalog.',
+      okDisplay: 'DELETE',
+      cancelDisplay: 'Cancel'
+    }
+    let confrmRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: config
+    });
+    confrmRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: boolean | undefined) => result ? this.products?.removeAt(i) : null);
   }
 
   onSubmit() {

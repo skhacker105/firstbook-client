@@ -1,6 +1,6 @@
-import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { Component, DoCheck, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { Catalog } from 'src/app/core/models/catalog.model';
 import { Contact } from 'src/app/core/models/contact.model';
 import { ProductClientCost } from 'src/app/core/models/product.model';
@@ -11,7 +11,7 @@ import { CatalogService } from 'src/app/core/services/catalog.service';
   templateUrl: './catalog-details.component.html',
   styleUrls: ['./catalog-details.component.css']
 })
-export class CatalogDetailsComponent implements OnInit, OnDestroy, DoCheck {
+export class CatalogDetailsComponent implements OnInit, OnDestroy {
 
   id: string | null | undefined;
   clientId: string | null | undefined;
@@ -26,17 +26,17 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy, DoCheck {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('catalogId');
-    this.clientId = this.route.snapshot.paramMap.get('clientFilter');
+    this.route.paramMap
+    .pipe(takeUntil(this.isComponentIsActive))
+    .subscribe((params: any) => {
+      this.clientId = this.route.snapshot.paramMap.get('clientFilter');
+      this.findSelectedClient();
+    })
     this.loadCatalog();
   }
 
   ngOnDestroy(): void {
     this.isComponentIsActive.complete()
-  }
-
-  ngDoCheck(): void {
-    this.clientId = this.route.snapshot.paramMap.get('clientFilter');
-    this.findSelectedClient();
   }
 
   loadCatalog() {
@@ -71,6 +71,7 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   handleClientChanged(client: Contact | undefined) {
+    console.log('client = ', client);
     if (!this.catalog) return;
     if (client)
       this.router.navigate(['/inventory/catalog/detail/', this.catalog._id, client._id]);

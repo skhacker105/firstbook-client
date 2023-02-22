@@ -15,23 +15,20 @@
             <!-- Products -->
             <div class="catalog-products-container" formArrayName="products">
 
-                <div class="catalog-product-name-header">Product Name</div>
-                <div class="catalog-product-cost-header">Cost</div>
-
-                <ng-container *ngFor="let product of products?.controls; let i = index;" [formGroupName]="i">
-
-                    <!-- Product -->
-                    <mat-form-field class="catalog-product-name">
-                        <input matInput type="text" formControlName="name">
-                        <mat-hint class="catalog-product-hint">Updated values will only be for Catalog</mat-hint>
-                    </mat-form-field>
+                <div *ngFor="let product of products?.controls; let i = index;" [formGroupName]="i" class="catalog-products">
 
                     <!-- Cost -->
                     <mat-form-field class="catalog-product-cost">
+                        <mat-label>
+                            {{ product.value.name }}
+                        </mat-label>
                         <input matInput type="number" formControlName="cost">
                     </mat-form-field>
 
-                </ng-container>
+                    <!-- Remove product from catalog -->
+                    <button type="button" mat-icon-button (click)="handleDeleteProduct(i, product.value)"><mat-icon>delete</mat-icon></button>
+
+                </div>
             </div>
 
             <br>
