@@ -143,7 +143,9 @@
                     <div class="catalog-product-contact-variance-container noprint"
                         *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (catProduct.product.clientCosts && catProduct.product.clientCosts.length > 0)">
 
-                        <div class="contact-cost-label">
+                        <div class="contact-cost-label" [ngClass]="{
+                            'contact-cost-label-disabled': selectedClient
+                        }">
                             <ng-container *ngIf="!catProduct.product.clientCostSelected">
                                 Generic Cost
                             </ng-container>

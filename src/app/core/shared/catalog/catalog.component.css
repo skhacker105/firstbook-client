@@ -26,6 +26,12 @@
     text-align: left;
 }
 
+.contact-cost-label-disabled {
+    opacity: 0.8;
+    font-style: italic;
+    font-size: smaller;
+}
+
 .catalog-expansion-panel-header-enabled {
     background-color: #9ba0e1 !important;
 }

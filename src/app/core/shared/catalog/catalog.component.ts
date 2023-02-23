@@ -261,7 +261,6 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.catalogService.downloadCatalogAsPDF(this.catalog._id, this.selectedClient?._id)
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(pdfResponse => {
-        console.log('fResponse=  ', pdfResponse);
         let blob = new Blob([pdfResponse], { type: 'application/pdf' });
 
         var downloadURL = window.URL.createObjectURL(blob);
