@@ -3,8 +3,8 @@
     <!-- Image Uploader -->
     <ng-template #fileUploader>
         <input type="file" #fileInput multiple accept="image/*" (change)="onChangeFileInput($event)" />
-        <button mat-fab class="upload" color="accent" (click)="onClickFileInputButton()">
-            <mat-icon>cloud_upload</mat-icon>
+        <button mat-mini-fab class="upload" color="primary" (click)="onClickFileInputButton()">
+            <mat-icon>upload</mat-icon>
         </button>
     </ng-template>
 

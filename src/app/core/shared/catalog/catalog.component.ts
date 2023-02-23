@@ -257,11 +257,18 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   exportToPDF() {
-    // window.addEventListener('afterprint', (event) => {
-    //   this.helperService.printTriggered.next(false);
-    // });
-    // setTimeout(() => {
-    //   window.print();
-    // }, 10);
+    if (!this.catalog) return
+    this.catalogService.downloadCatalogAsPDF(this.catalog._id, this.selectedClient?._id)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(pdfResponse => {
+        console.log('fResponse=  ', pdfResponse);
+        let blob = new Blob([pdfResponse], { type: 'application/pdf' });
+
+        var downloadURL = window.URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = "help.pdf";
+        link.click();
+      });
   }
 }

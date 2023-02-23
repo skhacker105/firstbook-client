@@ -9,6 +9,7 @@ import { HelperService } from './helper.service';
 
 const domain = environment.api;
 const downloadCatalAsExcelEndpoint = domain + 'catalog/downloadCatalAsExcel/';
+const downloadCatalAsPDFEndpoint = domain + 'catalog/downloadCatalAsPDF/';
 const userCatalogsEndpoint = domain + 'catalog/usercatalogs';
 const singleCatalogEndpoint = domain + 'catalog/getSingle/';
 const addCatalogEndpoint = domain + 'catalog/add';
@@ -50,6 +51,17 @@ export class CatalogService {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
     return this.http.get(downloadCatalAsExcelEndpoint + catalogId, { headers, responseType: 'blob' });
+  }
+
+
+  @HTTPCacheable({
+    logoutEvent: logout$, refresher: catalogCache$
+  })
+  downloadCatalogAsPDF(catalogId: string, clientId?: string) {
+    const headers = new HttpHeaders({
+      "Content-Type": "application/pdf"
+    });
+    return this.http.get(downloadCatalAsPDFEndpoint + catalogId + (clientId ? '/' + clientId : ''), { headers, responseType: 'blob' });
   }
 
   @HTTPCacheBuster({

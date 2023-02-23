@@ -71,7 +71,6 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
   }
 
   handleClientChanged(client: Contact | undefined) {
-    console.log('client = ', client);
     if (!this.catalog) return;
     if (client)
       this.router.navigate(['/inventory/catalog/detail/', this.catalog._id, client._id]);

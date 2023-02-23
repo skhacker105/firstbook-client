@@ -1,16 +1,14 @@
 .product-comments {
   width: 100%;
-  padding: 10px;
-  padding-bottom: 20px;
-  padding-top: 20px;
   text-align: left;
   border-top: solid 1px #acacac;
 }
 
 .comment-title {
   text-align: left;
-  padding-bottom: 10px;
+  padding-top: 10px;
   padding-left: 0px;
+  height: auto;
 }
 
 .comment-content {

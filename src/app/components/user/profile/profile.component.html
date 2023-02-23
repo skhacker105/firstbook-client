@@ -28,7 +28,7 @@
       <p align="justify">
 
         <!-- Block unblock User commenting -->
-        <mat-slide-toggle class="username" color="accent" formControlName="isCommentsBlocked" *ngIf="isAdmin"
+        <mat-slide-toggle class="username" color="accent" formControlName="isCommentsBlocked" *ngIf="isAdmin && !ownProfile"
           (change)="handleCommentBlockChange()">
           Block user from commenting
         </mat-slide-toggle><br>
@@ -96,7 +96,7 @@
     <button mat-flat-button routerLink="/inventory/detail/{{comment.product._id}}" class="comment-title">
       {{ comment.product.name }}</button>
     <mat-label>
-      <span class="comment-content">{{ comment.content | shortenString:100 }} </span>
+      <div class="comment-content">{{ comment.content | shortenString:100 }} </div>
     </mat-label>
   </div>
 </ng-template>

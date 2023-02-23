@@ -7,7 +7,8 @@ export class Catalog {
         public products: CatalogProduct[],
         public createdDate?: Date,
         public createdBy?: string,
-        public isDeleted?: boolean
+        public isDeleted?: boolean,
+        public banner?: string
     ){}
 }
 
