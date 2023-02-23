@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChange, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -20,12 +20,15 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { InputDialogComponent } from '../input-dialog/input-dialog.component';
 import { UserSearchComponent } from '../user-search/user-search.component';
 
+
+interface IProductClient { clientCost: ProductClientCost | undefined, catProduct: CatalogProduct }
+
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.css']
 })
-export class CatalogComponent implements OnInit, OnDestroy {
+export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() catalog: Catalog | undefined;
   @Input() expanded = false;
@@ -37,6 +40,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
   @Input() hideDownload = false;
   @Input() selectedClient: Contact | undefined;
   @Output() clientChanged = new EventEmitter<Contact | undefined>();
+  @Output() clientCostChanged = new EventEmitter<any>();
   isComponentIsActive = new Subject();
   isAdmin = false;
   isPrintTriggered = false;
@@ -72,15 +76,15 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentCart = this.cartService.getCart();
-    this.mapCartProducts();
-    this.accumulateClients();
-
-    this.isAdmin = this.helperService.isAdmin();
-    this.loggedInUser = this.helperService.getProfile();
-    this.checkIfEditAllowed();
-    this.loadImage();
+    this.onCatalogReload();
 
     this.helperService.printTriggered.pipe(takeUntil(this.isComponentIsActive)).subscribe(state => { this.isPrintTriggered = state });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['catalog']) {
+      this.onCatalogReload();
+    }
   }
 
   ngOnDestroy(): void {
@@ -96,6 +100,16 @@ export class CatalogComponent implements OnInit, OnDestroy {
       });
     });
     this.cumulativeClients = cumulativeClients;
+  }
+
+  onCatalogReload() {
+    this.mapCartProducts();
+    this.accumulateClients();
+
+    this.isAdmin = this.helperService.isAdmin();
+    this.loggedInUser = this.helperService.getProfile();
+    this.checkIfEditAllowed();
+    this.loadImage();
   }
 
   mapCartProducts() {
@@ -261,13 +275,50 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.catalogService.downloadCatalogAsPDF(this.catalog._id, this.selectedClient?._id)
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(pdfResponse => {
-        let blob = new Blob([pdfResponse], { type: 'application/pdf' });
-
-        var downloadURL = window.URL.createObjectURL(blob);
-        var link = document.createElement('a');
-        link.href = downloadURL;
-        link.download = "help.pdf";
-        link.click();
+        if (!this.catalog) return;
+        const fileName = this.catalog.name + `.pdf`;
+        let file = new File([pdfResponse], fileName);
+        let fileUrl = URL.createObjectURL(file);
+        var a = document.createElement("a");
+        a.href = fileUrl;
+        a.download = fileName;
+        a.click();
       });
+  }
+
+  handleEditCostClick(catProduct: CatalogProduct) {
+    const selectedClient = catProduct.product.clientCostSelected;
+    const config: IInputDialogConfig = {
+      initialValue: selectedClient ? selectedClient.cost.toString() : catProduct.cost.toString(),
+      inputLabel: selectedClient ? selectedClient.client.firstName : 'Generic',
+      multiLine: false,
+      placeHolder: 'Input numbers only',
+      hint: 'Changing for product ' + catProduct.name,
+      title: 'Update Cost of a Client'
+    };
+    const newCostRef = this.dialog.open(InputDialogComponent, {
+      data: config
+    });
+
+    newCostRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(result => {
+        if (result && isNaN(+result)) return this.toastr.error('Only numbers are allowed');
+        if (result && +result != (selectedClient ? selectedClient.cost : catProduct.cost)) {
+          this.triggerEditCost(catProduct, +result);
+        }
+        return;
+      })
+  }
+
+  triggerEditCost(catProduct: CatalogProduct, cost: number) {
+    if (!this.catalog) return;
+    const payload = {
+      catalogId: this.catalog._id,
+      catProductId: catProduct._id,
+      clientCostId: catProduct.product.clientCostSelected?._id,
+      cost: cost
+    }
+    this.clientCostChanged.emit(payload);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, DoCheck, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { Catalog } from 'src/app/core/models/catalog.model';
 import { Contact } from 'src/app/core/models/contact.model';
@@ -22,16 +23,18 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private catalogService: CatalogService) { }
+    private catalogService: CatalogService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('catalogId');
     this.route.paramMap
-    .pipe(takeUntil(this.isComponentIsActive))
-    .subscribe((params: any) => {
-      this.clientId = this.route.snapshot.paramMap.get('clientFilter');
-      this.findSelectedClient();
-    })
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((params: any) => {
+        this.clientId = this.route.snapshot.paramMap.get('clientFilter');
+        this.findSelectedClient();
+      })
     this.loadCatalog();
   }
 
@@ -76,6 +79,27 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       this.router.navigate(['/inventory/catalog/detail/', this.catalog._id, client._id]);
     else
       this.router.navigate(['/inventory/catalog/detail/', this.catalog._id]);
+  }
+
+  handleEditCost(payload: any) {
+    if (!payload) return;
+    this.catalogService.updateProductCost(payload)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(updatedCatalogRes => {
+        if ((!updatedCatalogRes.data)) this.toastr.error('Cost updation failed.');
+        else this.editCost(payload);
+      })
+  }
+
+  editCost(payload: any) {
+    if (payload.clientCostId) {
+      const obj = this.catalog?.products.find(cp => cp._id === payload.catProductId)
+        ?.product.clientCosts?.find(cc => cc._id === payload.clientCostId);
+      if (obj) obj.cost = payload.cost;
+    } else {
+      const obj = this.catalog?.products.find(cp => cp._id === payload.catProductId);
+      if (obj) obj.cost = payload.cost;
+    }
   }
 
 }

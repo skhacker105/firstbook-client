@@ -3,5 +3,6 @@ export interface IInputDialogConfig {
     inputLabel?: string,
     placeHolder?: string,
     initialValue?: string,
-    multiLine?: boolean
+    multiLine?: boolean,
+    hint?: string
 }

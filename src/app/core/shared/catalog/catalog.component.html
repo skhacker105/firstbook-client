@@ -131,6 +131,13 @@
                     'catalog-product-cost-disabled': catalog.isDeleted
                         }">
 
+                        <!-- Edit Price -->
+                        <button type="button" class="edit-cost-button" mat-icon-button (click)="handleEditCostClick(catProduct)"
+                        *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed ">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+
+                        <!-- Current Price -->
                         <ng-container *ngIf="!catProduct.product.clientCostSelected">
                             &#8377; {{ catProduct.cost | number: '.2' }}
                         </ng-container>

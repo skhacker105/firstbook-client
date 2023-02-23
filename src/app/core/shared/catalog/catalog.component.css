@@ -135,6 +135,13 @@
     display: flex;
 }
 
+.edit-cost-button {
+    color: #505050;
+    padding: 0px;
+    width: 24px;
+    height: 24px;
+}
+
 .catalog-product-description {
     text-align: left;
 }

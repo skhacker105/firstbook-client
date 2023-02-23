@@ -14,6 +14,7 @@ export class Catalog {
 
 export class CatalogProduct {
     constructor(
+        public _id: string,
         public product: Product,
         public name: string,
         public cost: number,

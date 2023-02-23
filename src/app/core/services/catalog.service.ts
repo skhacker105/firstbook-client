@@ -16,6 +16,7 @@ const addCatalogEndpoint = domain + 'catalog/add';
 const enableCatalogEndpoint = domain + 'catalog/enable/';
 const disableCatalogEndpoint = domain + 'catalog/disable/';
 const editCatalogEndpoint = domain + 'catalog/edit/';
+const updateProductCostEndpoint = domain + 'catalog/updateProductCost';
 const searchEndpoint = domain + 'catalog/search';
 const catalogCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
@@ -76,6 +77,13 @@ export class CatalogService {
   })
   editCatalog(id: string, payload: any): Observable<ServerResponse<Catalog>> {
     return this.http.put<ServerResponse<Catalog>>(editCatalogEndpoint + id, payload);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: catalogCache$
+  })
+  updateProductCost(payload: any): Observable<ServerResponse<Catalog>> {
+    return this.http.put<ServerResponse<Catalog>>(updateProductCostEndpoint, payload);
   }
 
   @HTTPCacheBuster({
