@@ -22,7 +22,8 @@
 
         <!-- User Selection -->
         <div class="global-client-filter-container">
-            <button mat-icon-button type="button" [matMenuTriggerFor]="menu1" *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+            <button mat-icon-button type="button" [matMenuTriggerFor]="menu1"
+                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
                 <mat-icon>manage_accounts</mat-icon>
             </button>
             <mat-menu #menu1="matMenu">
@@ -31,18 +32,19 @@
                 </button>
                 <ng-container *ngIf="cumulativeClients.length > 0">
                     <button mat-menu-item type="button" *ngFor="let client of cumulativeClients;"
-                    (click)="changeClient(client)">
+                        (click)="changeClient(client)">
                         {{ client.firstName }}
                     </button>
                 </ng-container>
 
             </mat-menu>
 
-            <ng-container *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+            <ng-container
+                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
                 {{
-                    selectedClient
-                    ? selectedClient.firstName
-                    : 'Generic Cost'
+                selectedClient
+                ? selectedClient.firstName
+                : 'Generic Cost'
                 }}
             </ng-container>
         </div>
@@ -132,8 +134,9 @@
                         }">
 
                         <!-- Edit Price -->
-                        <button type="button" class="edit-cost-button" mat-icon-button (click)="handleEditCostClick(catProduct)"
-                        *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed ">
+                        <button type="button" class="edit-cost-button" mat-icon-button
+                            (click)="handleEditCostClick(catProduct)"
+                            *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed ">
                             <mat-icon>edit</mat-icon>
                         </button>
 
@@ -150,6 +153,7 @@
                     <div class="catalog-product-contact-variance-container noprint"
                         *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (catProduct.product.clientCosts && catProduct.product.clientCosts.length > 0)">
 
+                        <!-- Client Name or GENERIC label -->
                         <div class="contact-cost-label" [ngClass]="{
                             'contact-cost-label-disabled': selectedClient
                         }">
@@ -161,23 +165,40 @@
                             </ng-container>
                         </div>
 
-                        <button mat-icon-button type="button" [matMenuTriggerFor]="menu4" [disabled]="selectedClient ? true : false">
+                        <!-- Client list with respective costs -->
+                        <button mat-icon-button type="button" [matMenuTriggerFor]="menu4"
+                            [disabled]="selectedClient ? true : false">
                             <mat-icon>manage_accounts</mat-icon>
                         </button>
-                        <mat-menu #menu4="matMenu">
-                            <button mat-menu-item type="button" (click)="selectProductContactCost(catProduct, undefined)">
-                                Generic Cost &#8377; <span class="client-cost-select-item">{{ catProduct.cost | number:
-                                    '.2' }}</span>
+                        <!-- Client Cost Menu -->
+                        <mat-menu #menu4="matMenu" class="cat-product-action">
+                            <!-- Generic Cost -->
+                            <button mat-menu-item type="button" class="cat-product-action-button"
+                                (click)="selectProductContactCost(catProduct, undefined)">
+                                <ng-template [ngTemplateOutlet]="clientCostListItem" [ngTemplateOutletContext]="{
+                                            clientCost: catProduct.cost,
+                                            clientName: 'Generic Cost'
+                                        }">
+                                </ng-template>
                             </button>
+                            <!-- Client Cost List -->
                             <ng-container *ngIf="catProduct.product.clientCosts">
-                                <button mat-menu-item type="button"
+                                <button mat-menu-item type="button" class="cat-product-action-button"
                                     (click)="selectProductContactCost(catProduct, clientCost)"
                                     *ngFor="let clientCost of catProduct.product.clientCosts;">
-                                    {{ clientCost.client.firstName }} <span class="client-cost-select-item">&#8377; {{
-                                        clientCost.cost | number: '.2' }}</span>
+                                    <ng-template [ngTemplateOutlet]="clientCostListItem" [ngTemplateOutletContext]="{
+                                            clientCost: clientCost.cost,
+                                            clientName: clientCost.client.firstName
+                                        }">
+                                    </ng-template>
                                 </button>
                             </ng-container>
-
+                            <!-- Add New Client -->
+                            <div class="add-product-client">
+                                <button mat-mini-fab color="primary" type="button">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </div>
                         </mat-menu>
                     </div>
                 </div>
@@ -213,10 +234,18 @@
                     </div>
 
                     <!-- Product Description -->
-                    <div [innerHTML]="catProduct.product.description" *ngIf="isPrintTriggered || (!hideDescription && !isEditAllowed)"
+                    <div [innerHTML]="catProduct.product.description"
+                        *ngIf="isPrintTriggered || (!hideDescription && !isEditAllowed)"
                         class="catalog-product-description"></div>
                 </div>
             </ng-container>
         </mat-card-content>
     </mat-card>
 </mat-expansion-panel>
+
+<ng-template #clientCostListItem let-clientName="clientName" let-clientCost="clientCost">
+    <div class="client-cost-select-item-name">{{ clientName }}</div>
+    <div class="client-cost-select-item-cost">
+        &nbsp; &#8377; {{ clientCost | number: '.2' }}
+    </div>
+</ng-template>

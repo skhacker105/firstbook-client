@@ -146,7 +146,20 @@
     text-align: left;
 }
 
+.cat-product-action-button::ng-deep .mdc-list-item__primary-text {
+    display: flex;
+    width: 100%;
+}
+
 .client-cost-select-item {
+    width: 100%;
+}
+
+.client-cost-select-item-name {
+    flex: 1 1 auto;
+}
+
+.client-cost-select-item-cost {
     font-size: 15px;
     color: gray;
 }
@@ -157,4 +170,10 @@
     flex: 1 1 auto;
     text-align: center;
     margin-top: 14px;
+}
+
+.add-product-client {
+    width: 100%;
+    text-align: end;
+    padding-right: 16px;
 }
