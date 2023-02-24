@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ItemImage } from '../models/image';
-import { Product } from '../models/product.model';
+import { Product, ProductClientCost } from '../models/product.model';
 import { ServerResponse } from '../models/server-response.model';
 import { Comment } from '../models/comment.model';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
@@ -11,6 +11,7 @@ import { HelperService } from './helper.service';
 
 const domain = environment.api;
 const userProductsEndpoint = domain + 'product/userproducts';
+const addClientCostEndpoint = domain + 'product/addClientCost/';
 const enableProductEndpoint = domain + 'product/enable/';
 const disableProductEndpoint = domain + 'product/disable/';
 const getSingleProductEndpoint = domain + 'product/details/';
@@ -51,6 +52,13 @@ export class ProductService {
   })
   userProducts(): Observable<ServerResponse<string[]>> {
     return this.http.get<ServerResponse<string[]>>(userProductsEndpoint);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: productCache$
+  })
+  addClientCost(id: string, payload: any): Observable<ServerResponse<ProductClientCost>> {
+    return this.http.post<ServerResponse<ProductClientCost>>(addClientCostEndpoint+id, payload);
   }
 
   @HTTPCacheBuster({

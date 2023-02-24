@@ -16,6 +16,7 @@ import { CatalogService } from '../../services/catalog.service';
 import { ChatRoomService } from '../../services/chat-room.service';
 import { HelperService } from '../../services/helper.service';
 import { ProductService } from '../../services/product.service';
+import { ContactSearchComponent } from '../client-search/contact-search.component';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { InputDialogComponent } from '../input-dialog/input-dialog.component';
 import { UserSearchComponent } from '../user-search/user-search.component';
@@ -41,6 +42,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedClient: Contact | undefined;
   @Output() clientChanged = new EventEmitter<Contact | undefined>();
   @Output() clientCostChanged = new EventEmitter<any>();
+  @Output() addClient = new EventEmitter<{ client: Contact, product: Product, cost: number }>();
   isComponentIsActive = new Subject();
   isAdmin = false;
   isPrintTriggered = false;
@@ -322,5 +324,48 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
       cost: cost
     }
     this.clientCostChanged.emit(payload);
+  }
+
+  handleAddNewClientCost(product: Product) {
+    const contactSearchRef = this.dialog.open(ContactSearchComponent);
+    contactSearchRef.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: Contact | undefined) => {
+        if (result) {
+          if (result.type != this.helperService.contactTypes.client) {
+            this.toastr.error('Please select only client type contact.');
+            this.handleAddNewClientCost(product);
+          } else if(product.clientCosts?.some(cc => cc.client._id === result._id)) {
+            this.toastr.error('Client already exists in product\'s list')
+          } else this.getCostForNewClient(product, result);
+        }
+      });
+  }
+
+  getCostForNewClient(product: Product, client: Contact) {
+    const config: IInputDialogConfig = {
+      initialValue: (product.sellingCost ? product.sellingCost : 0).toString(),
+      inputLabel: 'Cost',
+      title: "Product Cost"
+    };
+    const inputref = this.dialog.open(InputDialogComponent, {
+      data: config
+    });
+
+    inputref.afterClosed()
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe((result: string) => {
+        if (!result) return this.toastr.error('Client was not added as no cost was provided.')
+        if (!isNaN(+result)) this.updateClientInProduct(product, client, +result)
+        return;
+      });
+  }
+
+  updateClientInProduct(product: Product, client: Contact, cost: number) {
+    if (product.clientCosts?.some(cc => cc._id === client._id))
+      return this.toastr.error('Client already exists in your product\'s listenerCount.')
+
+    this.addClient.emit({ client, product, cost });
+    return;
   }
 }

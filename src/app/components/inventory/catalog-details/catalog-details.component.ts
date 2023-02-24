@@ -1,11 +1,12 @@
-import { Component, DoCheck, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { Catalog } from 'src/app/core/models/catalog.model';
 import { Contact } from 'src/app/core/models/contact.model';
-import { ProductClientCost } from 'src/app/core/models/product.model';
+import { Product, ProductClientCost } from 'src/app/core/models/product.model';
 import { CatalogService } from 'src/app/core/services/catalog.service';
+import { ProductService } from 'src/app/core/services/product.service';
 
 @Component({
   selector: 'app-catalog-details',
@@ -24,7 +25,8 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private catalogService: CatalogService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private productService: ProductService
   ) { }
 
   ngOnInit(): void {
@@ -100,6 +102,17 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       const obj = this.catalog?.products.find(cp => cp._id === payload.catProductId);
       if (obj) obj.cost = payload.cost;
     }
+  }
+
+  addClient(data: { client: Contact, product: Product, cost: number }) {
+    this.productService.addClientCost(data.product._id, {
+      client: data.client._id,
+      cost: data.cost
+    })
+    .pipe(takeUntil(this.isComponentIsActive))
+    .subscribe(updatedClientCostRes=> {
+      if (updatedClientCostRes.data) data.product.clientCosts?.push(updatedClientCostRes.data)
+    });
   }
 
 }
