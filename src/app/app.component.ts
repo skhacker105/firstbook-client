@@ -2,10 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, map } from 'rxjs';
+import { Router } from '@angular/router';
 import { AddEntity } from './core/models/add-entity.model';
-import { User } from './core/models/user.model';
 import { HelperService } from './core/services/helper.service';
 import { UserService } from './core/services/user.service';
 import { LoaderComponent } from './core/shared/loader/loader.component';
@@ -40,7 +38,9 @@ export class AppComponent implements OnInit {
     let ref: MatDialogRef<LoaderComponent> | undefined
     this.helperService.pendingHttpCall.subscribe(pending => {
       if (pending && !ref) {
-        ref = this.matDialog.open(LoaderComponent);
+        ref = this.matDialog.open(LoaderComponent, {
+          panelClass: 'loader-dialog-panel'
+        });
       }
       else if (!pending && ref) {
         ref.close();

@@ -23,7 +23,7 @@
         <!-- User Selection -->
         <div class="global-client-filter-container">
             <button mat-icon-button type="button" [matMenuTriggerFor]="menu1"
-                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
                 <mat-icon>manage_accounts</mat-icon>
             </button>
             <mat-menu #menu1="matMenu">
@@ -40,7 +40,7 @@
             </mat-menu>
 
             <ng-container
-                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (cumulativeClients.length > 0)">
+                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
                 {{
                 selectedClient
                 ? selectedClient.firstName
@@ -151,7 +151,7 @@
 
                     <!-- Cost Selection Based on User Variance -->
                     <div class="catalog-product-contact-variance-container noprint"
-                        *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && (catProduct.product.clientCosts && catProduct.product.clientCosts.length > 0)">
+                        *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed && catProduct.product.clientCosts">
 
                         <!-- Client Name or GENERIC label -->
                         <div class="contact-cost-label" [ngClass]="{

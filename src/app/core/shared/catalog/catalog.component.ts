@@ -109,7 +109,9 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     this.isAdmin = this.helperService.isAdmin();
     this.loggedInUser = this.helperService.getProfile();
     this.checkIfEditAllowed();
-    this.loadImage();
+    if ((!this.isEditAllowed || this.overideToShowImage) && !this.catalog?.isDeleted)
+      this.loadImage();
+
   }
 
   mapCartProducts() {
