@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { Catalog } from '../models/catalog.model';
@@ -34,7 +34,12 @@ export class CatalogService {
     logoutEvent: logout$, refresher: catalogCache$
   })
   getSingleCatalog(id: string): Observable<ServerResponse<Catalog>> {
-    return this.http.get<ServerResponse<Catalog>>(singleCatalogEndpoint + id);
+    return this.http.get<ServerResponse<Catalog>>(singleCatalogEndpoint + id)
+      .pipe(map(res => {
+        if (res.data)
+          res.data.products = res.data.products.filter(p => !p.product.disabled)
+        return res;
+      }));
   }
 
   @HTTPCacheable({
@@ -104,6 +109,12 @@ export class CatalogService {
     logoutEvent: logout$, refresher: catalogCache$
   })
   search(query: string): Observable<ServerResponse<Catalog[]>> {
-    return this.http.get<ServerResponse<Catalog[]>>(searchEndpoint + query);
+    return this.http.get<ServerResponse<Catalog[]>>(searchEndpoint + query)
+      .pipe(map(res => {
+        res.data?.forEach(catalog => {
+          catalog.products = catalog.products.filter(p => !p.product.disabled)
+        });
+        return res;
+      }));
   }
 }
