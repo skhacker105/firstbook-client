@@ -36,8 +36,12 @@ export class CatalogService {
   getSingleCatalog(id: string): Observable<ServerResponse<Catalog>> {
     return this.http.get<ServerResponse<Catalog>>(singleCatalogEndpoint + id)
       .pipe(map(res => {
-        if (res.data)
+        if (res.data) {
           res.data.products = res.data.products.filter(p => !p.product.disabled)
+          res.data.products.forEach(cp => {
+              cp.product.clientCosts = cp.product.clientCosts?.filter(cc => cc.client ? true : false);
+          });
+        }
         return res;
       }));
   }

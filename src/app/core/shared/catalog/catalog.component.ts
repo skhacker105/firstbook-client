@@ -335,7 +335,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
           if (result.type != this.helperService.contactTypes.client) {
             this.toastr.error('Please select only client type contact.');
             this.handleAddNewClientCost(product);
-          } else if(product.clientCosts?.some(cc => cc.client._id === result._id)) {
+          } else if (product.clientCosts?.some(cc => cc.client._id === result._id)) {
             this.toastr.error('Client already exists in product\'s list')
           } else this.getCostForNewClient(product, result);
         }
