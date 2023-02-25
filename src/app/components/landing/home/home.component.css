@@ -1,21 +1,80 @@
-h1 {
-  font-family: 'Shojumaru', cursive;
-  font-size: 50px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-top: 50px;
-  color: #CCC;
+.banner-image-container {
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100vw;
 }
 
-.books-home {
-  margin: 30px auto;
+.mobile_image,
+.desktop_image {
+  width: 100%;
+  height: auto;
 }
 
-.panel h2 {
-  font-family: 'Wendy One', sans-serif;
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  margin-left: 145px;
+@media screen and (min-width: 600px) {
+
+  /* Desktop */
+  .banner-image-container {
+    background-image: url('../../../../assets/banner.PNG');
+  }
+
+  .smallscreen {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+
+  /* Mobile*/
+  .banner-image-container {
+    background-image: url('../../../../assets/mobile-banner.png');
+  }
+
+  .bigscreen {
+    display: none;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.business-supports {
+  width: 100%;
+  background-color: white;
+}
+
+.business-supports-subheader {
   text-align: left;
+}
+
+.business-supports-title,
+.business-supports-line {
+  text-align: left;
+}
+
+.business-supports-line {
+  white-space: break-spaces;
+  text-align: justify;
+}
+
+.business-supports-item {
+  height: fit-content !important;
+}
+
+.inventory {
+  color: #a30b0b;
+}
+
+.catalog {
+  color: #8b22ff;
+}
+
+.contact {
+  color: green;
+}
+
+.chat {
+  color: #1e5999;
+}
+
+.transaction {
+  color: #ff6580;
 }

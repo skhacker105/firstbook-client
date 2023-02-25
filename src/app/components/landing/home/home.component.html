@@ -1,19 +1,72 @@
-<!-- <h1>Welcome to our Book Store</h1>
-<div *ngIf="mostPurchasedBooks" class="books-home">
-  <div class="panel">
-    <h2>Most Purchased Books</h2>
-  </div>
-  <app-book *ngFor="let book of mostPurchasedBooks" [book]="book"></app-book>
+<div class="banner-image-container">
+  <img src="../../../../assets/banner.PNG" class="bigscreen desktop_image">
+  <img src="../../../../assets/mobile-banner.png" class="smallscreen mobile_image">
 </div>
-<div *ngIf="bestRatedBooks" class="books-home">
-  <div class="panel">
-    <h2>Best Rated Books</h2>
-  </div>
-  <app-book *ngFor="let book of bestRatedBooks" [book]="book"></app-book>
+
+<mat-list class="business-supports">
+  <div mat-subheader class="business-supports-subheader">Business Supports</div>
+
+  <!-- Inventory -->
+  <mat-list-item class="business-supports-item">
+    <mat-icon matListItemIcon class="inventory-icon inventory">inventory_2</mat-icon>
+    <div matListItemTitle class="business-supports-title inventory">
+      Inventory
+    </div>
+    <div matListItemLine class="business-supports-line">
+      <br>Manage your products and their costs.
+    </div>
+  </mat-list-item><br>
+  <mat-divider></mat-divider>
+
+  <!-- Catalog --><br>
+  <mat-list-item class="business-supports-item">
+    <mat-icon matListItemIcon class="inventory-icon catalog">list_alt_add</mat-icon>
+    <div matListItemTitle class="business-supports-title catalog">Catalog</div>
+    <div matListItemLine class="business-supports-line">
+      <br>Create catalogs from your product. Easy to manage cost
+      quoted for your clients at one place.
+      <br><br>Provide your customers with beautifully customm design pdf download
+      for your catalog in A4 format.
+    </div>
+  </mat-list-item><br>
+  <mat-divider></mat-divider>
+
+  <!-- Contact --><br>
+  <mat-list-item class="business-supports-item">
+    <mat-icon matListItemIcon class="inventory-icon contact">contact_page</mat-icon>
+    <div matListItemTitle class="business-supports-title contact">Contact</div>
+    <div matListItemLine class="business-supports-line">
+      <br>Manage your contacts. Categorize your contacts as Clients,
+      Vendors, Friends and many mode.
+      <br><br>You can link your contact with any registered user to avail more
+      functionality of this product.
+    </div>
+  </mat-list-item><br>
+  <mat-divider></mat-divider>
+
+  <!-- Chat --><br>
+  <mat-list-item class="business-supports-item">
+    <mat-icon matListItemIcon class="inventory-icon chat">chat</mat-icon>
+    <div matListItemTitle class="business-supports-title chat">Chat</div>
+    <div matListItemLine class="business-supports-line">
+      <br>Chat with users who are registered with this app. You can
+      directly share your products and your catalogs over chat.
+    </div>
+  </mat-list-item><br>
+  <mat-divider></mat-divider>
+
+  <!-- Transactions --><br>
+  <mat-list-item class="business-supports-item">
+    <mat-icon matListItemIcon class="inventory-icon transaction">account_balance</mat-icon>
+    <div matListItemTitle class="business-supports-title transaction">Transaction</div>
+    <div matListItemLine class="business-supports-line">
+      <br>Records your transaction status with us get timely updates and
+      alerts. See your business flow live progress for all transactions
+    </div>
+  </mat-list-item><br>
+</mat-list>
+
+<div class="banner-image-container">
+  <img src="../../../../assets/whyus.png" class="bigscreen desktop_image">
+  <img src="../../../../assets/whyus.png" class="smallscreen mobile_image">
 </div>
-<div *ngIf="newestBooks" class="books-home">
-  <div class="panel">
-    <h2>Newest Books</h2>
-  </div>
-  <app-book *ngFor="let book of newestBooks" [book]="book"></app-book>
-</div> -->

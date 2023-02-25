@@ -1,3 +1,7 @@
 .search-container {
     width: 80%;
 }
+
+.search-box {
+    transition: top 0.3s;
+}

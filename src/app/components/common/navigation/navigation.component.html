@@ -13,15 +13,15 @@
 
     <ng-template [ngIf]="isUserLogged()">
       <button mat-menu-item routerLink="/inventory">
-        <mat-icon>create</mat-icon>
+        <mat-icon>inventory_2</mat-icon>
         <span>Inventory</span>
       </button>
       <button mat-menu-item routerLink="/inventory/catalog/store/default">
-        <mat-icon>list</mat-icon>
+        <mat-icon>list_alt_add</mat-icon>
         <span>Catalog</span>
       </button>
       <button mat-menu-item routerLink="/contact">
-        <mat-icon>contacts</mat-icon>
+        <mat-icon>contact_page</mat-icon>
         <span>Contacts</span>
       </button>
       <button mat-menu-item routerLink="/chatroom">
@@ -29,7 +29,7 @@
         <span>Chat</span>
       </button>
       <button mat-menu-item routerLink="/user/purchaseHistory">
-        <mat-icon>history</mat-icon>
+        <mat-icon>account_balance</mat-icon>
         <span>Transactions</span>
       </button>
       <button mat-menu-item routerLink="/user/profile/ME">
@@ -91,15 +91,17 @@
 
 </mat-toolbar>
 
-<form #formDir="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit()" *ngIf="helperService.showGlobalSearch" class="noprint">
-  <br>
-  <mat-form-field class="search-container">
-    <input matInput type="text" name="query" placeholder="Products, Services ..." formControlName="query">
-    <button type="submit" [disabled]="searchForm.invalid" matSuffix mat-icon-button aria-label="Search">
-      <mat-icon>search</mat-icon>
-    </button>
-  </mat-form-field>
+<div *ngIf="helperService.showGlobalSearch" class="noprint search-box">
+  <form #formDir="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit()" ngxHideOnScroll>
+    <br>
+    <mat-form-field class="search-container">
+      <input matInput type="text" name="query" placeholder="Products, Services ..." formControlName="query">
+      <button type="submit" [disabled]="searchForm.invalid" matSuffix mat-icon-button aria-label="Search">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
 
-  <!-- <input type="text" mat-input name="query" placeholder="Products, Services ..." formControlName="query" />
+    <!-- <input type="text" mat-input name="query" placeholder="Products, Services ..." formControlName="query" />
       <button type="submit" [disabled]="searchForm.invalid"><i class="fa fa-search"></i></button> -->
-</form>
+  </form>
+</div>

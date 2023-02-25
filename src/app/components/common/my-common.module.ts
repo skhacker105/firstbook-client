@@ -18,6 +18,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
+import { SharedModule } from 'src/app/core/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatMenuModule,
     MatToolbarModule,
     MatButtonModule,
-    MatBadgeModule
+    MatBadgeModule,
+    SharedModule
   ],
   exports: [
     HeaderComponent,
