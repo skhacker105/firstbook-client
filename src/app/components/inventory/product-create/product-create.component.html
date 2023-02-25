@@ -61,7 +61,7 @@
                     <ng-container *ngFor="let clientCostControl of clientCosts.controls; let i = index;">
                         <fieldset [formGroupName]="i">
                             <legend class="cost-header">
-                                <div>{{ clientCostControl.get('client')?.value.firstName }}</div>
+                                <div>{{ clientCostControl.get('client')?.value?.firstName }}</div>
                                 <span class="spacer"></span>
                                 <button mat-icon-button type="button" (click)="handleDeleteClientCost(clientCostControl.get('client')?.value._id)"><mat-icon>delete</mat-icon></button>
                             </legend>
