@@ -234,7 +234,7 @@ export class ProductCreateComponent implements OnInit, OnDestroy {
 
   reloadAfterSave(product: Product) {
     this.toastr.success('Item saved.');
-    this.router.navigate([`/inventory/detail/${product._id}`]);
+    this.router.navigateByUrl('/inventory/')
   }
 
   onClickFileInputButton() {
