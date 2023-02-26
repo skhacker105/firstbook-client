@@ -23,3 +23,9 @@
 .catalog-product-cost {
     flex: 1 1 auto;
 }
+
+.order-number {
+    height: 56px;
+    margin-top: auto;
+    padding-right: 10px;
+}

@@ -39,6 +39,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 // Components
@@ -124,7 +125,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     MatSidenavModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    DragDropModule
   ],
   exports: [
     CommentComponent,
@@ -175,7 +177,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     InfiniteScrollModule,
     ProductSearchComponent,
     CatalogComponent,
-    ContactSearchComponent
+    ContactSearchComponent,
+    DragDropModule
   ]
 })
 export class SharedModule { }

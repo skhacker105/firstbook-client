@@ -9,7 +9,7 @@ export class Catalog {
         public createdBy?: string,
         public isDeleted?: boolean,
         public banner?: string
-    ){}
+    ) { }
 }
 
 export class CatalogProduct {
@@ -18,8 +18,9 @@ export class CatalogProduct {
         public product: Product,
         public name: string,
         public cost: number,
+        public sequence?: number,
         public count?: number
-    ){
+    ) {
         if (!this.count) this.count = 0;
     }
 }

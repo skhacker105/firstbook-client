@@ -13,9 +13,12 @@
             </mat-form-field>
 
             <!-- Products -->
-            <div class="catalog-products-container" formArrayName="products">
+            <div cdkDropList  class="catalog-products-container" formArrayName="products" (cdkDropListDropped)="drop($event)">
 
-                <div *ngFor="let product of products?.controls; let i = index;" [formGroupName]="i" class="catalog-products">
+                <div cdkDrag *ngFor="let product of products?.controls; let i = index;" [formGroupName]="i" class="catalog-products">
+
+                    <!-- Product Index -->
+                    <div class="order-number">{{ product.value.sequence + 1 }}.</div>
 
                     <!-- Cost -->
                     <mat-form-field class="catalog-product-cost">

@@ -1,3 +1,4 @@
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -54,8 +55,20 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
     this.catalogService.getSingleCatalog(this.id)
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(catalogRes => {
-        if (catalogRes.data) this.initCatalogForm(catalogRes.data);
+        if (catalogRes.data) {
+          this.fixSequenceNumbers(catalogRes.data);
+          this.initCatalogForm(catalogRes.data);
+        }
       });
+  }
+
+  fixSequenceNumbers(catalog: Catalog): void {
+    if (!catalog.products) return;
+    const sequencedProducts = catalog?.products.filter(p => p.sequence && p.sequence >= 0).sort((a, b) => a.sequence && b.sequence && a.sequence > b.sequence ? 1 : -1);
+    sequencedProducts.forEach((p, i) => p.sequence = i);
+    const nextStartIndex = sequencedProducts ? sequencedProducts.length : 0;
+    const nonSequencedProducts = catalog?.products.filter(p => !p.sequence || p.sequence < 0).map((p, i) => { p.sequence = i + nextStartIndex; return p; });
+    catalog.products = sequencedProducts.concat(nonSequencedProducts);
   }
 
   initCatalogForm(catalog?: Catalog): void {
@@ -74,7 +87,8 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
     return this.fb.group({
       product: new FormControl(product?.product._id, Validators.required),
       name: new FormControl(product?.name, Validators.required),
-      cost: new FormControl(product?.cost, Validators.required)
+      cost: new FormControl(product?.cost, Validators.required),
+      sequence: new FormControl(product?.sequence, Validators.required)
     });
   }
 
@@ -82,7 +96,8 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
     return this.fb.group({
       product: new FormControl(product?._id, Validators.required),
       name: new FormControl(product?.name),
-      cost: new FormControl(product?.sellingCost, Validators.required)
+      cost: new FormControl(product?.sellingCost, Validators.required),
+      sequence: new FormControl(this.products ? this.products.length : 0, Validators.required)
     });
   }
 
@@ -127,6 +142,14 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
         return;
       })
     return;
+  }
+
+  drop(event: CdkDragDrop<Product[]>) {
+    if (!this.products) return;
+    let products = this.products.value as CatalogProduct[];
+    moveItemInArray(products, event.previousIndex, event.currentIndex);
+    products.forEach((p, i) => p.sequence = i);
+    this.createCatalogGroup?.controls['products'].patchValue(products);
   }
 
 }

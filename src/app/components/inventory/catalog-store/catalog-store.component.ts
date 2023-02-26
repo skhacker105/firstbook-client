@@ -61,14 +61,14 @@ export class CatalogStoreComponent implements OnInit, OnDestroy {
 
   generateQuery(query: string): string {
     if (query === 'default') {
-      return `?sort={"creationDate":-1}`
+      return `?sort={"createdDate":-1}`
         + `&skip=${(this.currentPage - 1) * this.pageSize}`
         + `&limit=${this.pageSize}`
         + (!this.helperService.isAdmin() ? `&createdBy=${this.helperService.getProfile()?.id}` : '');
     }
 
     return `?query={"searchTerm":"${query}"}`
-      + `&sort={"creationDate":-1}`
+      + `&sort={"createdDate":-1}`
       + `&skip=${(this.currentPage - 1) * this.pageSize}`
       + `&limit=${this.pageSize}`;
   }

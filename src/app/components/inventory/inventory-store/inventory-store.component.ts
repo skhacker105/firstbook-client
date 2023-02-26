@@ -64,7 +64,7 @@ export class InventoryStoreComponent implements OnInit, OnDestroy {
 
   generateQuery(query: string): string {
     if (query === 'default') {
-      return `?sort={"firstName":1}`
+      return `?sort={"creationDate":-1}`
         + `&skip=${(this.currentPage - 1) * this.pageSize}`
         + `&limit=${this.pageSize}`
         + (!this.helperService.isAdmin() ? `&createdBy=${this.helperService.getProfile()?.id}` : '');
