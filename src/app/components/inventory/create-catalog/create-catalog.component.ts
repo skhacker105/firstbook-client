@@ -93,11 +93,13 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
   }
 
   getProductForm(product: Product): FormGroup {
+    const products = this.products?.value as CatalogProduct[];
+    const maxSequence = !products ? 0 : products.reduce((max, val) => val.sequence && val.sequence > max ? val.sequence : max, 0)
     return this.fb.group({
       product: new FormControl(product?._id, Validators.required),
       name: new FormControl(product?.name),
       cost: new FormControl(product?.sellingCost, Validators.required),
-      sequence: new FormControl(this.products ? this.products.length : 0, Validators.required)
+      sequence: new FormControl(maxSequence, Validators.required)
     });
   }
 

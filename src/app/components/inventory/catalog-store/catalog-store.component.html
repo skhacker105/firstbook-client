@@ -1,7 +1,18 @@
-
-<ng-container *ngFor="let catalog of catalogs">
-    <app-catalog [catalog]="catalog" [hideDescription]="true" [hideClientCostFilter]="true" [hideDownload]="true"></app-catalog>
-    <br>
-</ng-container>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="end">
+    <mat-tab label="Active">
+        <ng-container *ngFor="let catalog of catalogs">
+            <app-catalog *ngIf="!catalog.isDeleted" [catalog]="catalog" [hideDescription]="true" [hideClientCostFilter]="true"
+                [hideDownload]="true"></app-catalog>
+            <br>
+        </ng-container>
+    </mat-tab>
+    <mat-tab label="Disabled">
+        <ng-container *ngFor="let catalog of catalogs">
+            <app-catalog *ngIf="catalog.isDeleted" [catalog]="catalog" [hideDescription]="true" [hideClientCostFilter]="true"
+                [hideDownload]="true"></app-catalog>
+            <br>
+        </ng-container>
+    </mat-tab>
+</mat-tab-group>
 
 <app-add-entity-trigger [addEntity]="addEntity"></app-add-entity-trigger>
