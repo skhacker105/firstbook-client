@@ -40,6 +40,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hideClientCostFilter = false;
   @Input() hideDownload = false;
   @Input() selectedClient: Contact | undefined;
+  @Input() tabularView: boolean | null = false;
   @Output() clientChanged = new EventEmitter<Contact | undefined>();
   @Output() clientCostChanged = new EventEmitter<any>();
   @Output() addClient = new EventEmitter<{ client: Contact, product: Product, cost: number }>();
@@ -51,6 +52,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   currentCart: Cart | undefined;
   cumulativeClients: Contact[] = [];
   lstProductClientCosts: ProductClientCost[] = [];
+  catalogProductColumns: string[] = [];
   customOptions: OwlOptions = {
     loop: true,
     margin: 10,
@@ -84,6 +86,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('changes = ', changes);
     if (changes['catalog']) {
       this.onCatalogReload();
     }
@@ -91,6 +94,34 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy(): void {
     this.isComponentIsActive.complete();
+  }
+
+  onCatalogReload() {
+    this.catalogProductColumns = [];
+    this.mapCartProducts();
+    this.accumulateClients();
+
+    this.isAdmin = this.helperService.isAdmin();
+    this.loggedInUser = this.helperService.getProfile();
+    this.checkIfEditAllowed();
+    if ((!this.isEditAllowed || this.overideToShowImage) && !this.catalog?.isDeleted)
+      this.loadImage();
+    this.recreateCatalogColumns();
+
+  }
+
+  recreateCatalogColumns() {
+    if (!this.catalog) return;
+    let catalogProductColumns = ['name', 'cost'];
+    this.cumulativeClients.forEach(cc => {
+      catalogProductColumns.push(cc.firstName);
+    });
+    catalogProductColumns.push('action');
+    this.catalogProductColumns = catalogProductColumns
+  }
+
+  productClient(product: Product, clientName: string): ProductClientCost | undefined {
+    return product.clientCosts?.find(cc => cc.client.firstName === clientName)
   }
 
   accumulateClients() {
@@ -102,18 +133,6 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
       });
     });
     this.cumulativeClients = cumulativeClients;
-  }
-
-  onCatalogReload() {
-    this.mapCartProducts();
-    this.accumulateClients();
-
-    this.isAdmin = this.helperService.isAdmin();
-    this.loggedInUser = this.helperService.getProfile();
-    this.checkIfEditAllowed();
-    if ((!this.isEditAllowed || this.overideToShowImage) && !this.catalog?.isDeleted)
-      this.loadImage();
-
   }
 
   mapCartProducts() {
@@ -290,6 +309,11 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
       });
   }
 
+  selectAndHandleEditCostClick(catProduct: CatalogProduct, client?: ProductClientCost) {
+    catProduct.product.clientCostSelected=client;
+    this.handleEditCostClick(catProduct);
+  }
+
   handleEditCostClick(catProduct: CatalogProduct) {
     const selectedClient = catProduct.product.clientCostSelected;
     const config: IInputDialogConfig = {
@@ -355,8 +379,8 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     inputref.afterClosed()
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe((result: string) => {
-        if (!result) return this.toastr.error('Client was not added as no cost was provided.')
-        if (!isNaN(+result)) this.updateClientInProduct(product, client, +result)
+        // if (!result) return this.toastr.error('Client was not added as no cost was provided.')
+        if (result && !isNaN(+result) && +result > 0) this.updateClientInProduct(product, client, +result)
         return;
       });
   }

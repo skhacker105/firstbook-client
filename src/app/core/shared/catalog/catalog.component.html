@@ -17,35 +17,36 @@
     </mat-expansion-panel-header>
 
 
-    <!-- Any user actions -->
+    <!-- All user actions -->
     <div class="catalog-edit noprint">
 
         <!-- User Selection -->
         <div class="global-client-filter-container">
-            <button mat-icon-button type="button" [matMenuTriggerFor]="menu1"
-                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
-                <mat-icon>manage_accounts</mat-icon>
-            </button>
-            <mat-menu #menu1="matMenu">
-                <button mat-menu-item type="button" (click)="changeClient(undefined)">
-                    Generic Cost
+            <ng-container *ngIf="!tabularView">
+                <button mat-icon-button type="button" [matMenuTriggerFor]="menu1"
+                    *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
+                    <mat-icon>manage_accounts</mat-icon>
                 </button>
-                <ng-container *ngIf="cumulativeClients.length > 0">
-                    <button mat-menu-item type="button" *ngFor="let client of cumulativeClients;"
-                        (click)="changeClient(client)">
-                        {{ client.firstName }}
+                <mat-menu #menu1="matMenu">
+                    <button mat-menu-item type="button" (click)="changeClient(undefined)">
+                        Generic Cost
                     </button>
+                    <ng-container *ngIf="cumulativeClients.length > 0">
+                        <button mat-menu-item type="button" *ngFor="let client of cumulativeClients;"
+                            (click)="changeClient(client)">
+                            {{ client.firstName }}
+                        </button>
+                    </ng-container>
+
+                </mat-menu>
+
+                <ng-container *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
+                    {{
+                    selectedClient
+                    ? selectedClient.firstName
+                    : 'Generic Cost'
+                    }}
                 </ng-container>
-
-            </mat-menu>
-
-            <ng-container
-                *ngIf="!catalog.isDeleted && !hideClientCostFilter && isEditAllowed">
-                {{
-                selectedClient
-                ? selectedClient.firstName
-                : 'Generic Cost'
-                }}
             </ng-container>
         </div>
 
@@ -120,7 +121,7 @@
         'catalog-products-card-enabled': !catalog.isDeleted,
         'catalog-products-card-disabled': catalog.isDeleted
     }">
-        <mat-card-content class="catalog-products-container">
+        <mat-card-content class="catalog-products-container" *ngIf="!tabularView">
             <ng-container *ngFor="let catProduct of catalog.products; let i = index;">
 
                 <mat-divider></mat-divider>
@@ -195,7 +196,8 @@
                             </ng-container>
                             <!-- Add New Client -->
                             <div class="add-product-client">
-                                <button mat-mini-fab color="primary" type="button" (click)="handleAddNewClientCost(catProduct.product)">
+                                <button mat-mini-fab color="primary" type="button"
+                                    (click)="handleAddNewClientCost(catProduct.product)">
                                     <mat-icon>add</mat-icon>
                                 </button>
                             </div>
@@ -239,6 +241,73 @@
                         class="catalog-product-description"></div>
                 </div>
             </ng-container>
+        </mat-card-content>
+
+        <mat-card-content *ngIf="catalog && tabularView && catalogProductColumns.length > 0"
+            class="prod-table-container">
+            <table mat-table [dataSource]="catalog.products" class="prod-table">
+
+                <!-- Prooduct Name -->
+                <ng-container matColumnDef="name" sticky>
+                    <th mat-header-cell *matHeaderCellDef class="product-column-header-name"> Product Name </th>
+                    <td mat-cell *matCellDef="let catProduct" class="product-name"> {{ catProduct.product.name }} </td>
+                </ng-container>
+
+                <!-- Generic Cost -->
+                <ng-container matColumnDef="cost">
+                    <th mat-header-cell *matHeaderCellDef class="product-column-header"> Generic Cost </th>
+                    <td mat-cell *matCellDef="let catProduct" class="product-cost"
+                        (click)="selectAndHandleEditCostClick(catProduct)">
+                        &#8377; {{ catProduct.cost | number: '.2' }}
+                        <mat-icon class="product-cost-edit">edit</mat-icon>
+                    </td>
+                </ng-container>
+
+                <!-- Clients -->
+                <ng-container *ngFor="let client of cumulativeClients; let idx = index;">
+                    <ng-container matColumnDef="{{client.firstName}}">
+                        <th mat-header-cell *matHeaderCellDef class="product-column-header"> {{ client.firstName }}
+                        </th>
+                        <td mat-cell *matCellDef="let catProduct">
+
+                            <ng-container *ngFor="let clientCost of catProduct.product.clientCosts">
+                                <ng-container *ngIf="client._id===clientCost.client._id">
+
+                                    <div class="full-width full-height product-cost"
+                                        (click)="selectAndHandleEditCostClick(catProduct, clientCost)">
+
+                                        &#8377; {{ clientCost.cost | number: '.2' }}
+                                        <mat-icon class="product-cost-edit">edit</mat-icon>
+                                    </div>
+
+                                </ng-container>
+                            </ng-container>
+
+                            <div *ngIf="!productClient(catProduct.product, client.firstName)"
+                                class="full-width full-height product-cost">
+                                <button mat-icon-button (click)="getCostForNewClient(catProduct.product, client)">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </div>
+
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+                <!-- Add Client -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let catProduct" class="product-cost">
+                        <button mat-icon-button (click)="handleAddNewClientCost(catProduct.product)">
+                            <mat-icon>person_add</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="catalogProductColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: catalogProductColumns;"></tr>
+
+            </table>
         </mat-card-content>
     </mat-card>
 </mat-expansion-panel>

@@ -1,15 +1,17 @@
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="end">
     <mat-tab label="Active">
+        <ng-template mat-tab-label><mat-icon class="active-tab">visibility</mat-icon></ng-template>
         <ng-container *ngFor="let catalog of catalogs">
-            <app-catalog *ngIf="!catalog.isDeleted" [catalog]="catalog" [hideDescription]="true" [hideClientCostFilter]="true"
-                [hideDownload]="true"></app-catalog>
+            <app-catalog *ngIf="!catalog.isDeleted" [catalog]="catalog" [hideDescription]="true"
+                [hideClientCostFilter]="true" [hideDownload]="true"></app-catalog>
             <br>
         </ng-container>
     </mat-tab>
     <mat-tab label="Disabled">
+        <ng-template mat-tab-label><mat-icon class="active-tab">visibility_off</mat-icon></ng-template>
         <ng-container *ngFor="let catalog of catalogs">
-            <app-catalog *ngIf="catalog.isDeleted" [catalog]="catalog" [hideDescription]="true" [hideClientCostFilter]="true"
-                [hideDownload]="true"></app-catalog>
+            <app-catalog *ngIf="catalog.isDeleted" [catalog]="catalog" [hideDescription]="true"
+                [hideClientCostFilter]="true" [hideDownload]="true"></app-catalog>
             <br>
         </ng-container>
     </mat-tab>

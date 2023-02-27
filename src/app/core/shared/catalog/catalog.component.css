@@ -177,3 +177,33 @@
     text-align: end;
     padding-right: 16px;
 }
+
+.prod-table-container {
+    max-width: 100vw;
+    overflow: auto;
+    padding-left: 0px;
+}
+
+.product-name {
+    min-width: 100px;
+}
+
+.product-cost {
+    white-space: nowrap;
+    text-align: end;
+}
+
+.product-column-header-name {
+    white-space: nowrap;
+}
+
+.product-column-header {
+    white-space: nowrap;
+    text-align: end;
+}
+
+.product-cost-edit {
+    font-size: 12px;
+    height: 12px;
+    color: gray;
+}

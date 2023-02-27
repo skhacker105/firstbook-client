@@ -41,6 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
 
 // Components
 import { CommentComponent } from './comment/comment.component';
@@ -127,7 +128,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     MatSnackBarModule,
     InfiniteScrollModule,
     DragDropModule,
-    MatTabsModule
+    MatTabsModule,
+    MatTableModule
   ],
   exports: [
     CommentComponent,
@@ -180,7 +182,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     CatalogComponent,
     ContactSearchComponent,
     DragDropModule,
-    MatTabsModule
+    MatTabsModule,
+    MatTableModule
   ]
 })
 export class SharedModule { }

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
@@ -19,6 +20,8 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
   clientId: string | null | undefined;
   client: Contact | undefined;
   catalog: Catalog | undefined;
+  isMobileView = false;
+  tabularView = new FormControl<boolean>(false);
   isComponentIsActive = new Subject();
 
   constructor(
@@ -31,6 +34,7 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('catalogId');
+    this.setMobileView();
     this.route.paramMap
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe((params: any) => {
@@ -42,6 +46,11 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.isComponentIsActive.complete()
+  }
+
+  setMobileView() {
+    this.isMobileView = window.innerWidth <= 500 ? true : false;
+    this.tabularView.setValue(!this.isMobileView);
   }
 
   loadCatalog() {
@@ -109,10 +118,10 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       client: data.client._id,
       cost: data.cost
     })
-    .pipe(takeUntil(this.isComponentIsActive))
-    .subscribe(updatedClientCostRes=> {
-      if (updatedClientCostRes.data) data.product.clientCosts?.push(updatedClientCostRes.data)
-    });
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(updatedClientCostRes => {
+        if (updatedClientCostRes.data) data.product.clientCosts?.push(updatedClientCostRes.data)
+      });
   }
 
 }
