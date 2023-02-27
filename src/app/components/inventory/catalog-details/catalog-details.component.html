@@ -1,4 +1,4 @@
-<p align="end" class="view-option-container" (window:resize)="setMobileView()">
+<p align="end" class="view-option-container" *ngIf="isAdmin || isEditAllowed">
     <mat-button-toggle-group name="PageVews" [formControl]="tabularView">
         <mat-button-toggle [value]="false"><mat-icon>view_day</mat-icon></mat-button-toggle>
         <mat-button-toggle [value]="true"><mat-icon>table_view</mat-icon></mat-button-toggle>
@@ -6,7 +6,7 @@
 </p>
 
 <app-catalog *ngIf="catalog" [catalog]="catalog" [expanded]="true" [overideToShowImage]="true" [selectedClient]="client"
-[hideGotoDetailButton]="true" [tabularView]="tabularView.value"
+[hideGotoDetailButton]="true" [tabularView]="tabularView.value" [triggerCatalogChange]="triggerCatalogChange"
 (clientChanged)="handleClientChanged($event)" (clientCostChanged)="handleEditCost($event)"
 (addClient)="addClient($event)">
 </app-catalog>

@@ -6,7 +6,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { Catalog } from 'src/app/core/models/catalog.model';
 import { Contact } from 'src/app/core/models/contact.model';
 import { Product, ProductClientCost } from 'src/app/core/models/product.model';
+import { User } from 'src/app/core/models/user.model';
 import { CatalogService } from 'src/app/core/services/catalog.service';
+import { HelperService } from 'src/app/core/services/helper.service';
 import { ProductService } from 'src/app/core/services/product.service';
 
 @Component({
@@ -23,17 +25,25 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
   isMobileView = false;
   tabularView = new FormControl<boolean>(false);
   isComponentIsActive = new Subject();
+  triggerCatalogChange = new Subject<void>();
+  isAdmin = false;
+  isEditAllowed: boolean = false;
+  loggedInUser: User | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private catalogService: CatalogService,
     private toastr: ToastrService,
-    private productService: ProductService
+    private productService: ProductService,
+    private helperService: HelperService
   ) { }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('catalogId');
+    this.isAdmin = this.helperService.isAdmin();
+    this.loggedInUser = this.helperService.getProfile();
+
     this.setMobileView();
     this.route.paramMap
       .pipe(takeUntil(this.isComponentIsActive))
@@ -49,7 +59,8 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
   }
 
   setMobileView() {
-    this.isMobileView = window.innerWidth <= 500 ? true : false;
+    if (!this.isAdmin && !this.isEditAllowed) this.isMobileView = true;
+    else this.isMobileView = window.innerWidth <= 500 ? true : false;
     this.tabularView.setValue(!this.isMobileView);
   }
 
@@ -60,6 +71,7 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       .subscribe(catalogRes => {
         this.catalog = catalogRes.data;
         this.findSelectedClient();
+        this.isEditAllowed = this.loggedInUser?._id === this.catalog?.createdBy || this.loggedInUser?.id === this.catalog?.createdBy;
       });
   }
 
@@ -120,7 +132,10 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
     })
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(updatedClientCostRes => {
-        if (updatedClientCostRes.data) data.product.clientCosts?.push(updatedClientCostRes.data)
+        if (updatedClientCostRes.data) {
+          data.product.clientCosts?.push(updatedClientCostRes.data);
+          this.triggerCatalogChange.next();
+        }
       });
   }
 

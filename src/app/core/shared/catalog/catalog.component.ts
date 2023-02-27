@@ -41,6 +41,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   @Input() hideDownload = false;
   @Input() selectedClient: Contact | undefined;
   @Input() tabularView: boolean | null = false;
+  @Input() triggerCatalogChange: Subject<void> | undefined;
   @Output() clientChanged = new EventEmitter<Contact | undefined>();
   @Output() clientCostChanged = new EventEmitter<any>();
   @Output() addClient = new EventEmitter<{ client: Contact, product: Product, cost: number }>();
@@ -83,6 +84,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     this.onCatalogReload();
 
     this.helperService.printTriggered.pipe(takeUntil(this.isComponentIsActive)).subscribe(state => { this.isPrintTriggered = state });
+    this.triggerCatalogChange?.pipe(takeUntil(this.isComponentIsActive)).subscribe(res => this.onCatalogReload());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -310,7 +312,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   selectAndHandleEditCostClick(catProduct: CatalogProduct, client?: ProductClientCost) {
-    catProduct.product.clientCostSelected=client;
+    catProduct.product.clientCostSelected = client;
     this.handleEditCostClick(catProduct);
   }
 
