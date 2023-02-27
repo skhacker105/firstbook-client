@@ -256,10 +256,11 @@
                 <!-- Generic Cost -->
                 <ng-container matColumnDef="cost">
                     <th mat-header-cell *matHeaderCellDef class="product-column-header"> Generic Cost </th>
-                    <td mat-cell *matCellDef="let catProduct" class="product-cost"
-                        (click)="selectAndHandleEditCostClick(catProduct)">
+                    <td mat-cell *matCellDef="let catProduct" class="product-cost">
                         &#8377; {{ catProduct.cost | number: '.2' }}
-                        <mat-icon class="product-cost-edit">edit</mat-icon>
+                        <button mat-icon-button (click)="selectAndHandleEditCostClick(catProduct)">
+                            <mat-icon class="product-cost-edit">edit</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
 
@@ -273,11 +274,13 @@
                             <ng-container *ngFor="let clientCost of catProduct.product.clientCosts">
                                 <ng-container *ngIf="client._id===clientCost.client._id">
 
-                                    <div class="full-width full-height product-cost"
-                                        (click)="selectAndHandleEditCostClick(catProduct, clientCost)">
+                                    <div class="full-width full-height product-cost">
 
                                         &#8377; {{ clientCost.cost | number: '.2' }}
-                                        <mat-icon class="product-cost-edit">edit</mat-icon>
+                                        <button mat-icon-button
+                                            (click)="selectAndHandleEditCostClick(catProduct, clientCost)">
+                                            <mat-icon class="product-cost-edit">edit</mat-icon>
+                                        </button>
                                     </div>
 
                                 </ng-container>
@@ -286,7 +289,7 @@
                             <div *ngIf="!productClient(catProduct.product, client.firstName)"
                                 class="full-width full-height product-cost">
                                 <button mat-icon-button (click)="getCostForNewClient(catProduct.product, client)">
-                                    <mat-icon>add</mat-icon>
+                                    <mat-icon>add_circle</mat-icon>
                                 </button>
                             </div>
 
@@ -295,7 +298,7 @@
                 </ng-container>
 
                 <!-- Add Client -->
-                <ng-container matColumnDef="action">
+                <ng-container matColumnDef="action" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let catProduct" class="product-cost">
                         <button mat-icon-button (click)="handleAddNewClientCost(catProduct.product)">
