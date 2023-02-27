@@ -88,7 +88,6 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes = ', changes);
     if (changes['catalog']) {
       this.onCatalogReload();
     }
