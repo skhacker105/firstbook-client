@@ -53,20 +53,20 @@
                     <!-- Email -->
                     <mat-form-field class="username" *ngIf="usingTitleBar">
                         <mat-label>Email</mat-label>
-                        <input matInput type="email" formControlName="email">
+                        <input matInput type="email" formControlName="email" name="email">
                     </mat-form-field>
 
                     <!-- Contact -->
                     <mat-form-field class="username" *ngIf="usingTitleBar">
                         <mat-label>Contact</mat-label>
-                        <input matInput type="number" formControlName="contact">
+                        <input matInput type="phone" formControlName="contact" name="phone">
                     </mat-form-field>
 
                     <!-- Address -->
                     <mat-form-field class="full-width" *ngIf="usingTitleBar">
                         <mat-label>Address</mat-label>
                         <textarea matInput formControlName="address" cdkTextareaAutosize cdkAutosizeMinRows="1"
-                            cdkAutosizeMaxRows="6"></textarea>
+                            cdkAutosizeMaxRows="6" name="address"></textarea>
                     </mat-form-field>
                 </p>
 

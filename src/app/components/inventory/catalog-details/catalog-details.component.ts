@@ -85,7 +85,9 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       this.catalogService.getBanner(catalog.config.banner)
         .pipe(takeUntil(this.isComponentIsActive))
         .subscribe(imageRes => {
-          if (imageRes.data && catalog.config) catalog.config.banner = imageRes.data;
+          setTimeout(() => {
+            if (imageRes.data && catalog.config) catalog.config.banner = imageRes.data;
+          },10)
         });
     }
   }
