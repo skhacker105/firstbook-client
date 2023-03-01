@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -67,6 +67,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     items: 1,
     lazyLoad: true
   };
+  zoomed = false;
 
   constructor(
     private productService: ProductService,
@@ -392,5 +393,9 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
 
     this.addClient.emit({ client, product: catproduct.product, cost });
     return;
+  }
+
+  toggleZoom() {
+    this.zoomed = !this.zoomed;
   }
 }
