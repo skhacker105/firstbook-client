@@ -1,3 +1,4 @@
+import { ItemImage } from "./image";
 import { Product } from "./product.model";
 
 export class Catalog {
@@ -8,7 +9,7 @@ export class Catalog {
         public createdDate?: Date,
         public createdBy?: string,
         public isDeleted?: boolean,
-        public banner?: string
+        public config?: CatalogConfig
     ) { }
 }
 
@@ -23,4 +24,15 @@ export class CatalogProduct {
     ) {
         if (!this.count) this.count = 0;
     }
+}
+
+export class CatalogConfig {
+    constructor(
+        public useBanner: boolean,
+        public useTitleBar: boolean,
+        public banner?: ItemImage | string,
+        public address?: string,
+        public contact?: string,
+        public email?: string
+    ) {}
 }

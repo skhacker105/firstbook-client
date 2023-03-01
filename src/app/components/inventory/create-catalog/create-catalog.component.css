@@ -1,9 +1,9 @@
 .catalog-container {
     display: flex;
-    height: 100%;
+    min-height: 100%;
 }
 
-.catalog-form-content{
+.catalog-form-content {
     flex: 1 1 auto;
 }
 
@@ -28,4 +28,29 @@
     height: 56px;
     margin-top: auto;
     padding-right: 10px;
+}
+
+.pdf-panel-desc {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pdf-panel-title {
+    white-space: nowrap;
+}
+
+.banner {
+    width: 90%;
+    min-width: 90%;
+    min-height: 100px;
+    border: solid 1px #404040;
+}
+
+.catalog-config {
+    width: 100%;
+    background-color: #f1f1f1;
+}
+
+.order-drag-handle {
+    cursor: pointer;
 }

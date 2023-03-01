@@ -15,12 +15,13 @@ export class HelperService {
   isUserLogged = new Subject<boolean>();
   searchQuery = new Subject<string>();
   cartStatus = new Subject<string>();
-  printTriggered=new BehaviorSubject<boolean>(false);
+  printTriggered = new BehaviorSubject<boolean>(false);
   showGlobalSearch = true;
   showFooter = true;
   pendingHttpCall = new BehaviorSubject<boolean>(false);
   sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
   sessionEndingAlertLimit = 300; // seconds
+  fullScreenMode = new BehaviorSubject<boolean>(false);
   contactTypes = {
     friend: 'Friend',
     vendor: 'Vendor',

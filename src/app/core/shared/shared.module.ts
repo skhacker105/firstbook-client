@@ -42,6 +42,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Components
 import { CommentComponent } from './comment/comment.component';
@@ -67,6 +68,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
 import { ProductSearchComponent } from './product-search/product-search.component';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ContactSearchComponent } from './client-search/contact-search.component';
+import { InformationMessageComponent } from './information-message/information-message.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +100,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     UserSearchComponent,
     ProductSearchComponent,
     CatalogComponent,
-    ContactSearchComponent
+    ContactSearchComponent,
+    InformationMessageComponent
   ],
   imports: [
     CommonModule,
@@ -129,7 +132,8 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     InfiniteScrollModule,
     DragDropModule,
     MatTabsModule,
-    MatTableModule
+    MatTableModule,
+    MatCheckboxModule
   ],
   exports: [
     CommentComponent,
@@ -183,7 +187,11 @@ import { ContactSearchComponent } from './client-search/contact-search.component
     ContactSearchComponent,
     DragDropModule,
     MatTabsModule,
-    MatTableModule
+    MatTableModule,
+    InformationMessageComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckboxModule
   ]
 })
 export class SharedModule { }

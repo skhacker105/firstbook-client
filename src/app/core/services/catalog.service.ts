@@ -4,12 +4,15 @@ import { map, Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HTTPCacheable, HTTPCacheBuster } from '../decorators/cacheable.decorator';
 import { Catalog } from '../models/catalog.model';
+import { ItemImage } from '../models/image';
 import { ServerResponse } from '../models/server-response.model';
 import { HelperService } from './helper.service';
 
 const domain = environment.api;
 const downloadCatalAsExcelEndpoint = domain + 'catalog/downloadCatalAsExcel/';
 const downloadCatalAsPDFEndpoint = domain + 'catalog/downloadCatalAsPDF/';
+const uploadCatalogBannerEndpoint = domain + 'catalog/banner/';
+const getCatalogBannerEndpoint = domain + 'catalog/banner/';
 const userCatalogsEndpoint = domain + 'catalog/usercatalogs';
 const singleCatalogEndpoint = domain + 'catalog/getSingle/';
 const addCatalogEndpoint = domain + 'catalog/add';
@@ -19,6 +22,7 @@ const editCatalogEndpoint = domain + 'catalog/edit/';
 const updateProductCostEndpoint = domain + 'catalog/updateProductCost';
 const searchEndpoint = domain + 'catalog/search';
 const catalogCache$ = new Subject<boolean>();
+const catalogBannerCache$ = new Subject<boolean>();
 const logout$ = new Subject<boolean>();
 
 @Injectable({
@@ -61,6 +65,25 @@ export class CatalogService {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
     return this.http.get(downloadCatalAsExcelEndpoint + catalogId, { headers, responseType: 'blob' });
+  }
+
+
+  
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: catalogBannerCache$
+  })
+  saveBanner(id: string, payload: ItemImage): Observable<ServerResponse<boolean>> {
+    const profileData = new FormData();
+    profileData.append('image', payload.image);
+    return this.http.post<ServerResponse<boolean>>(uploadCatalogBannerEndpoint + id, profileData);
+  }
+
+  @HTTPCacheBuster({
+    logoutEvent: logout$, refresher: catalogBannerCache$
+  })
+  getBanner(id: string): Observable<ServerResponse<ItemImage>> {
+    return this.http.get<ServerResponse<ItemImage>>(uploadCatalogBannerEndpoint + id);
   }
 
 

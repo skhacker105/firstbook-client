@@ -1,0 +1,18 @@
+.info {
+    text-align: justify;
+    font-style: italic;
+    font-size: small;
+    color: gray;
+    display: flex;
+  }
+
+.info-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 18px;
+    margin-right: 5px;
+}
+
+.info-message {
+    flex: 1 1 auto;
+}

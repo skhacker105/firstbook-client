@@ -121,6 +121,8 @@
         'catalog-products-card-enabled': !catalog.isDeleted,
         'catalog-products-card-disabled': catalog.isDeleted
     }">
+
+        <!-- Mobile Mode -->
         <mat-card-content class="catalog-products-container" *ngIf="!tabularView">
             <ng-container *ngFor="let catProduct of catalog.products; let i = index;">
 
@@ -197,7 +199,7 @@
                             <!-- Add New Client -->
                             <div class="add-product-client">
                                 <button mat-mini-fab color="primary" type="button"
-                                    (click)="handleAddNewClientCost(catProduct.product)">
+                                    (click)="handleAddNewClientCost(catProduct)">
                                     <mat-icon>add</mat-icon>
                                 </button>
                             </div>
@@ -243,6 +245,7 @@
             </ng-container>
         </mat-card-content>
 
+        <!--  tabular Mode -->
         <mat-card-content *ngIf="catalog && tabularView && catalogProductColumns.length > 0"
             class="prod-table-container">
             <table mat-table [dataSource]="catalog.products" class="prod-table">
@@ -288,7 +291,7 @@
 
                             <div *ngIf="!productClient(catProduct.product, client.firstName)"
                                 class="full-width full-height product-cost">
-                                <button mat-icon-button (click)="getCostForNewClient(catProduct.product, client)">
+                                <button mat-icon-button (click)="getCostForNewClient(catProduct, client)">
                                     <mat-icon>add_circle</mat-icon>
                                 </button>
                             </div>
@@ -301,7 +304,7 @@
                 <ng-container matColumnDef="action" stickyEnd>
                     <th mat-header-cell *matHeaderCellDef></th>
                     <td mat-cell *matCellDef="let catProduct" class="product-cost">
-                        <button mat-icon-button (click)="handleAddNewClientCost(catProduct.product)">
+                        <button mat-icon-button (click)="handleAddNewClientCost(catProduct)">
                             <mat-icon>person_add</mat-icon>
                         </button>
                     </td>

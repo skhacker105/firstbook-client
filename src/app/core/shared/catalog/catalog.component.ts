@@ -351,7 +351,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     this.clientCostChanged.emit(payload);
   }
 
-  handleAddNewClientCost(product: Product) {
+  handleAddNewClientCost(catproduct: CatalogProduct) {
     const contactSearchRef = this.dialog.open(ContactSearchComponent);
     contactSearchRef.afterClosed()
       .pipe(takeUntil(this.isComponentIsActive))
@@ -359,17 +359,17 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
         if (result) {
           if (result.type != this.helperService.contactTypes.client) {
             this.toastr.error('Please select only client type contact.');
-            this.handleAddNewClientCost(product);
-          } else if (product.clientCosts?.some(cc => cc.client._id === result._id)) {
+            this.handleAddNewClientCost(catproduct);
+          } else if (catproduct.product.clientCosts?.some(cc => cc.client._id === result._id)) {
             this.toastr.error('Client already exists in product\'s list')
-          } else this.getCostForNewClient(product, result);
+          } else this.getCostForNewClient(catproduct, result);
         }
       });
   }
 
-  getCostForNewClient(product: Product, client: Contact) {
+  getCostForNewClient(catproduct: CatalogProduct, client: Contact) {
     const config: IInputDialogConfig = {
-      initialValue: (product.sellingCost ? product.sellingCost : 0).toString(),
+      initialValue: catproduct.cost.toString(),
       inputLabel: 'Cost',
       title: "Product Cost"
     };
@@ -381,16 +381,16 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe((result: string) => {
         // if (!result) return this.toastr.error('Client was not added as no cost was provided.')
-        if (result && !isNaN(+result) && +result > 0) this.updateClientInProduct(product, client, +result)
+        if (result && !isNaN(+result) && +result > 0) this.updateClientInProduct(catproduct, client, +result)
         return;
       });
   }
 
-  updateClientInProduct(product: Product, client: Contact, cost: number) {
-    if (product.clientCosts?.some(cc => cc._id === client._id))
+  updateClientInProduct(catproduct: CatalogProduct, client: Contact, cost: number) {
+    if (catproduct.product.clientCosts?.some(cc => cc._id === client._id))
       return this.toastr.error('Client already exists in your product\'s listenerCount.')
 
-    this.addClient.emit({ client, product, cost });
+    this.addClient.emit({ client, product: catproduct.product, cost });
     return;
   }
 }

@@ -12,6 +12,67 @@
                 <input matInput type="text" formControlName="name">
             </mat-form-field>
 
+            <!-- Settings -->
+            <mat-expansion-panel class="catalog-config" formGroupName="config">
+                <mat-expansion-panel-header>
+                    <mat-panel-title class="pdf-panel-title">Configure</mat-panel-title>
+                    <mat-panel-description class="pdf-panel-desc">
+                        PDF
+                        <mat-icon>picture_as_pdf</mat-icon>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <app-information-message
+                    message="Settings will effect your pdf download for any user or client."></app-information-message>
+                <br>
+
+                <p align="justify">
+
+                    <!-- Use Banner -->
+                    <mat-checkbox formControlName="useBanner" name="useBanner" class="full-width"
+                        (change)="handleUseTitleBarChange()">Use Banner</mat-checkbox>
+
+                </p>
+                <!-- Banner -->
+                <ng-container *ngIf="usingBanner">
+                    <div class="full-width"><img class="banner" src="{{banner ? banner.image :'_blank'}}"></div>
+                    <input type="file" #fileInput accept="image/*" (change)="onChangeFileInput($event)" />
+                    <button mat-mini-fab class="upload" color="primary" (click)="onClickFileInputButton()" type="button"
+                        [disabled]="usingBanner ? false : true">
+                        <mat-icon>upload</mat-icon>
+                    </button>
+                </ng-container>
+
+                <mat-divider></mat-divider>
+
+                <p align="justify">
+                    <!-- Use Title Bar -->
+                    <mat-checkbox formControlName="useTitleBar" name="useTitleBar" class="full-width"
+                        (change)="handleUseTitleBarChange()">Use Title
+                        Bar</mat-checkbox>
+
+                    <!-- Email -->
+                    <mat-form-field class="username" *ngIf="usingTitleBar">
+                        <mat-label>Email</mat-label>
+                        <input matInput type="email" formControlName="email">
+                    </mat-form-field>
+
+                    <!-- Contact -->
+                    <mat-form-field class="username" *ngIf="usingTitleBar">
+                        <mat-label>Contact</mat-label>
+                        <input matInput type="number" formControlName="contact">
+                    </mat-form-field>
+
+                    <!-- Address -->
+                    <mat-form-field class="full-width" *ngIf="usingTitleBar">
+                        <mat-label>Address</mat-label>
+                        <textarea matInput formControlName="address" cdkTextareaAutosize cdkAutosizeMinRows="1"
+                            cdkAutosizeMaxRows="6"></textarea>
+                    </mat-form-field>
+                </p>
+
+            </mat-expansion-panel>
+            <br>
+
             <!-- Products -->
             <div cdkDropList class="catalog-products-container" formArrayName="products"
                 (cdkDropListDropped)="drop($event)">
@@ -21,7 +82,7 @@
 
                     <!-- Product Index -->
                     <div class="order-number">
-                        <div class="example-handle" cdkDragHandle>
+                        <div class="order-drag-handle" cdkDragHandle>
                             <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">

@@ -1,15 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { Catalog } from 'src/app/core/models/catalog.model';
 import { Contact } from 'src/app/core/models/contact.model';
+import { ItemImage } from 'src/app/core/models/image';
 import { Product, ProductClientCost } from 'src/app/core/models/product.model';
 import { User } from 'src/app/core/models/user.model';
 import { CatalogService } from 'src/app/core/services/catalog.service';
 import { HelperService } from 'src/app/core/services/helper.service';
 import { ProductService } from 'src/app/core/services/product.service';
+import { ImageViewComponent } from 'src/app/core/shared/image-view/image-view.component';
 
 @Component({
   selector: 'app-catalog-details',
@@ -36,7 +39,8 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
     private catalogService: CatalogService,
     private toastr: ToastrService,
     private productService: ProductService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -71,8 +75,19 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
       .subscribe(catalogRes => {
         this.catalog = catalogRes.data;
         this.findSelectedClient();
+        if (catalogRes.data) this.loadCatalogBanner(catalogRes.data);
         this.isEditAllowed = this.loggedInUser?._id === this.catalog?.createdBy || this.loggedInUser?.id === this.catalog?.createdBy;
       });
+  }
+
+  loadCatalogBanner(catalog: Catalog) {
+    if (catalog.config?.banner && typeof catalog.config.banner === 'string') {
+      this.catalogService.getBanner(catalog.config.banner)
+        .pipe(takeUntil(this.isComponentIsActive))
+        .subscribe(imageRes => {
+          if (imageRes.data && catalog.config) catalog.config.banner = imageRes.data;
+        });
+    }
   }
 
   findSelectedClient() {
@@ -137,6 +152,13 @@ export class CatalogDetailsComponent implements OnInit, OnDestroy {
           this.triggerCatalogChange.next();
         }
       });
+  }
+
+  handleImageClick(image: ItemImage | string) {
+    if (typeof image === 'string') return;
+    const imageViewRef = this.dialog.open(ImageViewComponent, {
+      data: image
+    });
   }
 
 }

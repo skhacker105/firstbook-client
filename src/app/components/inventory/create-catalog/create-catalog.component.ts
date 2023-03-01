@@ -1,12 +1,13 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Subject, takeUntil } from 'rxjs';
+import { mergeMap, of, Subject, takeUntil } from 'rxjs';
 import { Catalog, CatalogProduct } from 'src/app/core/models/catalog.model';
 import { ConfirmationDialogData } from 'src/app/core/models/confirmation-dialog.model';
+import { ItemImage } from 'src/app/core/models/image';
 import { Product } from 'src/app/core/models/product.model';
 import { CatalogService } from 'src/app/core/services/catalog.service';
 import { HelperService } from 'src/app/core/services/helper.service';
@@ -23,6 +24,7 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
   id: string | null | undefined;
   isComponentIsActive = new Subject();
   createCatalogGroup: FormGroup | undefined;
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +38,18 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
 
   get products(): FormArray | undefined {
     return this.createCatalogGroup?.controls['products'] as FormArray
+  }
+
+  get usingBanner(): boolean | undefined {
+    return this.createCatalogGroup?.value.config.useBanner;
+  }
+
+  get banner(): ItemImage | undefined {
+    return (this.createCatalogGroup?.controls['config'] as FormGroup).controls['banner'].value;
+  }
+
+  get usingTitleBar(): boolean | undefined {
+    return this.createCatalogGroup?.value.config.useTitleBar;
   }
 
   ngOnInit(): void {
@@ -57,9 +71,21 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
       .subscribe(catalogRes => {
         if (catalogRes.data) {
           this.fixSequenceNumbers(catalogRes.data);
-          this.initCatalogForm(catalogRes.data);
+          if (catalogRes.data.config?.useBanner && catalogRes.data.config?.banner) this.loadCatalogBanner(catalogRes.data);
+          else this.initCatalogForm(catalogRes.data);
         }
       });
+  }
+
+  loadCatalogBanner(catalog: Catalog) {
+    if (catalog.config?.useBanner && catalog.config?.banner && typeof catalog.config.banner === 'string') {
+      this.catalogService.getBanner(catalog.config.banner)
+        .pipe(takeUntil(this.isComponentIsActive))
+        .subscribe(bannerRes => {
+          if (bannerRes.data && catalog.config) catalog.config.banner = bannerRes.data
+          this.initCatalogForm(catalog);
+        });
+    } else this.initCatalogForm(catalog);
   }
 
   fixSequenceNumbers(catalog: Catalog): void {
@@ -72,8 +98,18 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
   }
 
   initCatalogForm(catalog?: Catalog): void {
+    const banner = catalog?.config?.banner;
+    const image = banner && typeof banner != 'string' ? banner : undefined;
     this.createCatalogGroup = this.fb.group({
       name: new FormControl(catalog?.name, Validators.required),
+      config: this.fb.group({
+        useBanner: new FormControl(catalog?.config?.useBanner),
+        useTitleBar: catalog?.config?.useTitleBar,
+        banner: new FormControl({ value: image, disabled: catalog?.config?.useBanner ? false : true }),
+        address: new FormControl({ value: catalog?.config?.address, disabled: catalog?.config?.useTitleBar ? false : true }),
+        contact: new FormControl({ value: catalog?.config?.contact, disabled: catalog?.config?.useTitleBar ? false : true }),
+        email: new FormControl({ value: catalog?.config?.email, disabled: catalog?.config?.useTitleBar ? false : true })
+      }),
       products: this.fb.array(this.getProductFormArray(catalog?.products))
     });
   }
@@ -132,10 +168,18 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
     if (this.createCatalogGroup?.invalid) return this.toastr.error('Incomplete form.')
     if (!this.createCatalogGroup || this.createCatalogGroup.invalid) return;
 
-    const add = this.catalogService.createCatalog(this.createCatalogGroup.value);
-    const edit = this.id ? this.catalogService.editCatalog(this.id, this.createCatalogGroup.value) : null;
+    const formValue = this.createCatalogGroup.value;
+    delete formValue['config']['banner'];
+    const add = this.catalogService.createCatalog(formValue);
+    const edit = this.id ? this.catalogService.editCatalog(this.id, formValue) : null;
 
     (!edit ? add : edit)
+      .pipe(mergeMap(newCatalogRes => {
+        if (!newCatalogRes.data && (!this.usingBanner || !this.banner)) return of({ data: false })
+        else if (newCatalogRes.data && (!this.usingBanner || !this.banner || this.banner._id)) return of({ data: true })
+        else if (newCatalogRes.data && this.usingBanner && this.banner) return this.catalogService.saveBanner(newCatalogRes.data._id, this.banner)
+        else return of({ data: false })
+      }))
       .pipe(takeUntil(this.isComponentIsActive))
       .subscribe(newCatalogRes => {
         if (!newCatalogRes.data) return this.toastr.error('Failed to save catalog');
@@ -152,6 +196,39 @@ export class CreateCatalogComponent implements OnInit, OnDestroy {
     moveItemInArray(products, event.previousIndex, event.currentIndex);
     products.forEach((p, i) => p.sequence = i);
     this.createCatalogGroup?.controls['products'].patchValue(products);
+  }
+
+  handleUseTitleBarChange() {
+    const config = this.createCatalogGroup?.controls['config'] as FormGroup;
+    if (config) {
+      this.usingTitleBar ? config.controls['email'].enable() : config.controls['email'].disable();
+      this.usingTitleBar ? config.controls['contact'].enable() : config.controls['contact'].disable();
+      this.usingTitleBar ? config.controls['address'].enable() : config.controls['address'].disable();
+      this.usingBanner ? config.controls['banner'].enable() : config.controls['banner'].disable();
+    }
+  }
+
+  onChangeFileInput(event: any) {
+    if (!event || !event.target) return;
+
+    const f: File = this.fileInput.nativeElement.files[0];
+    if (f) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const imageData: ItemImage = {
+          _id: '',
+          name: f.name,
+          image: reader.result as string
+        };
+        (this.createCatalogGroup?.controls['config'] as FormGroup).controls['banner'].setValue(imageData);
+      };
+      reader.readAsDataURL(f);
+    }
+  }
+
+  onClickFileInputButton() {
+    if (!this.fileInput) return;
+    this.fileInput.nativeElement.click();
   }
 
 }
