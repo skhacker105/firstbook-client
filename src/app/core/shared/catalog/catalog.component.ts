@@ -22,8 +22,6 @@ import { InputDialogComponent } from '../input-dialog/input-dialog.component';
 import { UserSearchComponent } from '../user-search/user-search.component';
 
 
-interface IProductClient { clientCost: ProductClientCost | undefined, catProduct: CatalogProduct }
-
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -47,6 +45,7 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   @Output() addClient = new EventEmitter<{ client: Contact, product: Product, cost: number }>();
   isComponentIsActive = new Subject();
   isAdmin = false;
+  zoomed = false;
   isPrintTriggered = false;
   isEditAllowed: boolean = false;
   loggedInUser: User | undefined;
@@ -67,7 +66,6 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     items: 1,
     lazyLoad: true
   };
-  zoomed = false;
 
   constructor(
     private productService: ProductService,
@@ -144,8 +142,8 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
     } else {
       this.catalog.products.forEach(catalogProduct => {
         const matchingCartProducts = this.currentCart?.products
-          .filter(cartProduct => cartProduct._id === catalogProduct.product._id);
-        catalogProduct.count = matchingCartProducts ? matchingCartProducts.length : 0;
+          .find(cartProduct => cartProduct.product._id === catalogProduct.product._id);
+        catalogProduct.count = matchingCartProducts ? matchingCartProducts.count : 0;
       });
     }
   }
@@ -262,7 +260,8 @@ export class CatalogComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   addToCart(catProduct: CatalogProduct) {
-    this.currentCart = this.cartService.addToCart(catProduct.product);
+    const cost = catProduct.product.clientCostSelected ? catProduct.product.clientCostSelected.cost : catProduct.cost;
+    this.currentCart = this.cartService.addToCart(catProduct.product, cost, this.loggedInUser);
     this.mapCartProducts();
   }
 

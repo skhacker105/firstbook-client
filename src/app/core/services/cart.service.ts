@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 // Models
-import { Cart } from '../models/cart.model';
+import { Cart, CartProduct } from '../models/cart.model';
 import { Product } from '../models/product.model';
 import { User } from '../models/user.model';
 import { Subject } from 'rxjs';
@@ -36,23 +36,40 @@ export class CartService {
     return val ? JSON.parse(val) as Cart : undefined;
   }
 
-  addToCart(product: Product, user?: User): Cart {
-    let cart = this.getCart();
+  addToCart(product: Product, cost: number, user?: User): Cart {
+    let cart = this.getCart() as Cart;
+    let cartProduct = cart ? cart.products.find(cp => cp.product._id === product._id) : undefined
+    cartProduct = cartProduct ? cartProduct : undefined;
+    const newCartProduct = { cost, count: 1, product };
     if (cart) {
-      cart.products.push(product);
+      if (!cartProduct) cart.products.push(newCartProduct);
+      else cartProduct.count++;
       cart.user = user
     } else {
-      cart = new Cart(0, [product], user);
+      cart = new Cart(0, [newCartProduct], user);
     }
     localStorage.setItem('cart', JSON.stringify(cart));
     this.cartUpdated.next(cart);
     return cart;
   }
 
+  updateProductCount(product: Product, count: number) {
+    let cart = this.getCart();
+    if (cart) {
+      const prodAt = cart.products.findIndex(p => p.product._id === product._id);
+      if (prodAt >= 0) {
+        if (cart.products[prodAt].count > 1) cart.products[prodAt].count = count;
+        else cart.products.splice(prodAt, 1);
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+    return cart;
+  }
+
   removeFromCart(product: Product): Cart | undefined {
     let cart = this.getCart();
     if (cart) {
-      const prodAt = cart.products.findIndex(p => p._id === product._id);
+      const prodAt = cart.products.findIndex(p => p.product._id === product._id);
       if (prodAt >= 0) cart.products.splice(prodAt, 1);
     }
     if (cart?.products.length === 0) localStorage.removeItem('cart');

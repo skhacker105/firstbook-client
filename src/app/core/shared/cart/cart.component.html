@@ -1,3 +1,106 @@
+<p align="end" *ngIf="cart && cart.products.length > 0">
+  <button class="full-width" mat-fab extended color="accent">
+    <mat-icon>shopping_cart_checkout</mat-icon>
+    Checkout
+  </button>
+</p>
+
+
+<!-- Tab / Desktop View -->
+<table mat-table [dataSource]="cart.products" class="cart-table" *ngIf="cart">
+
+
+  <!-- Prooduct Image -->
+  <ng-container matColumnDef="product" sticky>
+    <th mat-header-cell *matHeaderCellDef class="cart-product-header"> Product </th>
+    <td mat-cell *matCellDef="let cartProduct" class="product-image-container">
+      <img src="{{cartProduct.image.image}}" class="product-image" *ngIf="cartProduct.image">
+    </td>
+  </ng-container>
+
+  <!-- Prooduct Name -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef class="cart-product-header"> Name </th>
+    <td mat-cell *matCellDef="let cartProduct"> {{ cartProduct.product.name }} </td>
+  </ng-container>
+
+  <!-- Unit Price -->
+  <ng-container matColumnDef="unitprice">
+    <th mat-header-cell *matHeaderCellDef class="cart-product-header"> Unit Price </th>
+    <td mat-cell *matCellDef="let cartProduct" class="cost"> &#8377; {{ cartProduct.cost | number:'.2' }} </td>
+  </ng-container>
+
+  <!-- Quantity -->
+  <ng-container matColumnDef="quantity">
+    <th mat-header-cell *matHeaderCellDef class="cart-product-header"> Quantity </th>
+    <td mat-cell *matCellDef="let cartProduct">
+      <ng-template [ngTemplateOutlet]="quantityControl" [ngTemplateOutletContext]="{cartProduct}"></ng-template>
+    </td>
+  </ng-container>
+
+  <!-- Total -->
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef class="cart-product-header"> Total </th>
+    <td mat-cell *matCellDef="let cartProduct" class="cost"> &#8377; {{ (cartProduct.cost * cartProduct.count) |
+      number:'.2' }} </td>
+  </ng-container>
+
+  <!-- Action -->
+  <ng-container matColumnDef="action" stickyEnd>
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let cartProduct">
+      <button mat-icon-button (click)="removeProduct(cartProduct)"><mat-icon>delete</mat-icon></button>
+    </td>
+  </ng-container>
+
+
+  <tr mat-header-row *matHeaderRowDef="catalogProductColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: catalogProductColumns;"></tr>
+</table>
+
+<!-- Mobile View -->
+<div class="cart-card" *ngIf="cart">
+  <ng-container *ngFor="let cartProduct of cart.products">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <img src="{{cartProduct.image.image}}" class="product-image" *ngIf="cartProduct.image">
+        </mat-card-title>
+        <mat-card-subtitle>{{cartProduct.product.name}}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="control-container">
+        <div class="control-container-total-cost"><b>&#8377;</b> {{ (cartProduct.cost * cartProduct.count) | number:'.2'
+          }}</div>
+        <div><button mat-icon-button (click)="removeProduct(cartProduct)"><mat-icon>delete</mat-icon></button></div>
+      </mat-card-content>
+      <mat-card-content>
+        <ng-template [ngTemplateOutlet]="quantityControl" [ngTemplateOutletContext]="{cartProduct}"></ng-template>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+</div>
+
+<br>
+<p align="end" *ngIf="cart && cart.products.length > 0">
+  <button class="full-width" mat-fab extended color="primary">
+    <mat-icon>shopping_cart_checkout</mat-icon>
+    Checkout
+  </button>
+</p>
+
+<ng-template let-cartProduct="cartProduct" #quantityControl>
+  <table class="quantity-control-container">
+    <tr>
+      <td><button mat-button type="button" (click)="decreaseCount(cartProduct)"><mat-icon>remove</mat-icon></button>
+      </td>
+      <td>{{ cartProduct.count }}</td>
+      <td><button mat-button type="button" (click)="increaseCount(cartProduct)"><mat-icon>add</mat-icon></button></td>
+    </tr>
+  </table>
+</ng-template>
+
+
 <!-- <div *ngIf="cart && cartForm">
   <form #formDir="ngForm" [formGroup]="cartForm">
     <div class="card shopping-cart">
@@ -88,3 +191,5 @@
     <button type="button" class="btn btn-primary" (click)="removeModalRef?.hide()">No</button>
   </div>
 </ng-template> -->
+
+

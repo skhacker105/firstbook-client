@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 // RXJS
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 // Services
@@ -18,8 +18,11 @@ import { HelperService } from '../../services/helper.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
 
 // Models
-import { Cart } from '../../models/cart.model';
+import { Cart, CartProduct } from '../../models/cart.model';
 import { Product } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { ItemImage } from '../../models/image';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-cart',
@@ -28,86 +31,58 @@ import { Product } from '../../models/product.model';
 })
 export class CartComponent implements OnInit, OnDestroy {
   cart: Cart | undefined;
-  cartForm: FormGroup | undefined;
-  changesSub$: Subscription | undefined;
-  removeModalRef: BsModalRef | undefined;
-  lastCartState: string | undefined;
-  lastDeleteId: string | undefined;
   isComponentIsActive = new Subject();
+  loggedInUser: User | undefined;
+  catalogProductColumns = ['product', 'name', 'unitprice', 'quantity', 'total', 'action']
 
   constructor(
     private router: Router,
     private cartService: CartService,
     private helperService: HelperService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private productService: ProductService
   ) { }
 
   ngOnInit(): void {
-    // this.cartService
-    //   .getCart()
-    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe((res) => {
-    //     this.cart = res.data;
-    //     if (this.cart && this.cart.books)
-    //       this.cartForm = this.toFormGroup(this.cart.books);
-    //     this.onChanges();
-    //   });
+    this.cart = this.cartService.getCart();
+    this.loggedInUser = this.helperService.getProfile();
+    if (this.cart && this.cart.products) {
+      this.loadImages(this.cart.products);
+    }
   }
 
   ngOnDestroy(): void {
-    this.changesSub$ ? this.changesSub$.unsubscribe() : null;
     this.isComponentIsActive.complete()
   }
 
-  toFormGroup(books: Product[]): FormGroup {
-    const group: any = {};
-
-    // books.forEach(book => {
-    //   group[book._id] = new FormControl(
-    //     book.qty || '', [
-    //     Validators.required,
-    //     Validators.min(1),
-    //     Validators.max(20)
-    //   ]);
-    // });
-
-    return new FormGroup(group);
+  loadImages(products: CartProduct[]) {
+    let arr = products.forEach(cp => {
+      if (cp.product.defaultImage)
+        this.productService.getImage(cp.product.defaultImage)
+          .pipe(takeUntil(this.isComponentIsActive))
+          .subscribe(imgRes => {
+            setTimeout(() => {
+              if (imgRes.data)
+                cp.image = imgRes.data;
+            }, 10);
+          });
+    });
   }
 
-  onChanges(): void {
-    if (!this.cartForm) return;
-    this.changesSub$ = this.cartForm
-      .valueChanges
-      .pipe(
-        debounceTime(800),
-        distinctUntilChanged()
-      )
-      .pipe(takeUntil(this.isComponentIsActive)).subscribe(val => {
-        if (this.lastCartState !== JSON.stringify(val)) {
-          this.lastCartState = JSON.stringify(val);
-          this.reCalcSum(val);
-        }
-      });
+  increaseCount(cartProduct: CartProduct) {
+    this.cartService.addToCart(cartProduct.product, cartProduct.cost, this.loggedInUser);
+    cartProduct.count++;
   }
 
-  openRemoveModal(template: TemplateRef<any>, id: string): void {
-    this.lastDeleteId = id;
-    this.removeModalRef = this.modalService.show(
-      template,
-      { class: 'myModal modal-sm' }
-    );
+  decreaseCount(cartProduct: CartProduct) {
+    this.cartService.updateProductCount(cartProduct.product, cartProduct.count - 1);
+    cartProduct.count--;
+    if (cartProduct.count === 0) this.removeProduct(cartProduct);
   }
 
-  onRemove(): void {
-    // if (!this.lastDeleteId) return;
-    // this.cartService
-    //   .removeFromCart(this.lastDeleteId)
-    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
-    //     if (!this.cart) return;
-    //     this.helperService.cartStatus.next('remove');
-    //     this.cart.books = this.cart.books?.filter(b => b._id !== this.lastDeleteId);
-    //     this.reCalcSum(this.cartForm?.value);
-    //     this.removeModalRef?.hide();
-    //   });
+  removeProduct(cartProduct: CartProduct) {
+    this.cart = this.cartService.removeFromCart(cartProduct.product);
+    if (this.cart) this.loadImages(this.cart.products);
   }
 
   onSubmit(): void {
@@ -127,9 +102,5 @@ export class CartComponent implements OnInit, OnDestroy {
     // }
 
     // this.cart.totalPrice = price;
-  }
-
-  getControl(id: string) {
-    return this.cartForm?.get(id);
   }
 }

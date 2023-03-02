@@ -60,3 +60,69 @@
   float: right;
   font-size: 15px;
 }
+
+.cart-table,
+.cart-card {
+  background-color: #ffffff;
+  width: 100%;
+  min-height: 100%;
+}
+
+.product-image {
+  max-height: 150px;
+}
+
+.product-image-container {
+  padding: 10px;
+}
+
+.cart-product-header {
+  white-space: nowrap;
+}
+
+.quantity-control-container {
+  width: 100%;
+}
+
+.quantity-control-container td {
+  min-width: 64px;
+  max-width: 64px;
+
+  min-height: 36px;
+  max-height: 36px;
+
+  border: solid 1px #efefef;
+  text-align: center;
+}
+
+.cost {
+  white-space: nowrap;
+}
+
+.cart-card {
+  width: 100%;
+  min-height: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .cart-table {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .cart-card {
+    display: none;
+  }
+}
+
+
+.control-container {
+  display: flex;
+}
+
+.control-container-total-cost{
+  flex: 1 1 auto;
+  line-height: 48px;
+  text-align: left;
+}
