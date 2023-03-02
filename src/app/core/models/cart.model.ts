@@ -1,21 +1,14 @@
 import { User } from './user.model';
-import { Product } from './product.model';
-import { ItemImage } from './image';
+import { OrderAddress, OrderProduct } from './order.model';
+import { Payment } from './payment.model';
 
 export class Cart {
   constructor(
     public totalPrice: number,
-    public products: CartProduct[],
-    public user?: User
+    public products: OrderProduct[],
+    public user?: User,
+    public billingAddress?: OrderAddress,
+    public shippingAddress?: OrderAddress,
+    public paymentInformation?: Payment
   ) { }
-}
-
-export class CartProduct {
-  constructor(
-    public product: Product,
-    public cost: number,
-    public count: number,
-    public image?: ItemImage
-  ) {
-  }
 }

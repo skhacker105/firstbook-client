@@ -126,3 +126,9 @@
   line-height: 48px;
   text-align: left;
 }
+
+.checkout-container {
+  background-color: white;
+  margin: 0px;
+  padding-right: 16px;
+}

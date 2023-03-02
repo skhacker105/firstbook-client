@@ -225,3 +225,7 @@ app-product>mat-card {
 .no-results {
   margin: -3em 0;
 }
+
+.delete-button {
+  color: rgb(234, 130, 130);
+}

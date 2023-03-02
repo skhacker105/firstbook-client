@@ -1,28 +1,23 @@
 // Decorators and Lifehooks
-import { Component, TemplateRef, OnInit, OnDestroy } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // Router
 import { Router } from '@angular/router';
 
-// Forms
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-
 // RXJS
-import { Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // Services
 import { CartService } from '../../services/cart.service';
 import { HelperService } from '../../services/helper.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { ProductService } from '../../services/product.service';
 
 // Models
-import { Cart, CartProduct } from '../../models/cart.model';
-import { Product } from '../../models/product.model';
-import { ProductService } from '../../services/product.service';
-import { ItemImage } from '../../models/image';
+import { Cart } from '../../models/cart.model';
 import { User } from '../../models/user.model';
+import { OrderProduct } from '../../models/order.model';
 
 @Component({
   selector: 'app-cart',
@@ -39,7 +34,6 @@ export class CartComponent implements OnInit, OnDestroy {
     private router: Router,
     private cartService: CartService,
     private helperService: HelperService,
-    private modalService: BsModalService,
     private productService: ProductService
   ) { }
 
@@ -48,6 +42,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.loggedInUser = this.helperService.getProfile();
     if (this.cart && this.cart.products) {
       this.loadImages(this.cart.products);
+      this.reCalcSum();
     }
   }
 
@@ -55,7 +50,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.isComponentIsActive.complete()
   }
 
-  loadImages(products: CartProduct[]) {
+  loadImages(products: OrderProduct[]) {
     let arr = products.forEach(cp => {
       if (cp.product.defaultImage)
         this.productService.getImage(cp.product.defaultImage)
@@ -69,38 +64,33 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  increaseCount(cartProduct: CartProduct) {
+  increaseCount(cartProduct: OrderProduct) {
     this.cartService.addToCart(cartProduct.product, cartProduct.cost, this.loggedInUser);
     cartProduct.count++;
+    this.reCalcSum();
   }
 
-  decreaseCount(cartProduct: CartProduct) {
+  decreaseCount(cartProduct: OrderProduct) {
     this.cartService.updateProductCount(cartProduct.product, cartProduct.count - 1);
     cartProduct.count--;
     if (cartProduct.count === 0) this.removeProduct(cartProduct);
+    this.reCalcSum();
   }
 
-  removeProduct(cartProduct: CartProduct) {
+  removeProduct(cartProduct: OrderProduct) {
     this.cart = this.cartService.removeFromCart(cartProduct.product);
     if (this.cart) this.loadImages(this.cart.products);
+    this.reCalcSum();
   }
 
-  onSubmit(): void {
-    // this.cartService
-    //   .checkout(this.cartForm?.value)
-    //   .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
-    //     this.helperService.cartStatus.next('updateStatus');
-    //     this.router.navigate(['/user/purchaseHistory']);
-    //   });
+  checkout(): void {
+    this.router.navigateByUrl('/checkout');
   }
 
-  reCalcSum(formValues: any): void {
-    // if (!this.cart || !this.cart.books) return;
-    // let price = 0;
-    // for (const b of this.cart.books) {
-    //   price += b.price * formValues[b._id];
-    // }
-
-    // this.cart.totalPrice = price;
+  reCalcSum(): void {
+    if (!this.cart || !this.cart.products) return;
+    let price = this.cart.products.reduce((s, v) => s + (v.cost * v.count), 0);
+    this.cart.totalPrice = price;
+    this.cartService.updateTotalPrice(price);
   }
 }

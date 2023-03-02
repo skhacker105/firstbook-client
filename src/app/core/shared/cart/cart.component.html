@@ -1,8 +1,11 @@
-<p align="end" *ngIf="cart && cart.products.length > 0">
-  <button class="full-width" mat-fab extended color="accent">
+<!-- Checkout -->
+<p align="end" *ngIf="cart && cart.products.length > 0" class="checkout-container">
+  <br>
+  <button class="full-width" mat-fab extended color="accent" (click)="checkout()">
     <mat-icon>shopping_cart_checkout</mat-icon>
-    Checkout
+    {{ cart.totalPrice ? '&#8377; ' + (cart.totalPrice | number:'.2') : 'Checkout'}}
   </button>
+  <br><br>
 </p>
 
 
@@ -49,7 +52,8 @@
   <ng-container matColumnDef="action" stickyEnd>
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let cartProduct">
-      <button mat-icon-button (click)="removeProduct(cartProduct)"><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button (click)="removeProduct(cartProduct)"><mat-icon
+          class="delete-button">delete</mat-icon></button>
     </td>
   </ng-container>
 
@@ -70,9 +74,14 @@
       </mat-card-header>
 
       <mat-card-content class="control-container">
-        <div class="control-container-total-cost"><b>&#8377;</b> {{ (cartProduct.cost * cartProduct.count) | number:'.2'
-          }}</div>
-        <div><button mat-icon-button (click)="removeProduct(cartProduct)"><mat-icon>delete</mat-icon></button></div>
+        <div class="control-container-total-cost">
+          <b>&#8377;</b>
+          {{ (cartProduct.cost * cartProduct.count) | number:'.2'}}
+        </div>
+        <div>
+          <button mat-icon-button (click)="removeProduct(cartProduct)">
+            <mat-icon class="delete-button">delete</mat-icon></button>
+        </div>
       </mat-card-content>
       <mat-card-content>
         <ng-template [ngTemplateOutlet]="quantityControl" [ngTemplateOutletContext]="{cartProduct}"></ng-template>
@@ -81,12 +90,13 @@
   </ng-container>
 </div>
 
-<br>
-<p align="end" *ngIf="cart && cart.products.length > 0">
-  <button class="full-width" mat-fab extended color="primary">
+<!-- Checkout -->
+<p align="end" *ngIf="cart && cart.products.length > 0" class="checkout-container">
+  <button class="full-width" mat-fab extended color="accent" (click)="checkout()">
     <mat-icon>shopping_cart_checkout</mat-icon>
-    Checkout
+    {{ cart.totalPrice ? '&#8377; ' + (cart.totalPrice | number:'.2') : 'Checkout'}}
   </button>
+  <br><br>
 </p>
 
 <ng-template let-cartProduct="cartProduct" #quantityControl>
@@ -191,5 +201,3 @@
     <button type="button" class="btn btn-primary" (click)="removeModalRef?.hide()">No</button>
   </div>
 </ng-template> -->
-
-

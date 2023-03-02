@@ -34,6 +34,10 @@ const routes: Routes = [
     loadChildren: () => import('./components/chat-room-window/chat-room-window.module').then(m => m.ChatRoomWindowModule)
   },
   {
+    path: 'checkout',
+    loadChildren: () => import('./components/checkout/checkout.module').then(m => m.CheckoutModule)
+  },
+  {
     path: 'home',
     component: HomeComponent
   },

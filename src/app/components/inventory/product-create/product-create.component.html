@@ -63,7 +63,7 @@
                             <legend class="cost-header">
                                 <div>{{ clientCostControl.get('client')?.value?.firstName }}</div>
                                 <span class="spacer"></span>
-                                <button mat-icon-button type="button" (click)="handleDeleteClientCost(clientCostControl.get('client')?.value._id)"><mat-icon>delete</mat-icon></button>
+                                <button mat-icon-button type="button" (click)="handleDeleteClientCost(clientCostControl.get('client')?.value._id)"><mat-icon class="delete-button">delete</mat-icon></button>
                             </legend>
                             <mat-form-field class="flexible-input">
                                 <mat-label>Selling Cost</mat-label>

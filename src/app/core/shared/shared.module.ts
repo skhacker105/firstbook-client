@@ -43,6 +43,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatStepperModule } from '@angular/material/stepper';
 
 // Components
 import { CommentComponent } from './comment/comment.component';
@@ -133,7 +134,8 @@ import { InformationMessageComponent } from './information-message/information-m
     DragDropModule,
     MatTabsModule,
     MatTableModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatStepperModule
   ],
   exports: [
     CommentComponent,
@@ -191,7 +193,8 @@ import { InformationMessageComponent } from './information-message/information-m
     InformationMessageComponent,
     FormsModule,
     ReactiveFormsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatStepperModule
   ]
 })
 export class SharedModule { }

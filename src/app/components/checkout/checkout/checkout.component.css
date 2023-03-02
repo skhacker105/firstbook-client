@@ -1,0 +1,22 @@
+.address-form-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+
+@media screen and (max-width: 600px) {
+    .address-form-container {
+        flex-direction: column;
+    }
+
+    .address-form  {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .address-form  {
+        width: 50%;
+    }
+}

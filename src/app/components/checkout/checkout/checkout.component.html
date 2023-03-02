@@ -1,0 +1,101 @@
+<mat-toolbar *ngIf="cart">
+    <!-- <div cal> -->
+        {{ cart.products.length }} Item{{ cart.products.length > 1 ? 's' : '' }}
+        &nbsp;
+        <app-information-message [message]="totalCount.toString() + ' Quantities'"></app-information-message>
+    <!-- </div> -->
+    <span class="spacer"></span>
+    &#8377; {{ cart.totalPrice | number: '.2' }}
+</mat-toolbar>
+
+<mat-stepper #stepper [orientation]="isMobileView ? 'vertical' :  'horizontal'">
+    <!-- Address Form -->
+    <mat-step [stepControl]="addressForm" *ngIf="addressForm" errorMessage="Incomplete Address">
+        <p align="end">
+            <mat-checkbox [(ngModel)]="copy" (change)="handleCopyChange()">Copy to Billing Address</mat-checkbox>
+        </p>
+        <form [formGroup]="addressForm">
+            <ng-template matStepLabel>Address Information</ng-template>
+            <div class="address-form-container">
+                <ng-template [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{
+                    header: 'Shipping Information',
+                    contactConrol: addressForm.controls['shippingContact'],
+                    addressConrol: addressForm.controls['shippingAddress']
+                }"></ng-template>
+                <ng-template [ngTemplateOutlet]="address" [ngTemplateOutletContext]="{
+                    header: 'Billing Information',
+                    contactConrol: addressForm.controls['bilingContact'],
+                    addressConrol: addressForm.controls['bilingAddress']
+                }"></ng-template>
+            </div>
+            <p align="end">
+                <br>
+                <button mat-raised-button color="primary" matStepperNext (click)="mapAddressToCart()">Next</button>
+            </p>
+        </form>
+    </mat-step>
+
+    <!-- Payment Information -->
+    <mat-step [stepControl]="paymentForm" errorMessage="Select Payment Service" *ngIf="paymentForm">
+        <ng-template matStepLabel>Payment Information</ng-template>
+        <mat-card class="full-width">
+
+            <mat-card-content>
+                <form [formGroup]="paymentForm">
+                    <mat-selection-list [multiple]="false" formControlName="paymentService">
+                        <mat-list-option *ngFor="let payment of paymentService.lstPaymentServices" [value]="payment">
+                            <img src="{{ payment.icon }}" matListItemIcon>
+                            {{ payment.displayText }}
+                        </mat-list-option>
+                    </mat-selection-list>
+                </form>
+            </mat-card-content>
+
+        </mat-card>
+        <p align="end">
+            <br>
+            <button mat-raised-button color="primary" matStepperPrevious>Previous</button> &nbsp;
+            <button mat-raised-button color="primary" matStepperNext>Next</button>
+        </p>
+    </mat-step>
+
+    <!-- Receipt Information -->
+    <mat-step>
+        <ng-template matStepLabel>Receipt</ng-template>
+        Receipt Information
+        <p align="end">
+            <br>
+            <button mat-raised-button color="primary" matStepperPrevious>Previous</button>
+        </p>
+    </mat-step>
+</mat-stepper>
+
+<ng-template #address let-header="header" let-contactConrol="contactConrol" let-addressConrol="addressConrol">
+    <div class="address-form">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-subtitle>{{ header }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+
+                <!-- Contact -->
+                <mat-form-field class="full-width">
+                    <mat-label>Contact</mat-label>
+                    <input matInput type="phone" [formControl]="contactConrol">
+                    <button *ngIf="contactConrol.value && contactConrol.enabled" matSuffix mat-icon-button
+                        aria-label="Clear" (click)="contactConrol.setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <!-- Address -->
+                <mat-form-field class="full-width">
+                    <mat-label>Address</mat-label>
+                    <textarea matInput type="phone" [formControl]="addressConrol" cdkTextareaAutosize
+                        cdkAutosizeMinRows="3" cdkAutosizeMaxRows="6"></textarea>
+                </mat-form-field>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+</ng-template>

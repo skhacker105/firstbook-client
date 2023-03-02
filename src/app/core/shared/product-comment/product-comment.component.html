@@ -28,7 +28,7 @@
           </button>
           <button mat-icon-button color="none" *ngIf="isAdmin || c.user._id === userId"
             (click)="openRemoveModal(c._id)">
-            <mat-icon>delete</mat-icon>
+            <mat-icon class="delete-button">delete</mat-icon>
           </button>
         </mat-card-header>
         <mat-card-content>

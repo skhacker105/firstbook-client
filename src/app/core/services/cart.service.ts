@@ -1,5 +1,5 @@
 // Decorators
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 // HTTP
 import { HttpClient } from '@angular/common/http';
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 // Models
-import { Cart, CartProduct } from '../models/cart.model';
+import { Cart } from '../models/cart.model';
 import { Product } from '../models/product.model';
 import { User } from '../models/user.model';
 import { Subject } from 'rxjs';
@@ -76,6 +76,14 @@ export class CartService {
     else if (cart) localStorage.setItem('cart', JSON.stringify(cart));
     this.cartUpdated.next(cart);
     return cart;
+  }
+
+  updateTotalPrice(price: number) {
+    let cart = this.getCart() as Cart;
+    if (cart) {
+      cart.totalPrice = price;
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
   }
 
   // checkout(payload: object): Observable<ServerResponse<object>> {
