@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
+import { HelperService } from 'src/app/core/services/helper.service';
 
 const emailRegex: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -41,7 +42,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private helperService: HelperService
   ) { }
 
   ngOnInit(): void {
@@ -57,7 +59,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .register(this.registerForm.value)
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.toastr.success('User register.');
-        this.router.navigate(['/home']);
+        if (this.helperService.hasCallBack())
+          this.router.navigateByUrl(this.helperService.getCallBack());
+        else
+          this.router.navigate(['/home']);
       });
   }
 

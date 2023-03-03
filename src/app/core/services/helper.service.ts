@@ -21,6 +21,7 @@ export class HelperService {
   pendingHttpCall = new BehaviorSubject<boolean>(false);
   sessionTimeRemaining = new BehaviorSubject<number>(0); // in seconds
   sessionEndingAlertLimit = 300; // seconds
+  private callBackUrl = '';
   fullScreenMode = new BehaviorSubject<boolean>(false);
   contactTypes = {
     friend: 'Friend',
@@ -145,5 +146,19 @@ export class HelperService {
       document.removeEventListener('copy', () => { });
     });
     document.execCommand('copy');
+  }
+
+  setCallBack(cb: string) {
+    this.callBackUrl = cb;
+  }
+
+  hasCallBack(): boolean {
+    return this.callBackUrl ? true : false;
+  }
+
+  getCallBack(): string {
+    const val = this.callBackUrl;
+    this.callBackUrl = '';
+    return val;
   }
 }

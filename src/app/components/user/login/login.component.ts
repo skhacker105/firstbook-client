@@ -52,9 +52,13 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(this.loginForm.value)
       .pipe(takeUntil(this.isComponentIsActive)).subscribe(() => {
         this.helperService.statSessionWatch();
-        if (!this.returnResultOnly)
-          this.router.navigate(['/home']);
-          else this.dialogRef?.close('done');
+        if (!this.returnResultOnly) {
+          if (this.helperService.hasCallBack())
+            this.router.navigateByUrl(this.helperService.getCallBack());
+          else
+            this.router.navigate(['/home']);
+        }
+        else this.dialogRef?.close('done');
       });
   }
 

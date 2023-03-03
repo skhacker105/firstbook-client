@@ -8,6 +8,10 @@ const routes: Routes = [
     component: CheckoutComponent
   },
   {
+    path: ':step',
+    component: CheckoutComponent
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full'

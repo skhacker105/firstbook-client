@@ -1,7 +1,7 @@
-import { FormControl, FormGroup } from "@angular/forms";
-import { Order } from "./order.model";
+import { Observable, of } from "rxjs";
+import { ServerResponse } from "./server-response.model";
 
-export class Payment {
+export abstract class Payment {
     constructor(
         public mode: string,
         public displayText: string,
@@ -9,6 +9,8 @@ export class Payment {
         public _id?: string,
         public icon?: string
     ) { }
+
+    abstract getPaymentURL(): string;
 }
 
 export class CashOnDelivery extends Payment {
@@ -17,6 +19,10 @@ export class CashOnDelivery extends Payment {
         _id?: string,
     ) {
         super('COD', 'Cash On Delivery', intent, _id, './assets/cash-on-delivery.png');
+    }
+
+    getPaymentURL() {
+        return '';
     }
 }
 

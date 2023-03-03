@@ -1,14 +1,14 @@
 <mat-toolbar *ngIf="cart">
     <!-- <div cal> -->
-        {{ cart.products.length }} Item{{ cart.products.length > 1 ? 's' : '' }}
-        &nbsp;
-        <app-information-message [message]="totalCount.toString() + ' Quantities'"></app-information-message>
+    {{ cart.products.length }} Item{{ cart.products.length > 1 ? 's' : '' }}
+    &nbsp;
+    <app-information-message [message]="totalCount.toString() + ' Quantities'"></app-information-message>
     <!-- </div> -->
     <span class="spacer"></span>
     &#8377; {{ cart.totalPrice | number: '.2' }}
 </mat-toolbar>
 
-<mat-stepper #stepper [orientation]="isMobileView ? 'vertical' :  'horizontal'">
+<mat-stepper linear #stepper [orientation]="isMobileView ? 'vertical' :  'horizontal'" [selectedIndex]="step">
     <!-- Address Form -->
     <mat-step [stepControl]="addressForm" *ngIf="addressForm" errorMessage="Incomplete Address">
         <p align="end">
@@ -35,6 +35,13 @@
         </form>
     </mat-step>
 
+    <!-- Login/Register -->
+    <mat-step *ngIf="!loggedInUser">
+        <ng-template matStepLabel>Login</ng-template>
+        <button mat-raised-button color="accent" (click)="redirectToLogin()">LOGIN</button> &nbsp;
+        <button mat-raised-button color="accent" (click)="redirectToRegister()">REGISTER</button> &nbsp;
+    </mat-step>
+
     <!-- Payment Information -->
     <mat-step [stepControl]="paymentForm" errorMessage="Select Payment Service" *ngIf="paymentForm">
         <ng-template matStepLabel>Payment Information</ng-template>
@@ -54,8 +61,17 @@
         </mat-card>
         <p align="end">
             <br>
-            <button mat-raised-button color="primary" matStepperPrevious>Previous</button> &nbsp;
-            <button mat-raised-button color="primary" matStepperNext>Next</button>
+            <button mat-raised-button color="primary" matStepperPrevious>Back</button> &nbsp;
+            <button mat-raised-button color="primary" matStepperNext (click)="mapPaymentInformation()">Pay Now</button>
+        </p>
+    </mat-step>
+
+    <!-- Waiting for Payment -->
+    <mat-step>
+        <ng-template matStepLabel>Processing Payment</ng-template>
+        <p align="center">
+            <mat-spinner></mat-spinner>
+            Please do not refresh or close this screen.
         </p>
     </mat-step>
 

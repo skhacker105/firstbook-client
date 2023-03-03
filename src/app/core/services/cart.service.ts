@@ -86,6 +86,10 @@ export class CartService {
     }
   }
 
+  setNewCart(cart: Cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+  
   // checkout(payload: object): Observable<ServerResponse<object>> {
   //   return this.http.post<ServerResponse<object>>(baseUrl + checkoutEndpoint, payload);
   // }

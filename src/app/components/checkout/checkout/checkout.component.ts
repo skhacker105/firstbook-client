@@ -1,9 +1,11 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Cart } from 'src/app/core/models/cart.model';
+import { Payment } from 'src/app/core/models/payment.model';
 import { User } from 'src/app/core/models/user.model';
 import { CartService } from 'src/app/core/services/cart.service';
 import { HelperService } from 'src/app/core/services/helper.service';
@@ -33,9 +35,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   addressForm: FormGroup | undefined;
   paymentForm: FormGroup | undefined;
   totalCount = 0;
+  @ViewChild('stepper') stepper!: MatStepper;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private helperService: HelperService,
     private cartService: CartService,
@@ -60,15 +64,28 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   initAllFormsGroups() {
     this.addressForm = this.fb.group({
-      shippingAddress: new FormControl('', Validators.required),
-      shippingContact: new FormControl('', Validators.required),
-      bilingAddress: new FormControl('', Validators.required),
-      bilingContact: new FormControl('', Validators.required)
+      shippingAddress: new FormControl(this.cart?.shippingAddress?.address, Validators.required),
+      shippingContact: new FormControl(this.cart?.shippingAddress?.contact, Validators.required),
+      bilingAddress: new FormControl(this.cart?.billingAddress?.address, Validators.required),
+      bilingContact: new FormControl(this.cart?.billingAddress?.contact, Validators.required)
     });
     this.mapUserAddress();
+    this.checkIfShippingAndBillingAddrSame();
     this.paymentForm = this.fb.group({
-      paymentService: new FormControl(this.cart?.paymentInformation, Validators.required)
+      paymentService: new FormControl(this.cart?.paymentInformation as Payment, Validators.required)
     });
+  }
+
+  checkIfShippingAndBillingAddrSame() {
+    if (!this.addressForm) return;
+    let bilingAddress = this.addressForm.controls['bilingAddress'].value;
+    let bilingContact = this.addressForm.controls['bilingContact'].value;
+    let shippingContact = this.addressForm.controls['shippingContact'].value;
+    let shippingAddress = this.addressForm.controls['shippingAddress'].value;
+    if (bilingAddress === shippingAddress && bilingContact === shippingContact) {
+      this.copy = true;
+      this.handleCopyChange();
+    }
   }
 
   countItems() {
@@ -79,13 +96,19 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   mapUserAddress() {
     if (!this.addressForm) return;
     let user: User | undefined;
-    if (this.loggedInUser) user = this.loggedInUser;
+    if (this.loggedInUser) {
+      user = this.loggedInUser;
+      if (this.cart && !this.cart.user) this.cart.user = user;
+    }
     else if (this.cart?.user) user = this.cart.user;
     if (user) {
       this.addressForm.controls['bilingAddress'].setValue(user.address ? user.address : '');
       this.addressForm.controls['shippingAddress'].setValue(user.address ? user.address : '');
       this.addressForm.controls['shippingContact'].setValue(user.contact1 ? user.contact1 : user.contact2 ? user.contact2 : '');
       this.addressForm.controls['bilingContact'].setValue(user.contact1 ? user.contact1 : user.contact2 ? user.contact2 : '');
+    }
+    if (this.cart) {
+      this.cartService.setNewCart(this.cart);
     }
   }
 
@@ -134,6 +157,29 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       address: formValue.shippingAddress,
       contact: formValue.shippingContact
     }
+  }
+
+  redirectToLogin() {
+    this.helperService.setCallBack('/checkout/1');
+    this.router.navigateByUrl('/user/login');
+  }
+
+  redirectToRegister() {
+    this.helperService.setCallBack('/checkout/1');
+    this.router.navigateByUrl('/user/register');
+  }
+
+  mapPaymentInformation() {
+    if (!this.paymentForm || this.paymentForm.invalid || !this.cart) return;
+    let selectedPayment = this.paymentForm.value.paymentService;
+    this.cart.paymentInformation = this.paymentService.lstPaymentServices.find(ps => ps.mode === selectedPayment._mode)
+    this.cartService.setNewCart(this.cart);
+    if (this.cart.paymentInformation)
+      this.paymentService.makePayment(this.cart.paymentInformation.getPaymentURL(), this.cart)
+      .pipe(takeUntil(this.isComponentIsActive))
+      .subscribe(order => {
+        console.log('order = ', order)
+      })
   }
 
 }
