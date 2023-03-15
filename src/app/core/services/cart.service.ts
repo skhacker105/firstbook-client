@@ -86,8 +86,12 @@ export class CartService {
     }
   }
 
-  setNewCart(cart: Cart) {
+  udpateCart(cart: Cart) {
     localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  clearCart() {
+    localStorage.removeItem('cart')
   }
   
   // checkout(payload: object): Observable<ServerResponse<object>> {

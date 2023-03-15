@@ -1,0 +1,47 @@
+<mat-card *ngIf="order">
+    <mat-card-header>
+        <mat-card-subtitle><b>Order Number: {{ order._id }}</b></mat-card-subtitle>
+        <mat-card-subtitle class="align-left" *ngIf="order.creationDate">{{ order.creationDate | date:
+            'dd/MM/yyyy'}}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="align-left">
+        <mat-list>
+            <ng-container *ngFor="let orderProduct of order.products">
+                <span matListItemTitle class="word-wrap">{{ orderProduct.product.name }}</span>
+                <span matListItemLine>Purchased {{ orderProduct.count }} at rate of &#8377; {{ orderProduct.cost |
+                    number: '.2' }} per item</span>
+                    <mat-divider></mat-divider>
+                    <br>
+            </ng-container>
+        </mat-list>
+    </mat-card-content>
+
+    <mat-card-footer class="flex-display standard-padding">
+        <div class="half-width align-left">
+            {{ order.currentStatus?.status }} on {{ order.currentStatus?.creationDate | date: 'dd/MM/yyyy' }}
+            <button mat-icon-button [matMenuTriggerFor]="statusMenu" *ngIf="order.statusHistory && order.statusHistory.length > 0">
+                <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #statusMenu="matMenu">
+                <ng-container *ngFor="let status of order.statusHistory">
+                    <button mat-menu-item>{{ status?.status }} on {{ status?.creationDate | date: 'dd/MM/yyyy' }}</button>
+                    <mat-divider></mat-divider>
+                </ng-container>
+            </mat-menu>
+        </div>
+
+        <div class="half-width align-left">
+            {{ order.currentPaymentStatus?.status }} on {{ order.currentPaymentStatus?.creationDate | date: 'dd/MM/yyyy' }}
+            <button mat-icon-button [matMenuTriggerFor]="paymentMenu" *ngIf="order.paymentStatusHistory && order.paymentStatusHistory.length > 0">
+                <mat-icon>expand_more</mat-icon>
+            </button>
+            <mat-menu #paymentMenu="matMenu">
+                <ng-container *ngFor="let status of order.paymentStatusHistory">
+                    <button mat-menu-item>{{ status?.status }} on {{ status?.creationDate | date: 'dd/MM/yyyy' }}</button>
+                    <mat-divider></mat-divider>
+                </ng-container>
+            </mat-menu>
+        </div>
+    </mat-card-footer>
+</mat-card>

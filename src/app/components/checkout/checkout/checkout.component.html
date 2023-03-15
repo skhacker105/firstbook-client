@@ -8,7 +8,13 @@
     &#8377; {{ cart.totalPrice | number: '.2' }}
 </mat-toolbar>
 
-<mat-stepper linear #stepper [orientation]="isMobileView ? 'vertical' :  'horizontal'" [selectedIndex]="step">
+<mat-toolbar *ngIf="!loggedInUser">
+    <button mat-raised-button color="accent" (click)="redirectToLogin()">LOGIN</button> &nbsp;
+    <button mat-raised-button color="accent" (click)="redirectToRegister()">REGISTER</button> &nbsp;
+</mat-toolbar>
+
+<mat-stepper linear #stepper [orientation]="isMobileView ? 'vertical' :  'horizontal'" [selectedIndex]="step" *ngIf="loggedInUser">
+    
     <!-- Address Form -->
     <mat-step [stepControl]="addressForm" *ngIf="addressForm" errorMessage="Incomplete Address">
         <p align="end">
@@ -30,16 +36,9 @@
             </div>
             <p align="end">
                 <br>
-                <button mat-raised-button color="primary" matStepperNext (click)="mapAddressToCart()">Next</button>
+                <button mat-raised-button color="primary" matStepperNext (click)="placeOrder()">Proceed to payment</button>
             </p>
         </form>
-    </mat-step>
-
-    <!-- Login/Register -->
-    <mat-step *ngIf="!loggedInUser">
-        <ng-template matStepLabel>Login</ng-template>
-        <button mat-raised-button color="accent" (click)="redirectToLogin()">LOGIN</button> &nbsp;
-        <button mat-raised-button color="accent" (click)="redirectToRegister()">REGISTER</button> &nbsp;
     </mat-step>
 
     <!-- Payment Information -->
@@ -50,7 +49,7 @@
             <mat-card-content>
                 <form [formGroup]="paymentForm">
                     <mat-selection-list [multiple]="false" formControlName="paymentService">
-                        <mat-list-option *ngFor="let payment of paymentService.lstPaymentServices" [value]="payment">
+                        <mat-list-option *ngFor="let payment of orderService.lstPaymentServices" [value]="payment">
                             <img src="{{ payment.icon }}" matListItemIcon>
                             {{ payment.displayText }}
                         </mat-list-option>
@@ -62,28 +61,28 @@
         <p align="end">
             <br>
             <button mat-raised-button color="primary" matStepperPrevious>Back</button> &nbsp;
-            <button mat-raised-button color="primary" matStepperNext (click)="mapPaymentInformation()">Pay Now</button>
+            <button mat-raised-button color="primary" matStepperNext (click)="payNow()">Pay Now</button>
         </p>
     </mat-step>
 
     <!-- Waiting for Payment -->
-    <mat-step>
+    <!-- <mat-step>
         <ng-template matStepLabel>Processing Payment</ng-template>
         <p align="center">
             <mat-spinner></mat-spinner>
             Please do not refresh or close this screen.
         </p>
-    </mat-step>
+    </mat-step> -->
 
     <!-- Receipt Information -->
-    <mat-step>
+    <!-- <mat-step>
         <ng-template matStepLabel>Receipt</ng-template>
         Receipt Information
         <p align="end">
             <br>
             <button mat-raised-button color="primary" matStepperPrevious>Previous</button>
         </p>
-    </mat-step>
+    </mat-step> -->
 </mat-stepper>
 
 <ng-template #address let-header="header" let-contactConrol="contactConrol" let-addressConrol="addressConrol">

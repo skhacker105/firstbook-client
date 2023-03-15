@@ -223,7 +223,7 @@
                 <div class="full-width catalog-product-detail">
 
                     <!-- Cart ADD/REMOVE Controls -->
-                    <div class="full-width noprint" *ngIf="!catalog.isDeleted && !isEditAllowed">
+                    <div class="full-width noprint" *ngIf="!catalog.isDeleted">
                         <button mat-icon-button (click)="removeFromCart(catProduct)"
                             class="counter-button"><mat-icon>remove_circle_outline</mat-icon>
                         </button>

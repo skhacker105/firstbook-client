@@ -70,6 +70,7 @@ import { ProductSearchComponent } from './product-search/product-search.componen
 import { CatalogComponent } from './catalog/catalog.component';
 import { ContactSearchComponent } from './client-search/contact-search.component';
 import { InformationMessageComponent } from './information-message/information-message.component';
+import { OrderComponent } from './order/order.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,8 @@ import { InformationMessageComponent } from './information-message/information-m
     ProductSearchComponent,
     CatalogComponent,
     ContactSearchComponent,
-    InformationMessageComponent
+    InformationMessageComponent,
+    OrderComponent
   ],
   imports: [
     CommonModule,
@@ -194,7 +196,8 @@ import { InformationMessageComponent } from './information-message/information-m
     FormsModule,
     ReactiveFormsModule,
     MatCheckboxModule,
-    MatStepperModule
+    MatStepperModule,
+    OrderComponent
   ]
 })
 export class SharedModule { }
